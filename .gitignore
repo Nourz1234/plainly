@@ -1,1 +1,4 @@
 /build
+/.vs
+
+*.csproj.user
