@@ -1,54 +1,20 @@
 using System.Text.Json;
 
-var builder = WebApplication.CreateBuilder(args);
+namespace Plainly.Api;
 
-builder.Services.AddControllers();
-builder.Services.AddOpenApi();
-
-var app = builder.Build();
-
-if (app.Environment.IsDevelopment())
+public class Program
 {
-    app.MapOpenApi();
-}
-
-app.UseHttpsRedirection();
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.MapFallback(async context =>
-{
-    context.Response.StatusCode = 404;
-    context.Response.ContentType = "application/json";
-
-    var result = new
+    public static void Main(string[] args)
     {
-        status = 404,
-        error = "Endpoint not found",
-        path = context.Request.Path,
-        method = context.Request.Method
-    };
+        var builder = WebApplication.CreateBuilder(args);
+        var startup = new Startup(builder.Configuration);
 
-    var json = JsonSerializer.Serialize(result);
-    await context.Response.WriteAsync(json);
-});
+        startup.ConfigureServices(builder.Services);
 
+        var app = builder.Build();
 
+        startup.Configure(app, builder.Environment);
 
-var appRunTask = app.RunAsync();
-
-if (app.Environment.IsDevelopment())
-{
-    var endpointDataSource = app.Services.GetRequiredService<EndpointDataSource>();
-    Console.WriteLine("Registered Endpoints:");
-    foreach (var endpoint in endpointDataSource.Endpoints)
-    {
-        if (endpoint is RouteEndpoint routeEndpoint)
-        {
-            Console.WriteLine($"  {routeEndpoint.DisplayName} - {routeEndpoint.RoutePattern.RawText}");
-        }
+        app.Run();
     }
 }
-
-await appRunTask;

@@ -4,7 +4,7 @@ using FluentAssertions;
 namespace Plainly.Api.Tests.Controllers;
 
 [ExcludeFromCodeCoverage]
-public class HealthController
+public class HealthControllerTests
 {
     [Fact]
     public void TestHealth_ShouldReturnHealthy()
