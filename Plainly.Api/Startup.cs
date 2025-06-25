@@ -1,6 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using Microsoft.AspNetCore.Diagnostics;
+using Plainly.Api.Exceptions;
+using Plainly.Api.Middleware;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Plainly.Api;
@@ -21,43 +23,27 @@ public class Startup(IConfiguration configuration)
         if (env.IsDevelopment())
         {
             app.MapOpenApi();
+
+            app.MapGet("/exception", (context) => throw new Exception());
+            app.MapGet("/internal-error", (context) => throw new InternalServerErrorException());
+            app.MapGet("/not-found-error", (context) => throw new NotFoundException());
+            app.MapGet("/unauthorized-error", (context) => throw new UnauthorizedException());
+            app.MapGet("/forbidden-error", (context) => throw new ForbiddenException());
+            app.MapGet("/bad-request-error", (context) => throw new BadRequestException());
+            app.MapGet("/validation-error", (context) => throw new ValidationException());
+            app.MapGet("/validation-error-with-errors", (context) => throw new ValidationException(new Dictionary<string, string[]> { ["field1"] = ["test"] }));
         }
 
 
-        app.UseExceptionHandler(exceptionHandlerApp =>
-        {
-            exceptionHandlerApp.Run(async context =>
-            {
-                context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-
-                // using static System.Net.Mime.MediaTypeNames;
-                context.Response.ContentType = Text.Plain;
-
-                await context.Response.WriteAsync("An exception was thrown.");
-
-                var exceptionHandlerPathFeature =
-                    context.Features.Get<IExceptionHandlerPathFeature>();
-
-                if (exceptionHandlerPathFeature?.Error is FileNotFoundException)
-                {
-                    await context.Response.WriteAsync(" The file was not found.");
-                }
-
-                if (exceptionHandlerPathFeature?.Path == "/")
-                {
-                    await context.Response.WriteAsync(" Page: Home.");
-                }
-            });
-        });
-
+        app.UseGlobalExceptionHandling();
         app.UseHttpsRedirection();
         app.UseRouting();
         app.UseAuthorization();
         app.MapControllers();
 
+
         app.MapFallback(async context =>
         {
-            throw new Exception("test");
             context.Response.StatusCode = 404;
             context.Response.ContentType = "application/json";
 

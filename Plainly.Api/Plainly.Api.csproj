@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Plainly.Core\Plainly.Core.csproj" />
+    <ProjectReference Include="..\Plainly.Shared\Plainly.Shared.csproj" />
   </ItemGroup>
 
 </Project>

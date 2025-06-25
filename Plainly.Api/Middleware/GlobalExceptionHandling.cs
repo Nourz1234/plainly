@@ -1,12 +1,11 @@
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Plainly.Api.Exceptions;
 
 namespace Plainly.Api.Middleware;
 
 
-public static class ExceptionHandler
+public static class GlobalExceptionHandling
 {
     public static IApplicationBuilder UseGlobalExceptionHandling(this IApplicationBuilder app)
     {
@@ -23,13 +22,13 @@ public static class ExceptionHandler
             var appException = exception switch
             {
                 BaseException baseException => baseException,
-                Exception inner => new InternalErrorException(null, inner),
-                _ => new InternalErrorException()
+                Exception inner => new InternalServerErrorException(null, inner),
+                _ => new InternalServerErrorException()
             };
 
-            var result = new ObjectResult(appException.GetResult())
+            var result = new ObjectResult(appException.ToResponse())
             {
-                StatusCode = StatusCodes.Status500InternalServerError
+                StatusCode = appException.StatusCode
             };
 
             await WriteActionResultAsync(context, result);

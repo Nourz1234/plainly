@@ -1,7 +1,8 @@
-using System.Text.Json;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Plainly.Api;
 
+[ExcludeFromCodeCoverage]
 public class Program
 {
     public static void Main(string[] args)

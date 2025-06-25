@@ -1,4 +1,6 @@
+using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Plainly.Shared.Responses;
 
 
 namespace Plainly.Api.Exceptions;
@@ -6,7 +8,6 @@ namespace Plainly.Api.Exceptions;
 public abstract class BaseException : Exception
 {
     public abstract int StatusCode { get; }
-    public abstract string DefaultMessage { get; }
 
     protected BaseException() : base()
     {
@@ -20,12 +21,5 @@ public abstract class BaseException : Exception
     {
     }
 
-    protected string MessageOrDefault() => Message ?? DefaultMessage;
-
-    public virtual object GetResult() => new
-    {
-        StatusCode,
-        Status = "error",
-        Message = MessageOrDefault(),
-    };
+    public abstract ErrorResponse ToResponse();
 }
