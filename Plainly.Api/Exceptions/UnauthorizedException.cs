@@ -1,4 +1,3 @@
-using System.Net;
 using Plainly.Shared.Responses;
 
 
@@ -6,7 +5,6 @@ namespace Plainly.Api.Exceptions;
 
 public class UnauthorizedException : BaseException
 {
-    public override int StatusCode => (int)HttpStatusCode.Unauthorized;
     public static readonly string DefaultMessage = "Unauthorized! Please log in to access this resource.";
 
     public UnauthorizedException() : base(DefaultMessage)
@@ -18,5 +16,5 @@ public class UnauthorizedException : BaseException
     public UnauthorizedException(string? message, Exception? innerException) : base(message ?? DefaultMessage, innerException)
     { }
 
-    public override ErrorResponse ToResponse() => new() { Message = Message };
+    public override ErrorResponse ToResponse() => new(StatusCodes.Status401Unauthorized) { Message = Message };
 }

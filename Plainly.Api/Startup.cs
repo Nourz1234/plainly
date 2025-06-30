@@ -1,8 +1,10 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Net.Http.Headers;
 using System.Text.Json;
 using Microsoft.AspNetCore.Diagnostics;
 using Plainly.Api.Exceptions;
 using Plainly.Api.Middleware;
+using Plainly.Shared;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Plainly.Api;
@@ -23,17 +25,7 @@ public class Startup(IConfiguration configuration)
         if (env.IsDevelopment())
         {
             app.MapOpenApi();
-
-            app.MapGet("/exception", (context) => throw new Exception());
-            app.MapGet("/internal-error", (context) => throw new InternalServerErrorException());
-            app.MapGet("/not-found-error", (context) => throw new NotFoundException());
-            app.MapGet("/unauthorized-error", (context) => throw new UnauthorizedException());
-            app.MapGet("/forbidden-error", (context) => throw new ForbiddenException());
-            app.MapGet("/bad-request-error", (context) => throw new BadRequestException());
-            app.MapGet("/validation-error", (context) => throw new ValidationException());
-            app.MapGet("/validation-error-with-errors", (context) => throw new ValidationException(new Dictionary<string, string[]> { ["field1"] = ["test"] }));
         }
-
 
         app.UseGlobalExceptionHandling();
         app.UseHttpsRedirection();
@@ -41,23 +33,15 @@ public class Startup(IConfiguration configuration)
         app.UseAuthorization();
         app.MapControllers();
 
-
-        app.MapFallback(async context =>
+        app.MapFallback(context =>
         {
-            context.Response.StatusCode = 404;
-            context.Response.ContentType = "application/json";
-
-            var result = new
-            {
-                status = 404,
-                error = "Endpoint not found!",
-                path = context.Request.Path,
-                method = context.Request.Method
-            };
-
-            var json = JsonSerializer.Serialize(result);
-            await context.Response.WriteAsync(json);
+            throw new NotFoundException(Messages.EndpointNotFoundMessage);
         });
+
+        if (env.IsEnvironment("Testing"))
+        {
+            AddTestRoutes(app);
+        }
 
         if (app.Environment.IsDevelopment())
         {
@@ -74,5 +58,17 @@ public class Startup(IConfiguration configuration)
                 }
             });
         }
+    }
+
+    private static void AddTestRoutes(WebApplication app)
+    {
+        app.MapGet("/exception", (context) => throw new Exception());
+        app.MapGet("/internal-error", (context) => throw new InternalServerErrorException());
+        app.MapGet("/not-found-error", (context) => throw new NotFoundException());
+        app.MapGet("/unauthorized-error", (context) => throw new UnauthorizedException());
+        app.MapGet("/forbidden-error", (context) => throw new ForbiddenException());
+        app.MapGet("/bad-request-error", (context) => throw new BadRequestException());
+        app.MapGet("/validation-error", (context) => throw new ValidationException());
+        app.MapGet("/validation-error-with-errors", (context) => throw new ValidationException(new Dictionary<string, string[]> { ["field1"] = ["test"] }));
     }
 }

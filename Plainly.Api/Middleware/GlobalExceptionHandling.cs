@@ -26,10 +26,7 @@ public static class GlobalExceptionHandling
                 _ => new InternalServerErrorException()
             };
 
-            var result = new ObjectResult(appException.ToResponse())
-            {
-                StatusCode = appException.StatusCode
-            };
+            var result = appException.ToResponse().Convert();
 
             await WriteActionResultAsync(context, result);
         });
