@@ -14,9 +14,9 @@ public class AppTests(AppFixture appFixture)
     private readonly AppFixture _AppFixture = appFixture;
 
     [Fact]
-    public async Task TestMissingPage()
+    public async Task GetMissingPage_ShouldReturnNotFoundResponse()
     {
-        var response = await _AppFixture.Client.GetAsync("/does-not-exist");
+        var response = await _AppFixture.Client.GetAsync("/missing-page");
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
 
         var result = await response.Content.ReadFromJsonAsync<ErrorResponse>();
@@ -26,7 +26,7 @@ public class AppTests(AppFixture appFixture)
     }
 
     [Fact]
-    public async Task TestException()
+    public async Task GetMethodThatThrowsException_ShouldReturnInternalServerErrorResponse()
     {
         var response = await _AppFixture.Client.GetAsync("/exception");
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.InternalServerError);
@@ -38,7 +38,7 @@ public class AppTests(AppFixture appFixture)
     }
 
     [Fact]
-    public async Task TestInternalError()
+    public async Task GetInternalError_ShouldReturnInternalServerErrorResponse()
     {
         var response = await _AppFixture.Client.GetAsync("/internal-error");
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.InternalServerError);
@@ -50,7 +50,7 @@ public class AppTests(AppFixture appFixture)
     }
 
     [Fact]
-    public async Task TestNotFoundError()
+    public async Task GetNotFoundError_ShouldReturnNotFoundResponse()
     {
         var response = await _AppFixture.Client.GetAsync("/not-found-error");
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
@@ -62,7 +62,7 @@ public class AppTests(AppFixture appFixture)
     }
 
     [Fact]
-    public async Task TestUnauthorized()
+    public async Task GetUnauthorized_ShouldReturnUnauthorizedResponse()
     {
         var response = await _AppFixture.Client.GetAsync("/unauthorized-error");
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
@@ -74,7 +74,7 @@ public class AppTests(AppFixture appFixture)
     }
 
     [Fact]
-    public async Task TestForbidden()
+    public async Task GetForbidden_ShouldReturnForbiddenResponse()
     {
         var response = await _AppFixture.Client.GetAsync("/forbidden-error");
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
@@ -86,7 +86,7 @@ public class AppTests(AppFixture appFixture)
     }
 
     [Fact]
-    public async Task TestBadRequest()
+    public async Task GetBadRequest_ShouldReturnBadRequestResponse()
     {
         var response = await _AppFixture.Client.GetAsync("/bad-request-error");
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
@@ -98,7 +98,7 @@ public class AppTests(AppFixture appFixture)
     }
 
     [Fact]
-    public async Task TestValidationError()
+    public async Task GetValidationError_ShouldReturnValidationErrorResponse()
     {
         var response = await _AppFixture.Client.GetAsync("/validation-error");
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.UnprocessableEntity);
@@ -111,7 +111,7 @@ public class AppTests(AppFixture appFixture)
     }
 
     [Fact]
-    public async Task GetValidationErrorWithErrors()
+    public async Task GetValidationError_WithErrors_ShouldReturnValidationErrorWithErrorsResponse()
     {
         var response = await _AppFixture.Client.GetAsync("/validation-error-with-errors");
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.UnprocessableEntity);

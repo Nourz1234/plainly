@@ -7,21 +7,21 @@ namespace Plainly.Api.Tests.Unit;
 public class ExceptionsTests
 {
     [Fact]
-    public void TestInternalServerErrorException_DefaultMessage()
+    public void InternalServerErrorException_DefaultConstructor_ShouldSetDefaultMessage()
     {
         var exception = new InternalServerErrorException();
         exception.Message.Should().Be(InternalServerErrorException.DefaultMessage);
     }
 
     [Fact]
-    public void TestInternalServerErrorException_WithMessage()
+    public void InternalServerErrorException_WithMessage_ShouldSetMessage()
     {
         var exception = new InternalServerErrorException("Test message");
         exception.Message.Should().Be("Test message");
     }
 
     [Fact]
-    public void TestInternalServerErrorException_WithInnerException()
+    public void InternalServerErrorException_WithInnerException_ShouldSetInnerException()
     {
         var innerException = new Exception("Inner exception message");
         var exception = new InternalServerErrorException("Test message", innerException);
@@ -31,21 +31,21 @@ public class ExceptionsTests
 
 
     [Fact]
-    public void TestForbiddenException_DefaultMessage()
+    public void ForbiddenException_DefaultConstructor_ShouldSetDefaultMessage()
     {
         var exception = new ForbiddenException();
         exception.Message.Should().Be(ForbiddenException.DefaultMessage);
     }
 
     [Fact]
-    public void TestForbiddenException_WithMessage()
+    public void ForbiddenException_WithMessage_ShouldSetMessage()
     {
         var exception = new ForbiddenException("Test message");
         exception.Message.Should().Be("Test message");
     }
 
     [Fact]
-    public void TestForbiddenException_WithInnerException()
+    public void ForbiddenException_WithInnerException_ShouldSetInnerException()
     {
         var innerException = new Exception("Inner exception message");
         var exception = new ForbiddenException("Test message", innerException);
@@ -55,21 +55,21 @@ public class ExceptionsTests
 
 
     [Fact]
-    public void TestBadRequestException_DefaultMessage()
+    public void BadRequestException_DefaultConstructor_ShouldSetDefaultMessage()
     {
         var exception = new BadRequestException();
         exception.Message.Should().Be(BadRequestException.DefaultMessage);
     }
 
     [Fact]
-    public void TestBadRequestException_WithMessage()
+    public void BadRequestException_WithMessage_ShouldSetMessage()
     {
         var exception = new BadRequestException("Test message");
         exception.Message.Should().Be("Test message");
     }
 
     [Fact]
-    public void TestBadRequestException_WithInnerException()
+    public void BadRequestException_WithInnerException_ShouldSetInnerException()
     {
         var innerException = new Exception("Inner exception message");
         var exception = new BadRequestException("Test message", innerException);
@@ -79,21 +79,21 @@ public class ExceptionsTests
 
 
     [Fact]
-    public void TestNotFoundException_DefaultMessage()
+    public void NotFoundException_DefaultConstructor_ShouldSetDefaultMessage()
     {
         var exception = new NotFoundException();
         exception.Message.Should().Be(NotFoundException.DefaultMessage);
     }
 
     [Fact]
-    public void TestNotFoundException_WithMessage()
+    public void NotFoundException_WithMessage_ShouldSetMessage()
     {
         var exception = new NotFoundException("Test message");
         exception.Message.Should().Be("Test message");
     }
 
     [Fact]
-    public void TestNotFoundException_WithInnerException()
+    public void NotFoundException_WithInnerException_ShouldSetInnerException()
     {
         var innerException = new Exception("Inner exception message");
         var exception = new NotFoundException("Test message", innerException);
@@ -103,21 +103,21 @@ public class ExceptionsTests
 
 
     [Fact]
-    public void TestUnauthorizedException_DefaultMessage()
+    public void UnauthorizedException_DefaultConstructor_ShouldSetDefaultMessage()
     {
         var exception = new UnauthorizedException();
         exception.Message.Should().Be(UnauthorizedException.DefaultMessage);
     }
 
     [Fact]
-    public void TestUnauthorizedException_WithMessage()
+    public void UnauthorizedException_WithMessage_ShouldSetMessage()
     {
         var exception = new UnauthorizedException("Test message");
         exception.Message.Should().Be("Test message");
     }
 
     [Fact]
-    public void TestUnauthorizedException_WithInnerException()
+    public void UnauthorizedException_WithInnerException_ShouldSetInnerException()
     {
         var innerException = new Exception("Inner exception message");
         var exception = new UnauthorizedException("Test message", innerException);
@@ -127,21 +127,21 @@ public class ExceptionsTests
 
 
     [Fact]
-    public void TestValidationException_DefaultMessage()
+    public void ValidationException_DefaultConstructor_ShouldSetDefaultMessage()
     {
         var exception = new ValidationException();
         exception.Message.Should().Be(ValidationException.DefaultMessage);
     }
 
     [Fact]
-    public void TestValidationException_WithMessage()
+    public void ValidationException_WithMessage_ShouldSetMessage()
     {
         var exception = new ValidationException("Test message");
         exception.Message.Should().Be("Test message");
     }
 
     [Fact]
-    public void TestValidationException_WithErrors()
+    public void ValidationException_WithErrors_ShouldSetErrors()
     {
         var errors = new Dictionary<string, string[]> { ["field1"] = ["test"] };
         var exception = new ValidationException("Test message", errors);
@@ -150,7 +150,7 @@ public class ExceptionsTests
     }
 
     [Fact]
-    public void TestValidationException_WithInnerException()
+    public void ValidationException_WithInnerException_ShouldSetInnerException()
     {
         var innerException = new Exception("Inner exception message");
         var exception = new ValidationException("Test message", innerException);
@@ -159,7 +159,7 @@ public class ExceptionsTests
     }
 
     [Fact]
-    public void TestValidationException_WithErrorsAndInnerException()
+    public void ValidationException_WithErrorsAndInnerException_ShouldSetErrorsAndInnerException()
     {
         var errors = new Dictionary<string, string[]> { ["field1"] = ["test"] };
         var innerException = new Exception("Inner exception message");

@@ -13,7 +13,7 @@ public class HealthControllerTests(AppFixture appFixture)
     private readonly AppFixture _AppFixture = appFixture;
 
     [Fact]
-    public async Task TestHealth_ShouldReturnHealthy()
+    public async Task Get_ShouldReturnHealthyResponse()
     {
         var response = await _AppFixture.Client.GetAsync("api/Health");
         response.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);
