@@ -1,11 +1,15 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Net.Http.Headers;
-using System.Text.Json;
-using Microsoft.AspNetCore.Diagnostics;
+using System.Security.Cryptography;
 using Plainly.Api.Exceptions;
 using Plainly.Api.Middleware;
 using Plainly.Shared;
-using static System.Net.Mime.MediaTypeNames;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Plainly.Api.Models;
+using Plainly.Api.Data;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Plainly.Api.Services;
 
 namespace Plainly.Api;
 
@@ -18,6 +22,36 @@ public class Startup(IConfiguration configuration)
     {
         services.AddControllers();
         services.AddOpenApi();
+
+        // Configure EF Core
+        services.AddDbContext<AppDbContext>(
+            options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"))
+        );
+
+        // Add Identity
+        services.AddIdentity<User, IdentityRole>()
+            .AddEntityFrameworkStores<AppDbContext>()
+            .AddDefaultTokenProviders();
+
+        // JWT Auth setup
+        var rsa = RSA.Create();
+        rsa.ImportFromPem(Configuration["Jwt:PublicKey"]);
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = Configuration["Jwt:Issuer"],
+                    ValidAudience = Configuration["Jwt:Audience"],
+                    IssuerSigningKey = new RsaSecurityKey(rsa)
+                };
+            });
+
+        services.AddScoped<JwtService>();
     }
 
     public void Configure(WebApplication app, IWebHostEnvironment env)
@@ -29,13 +63,14 @@ public class Startup(IConfiguration configuration)
 
         app.UseGlobalExceptionHandling();
         app.UseHttpsRedirection();
-        app.UseRouting();
+        app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
+        app.UseRouting();
 
         app.MapFallback(context =>
         {
-            throw new NotFoundException(Messages.EndpointNotFoundMessage);
+            throw new NotFoundException(Messages.EndpointNotFound);
         });
 
         if (env.IsEnvironment("Testing"))

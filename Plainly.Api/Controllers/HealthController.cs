@@ -15,7 +15,7 @@ public class HealthController : ControllerBase
     {
         return new SuccessResponse<HealthDTO>
         {
-            Message = Messages.GenericSuccessMessage,
+            Message = Messages.Success,
             Data = new HealthDTO
             {
                 Status = "Healthy",

@@ -22,7 +22,7 @@ public class AppTests(AppFixture appFixture)
         var result = await response.Content.ReadFromJsonAsync<ErrorResponse>();
         result.Should().NotBeNull();
         result.Success.Should().Be(false);
-        result.Message.Should().Be(Messages.EndpointNotFoundMessage);
+        result.Message.Should().Be(Messages.EndpointNotFound);
     }
 
     [Fact]

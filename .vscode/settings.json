@@ -1,3 +1,7 @@
 {
-    "dotnet.defaultSolution": "Plainly.sln"
+    "dotnet.defaultSolution": "Plainly.sln",
+    "cSpell.words": [
+        "ASPNETCORE",
+        "Npgsql"
+    ]
 }
