@@ -1,3 +1,9 @@
+# 🔐 Development and Testing Configuration
+
+Create the following configuration files in the project root for development and testing: `appsettings.Development.json`, `appsettings.Testing.json`
+
+Use `appsettings.json` as template.
+
 
 # 🔐 Production Configuration
 
@@ -41,4 +47,17 @@ Store keys securely in environment variables:
 ```
 Jwt__PrivateKey=[private key]
 Jwt__PublicKey=[public key]
+```
+
+
+# DB Migrations:
+
+Create migration:
+```sh
+.\scripts\add-migration.ps1 MigrationName [Env]
+```
+
+Run migration:
+```sh
+.\scripts\migrate.ps1 [Env]
 ```

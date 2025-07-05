@@ -2,6 +2,7 @@
     "dotnet.defaultSolution": "Plainly.sln",
     "cSpell.words": [
         "ASPNETCORE",
-        "Npgsql"
-    ]
+        "Npgsql",
+        "Shouldly"
+    ],
 }

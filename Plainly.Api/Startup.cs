@@ -6,10 +6,11 @@ using Plainly.Shared;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Plainly.Api.Models;
-using Plainly.Api.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Plainly.Api.Services;
+using Plainly.Api.Database;
+using Plainly.Api.Interfaces;
 
 namespace Plainly.Api;
 
@@ -51,7 +52,7 @@ public class Startup(IConfiguration configuration)
                 };
             });
 
-        services.AddScoped<JwtService>();
+        services.AddSingleton<IAuthTokenService>(new JwtService(Configuration));
     }
 
     public void Configure(WebApplication app, IWebHostEnvironment env)

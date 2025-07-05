@@ -41,7 +41,7 @@ public class AuthController(UserManager<User> userManager, SignInManager<User> s
         return new SuccessResponse<LoginDTO>
         {
             Message = Messages.Success,
-            Data = new LoginDTO(token)
+            Data = new(token)
         };
     }
 }

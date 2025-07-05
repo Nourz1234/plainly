@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Plainly.Api.Interfaces;
 using Plainly.Api.Models;
 
-namespace Plainly.Api.Data;
+namespace Plainly.Api.Database;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbContext<User>(options)
 {
