@@ -1,9 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Http.Json;
-using FluentAssertions;
 using Plainly.Api.Exceptions;
 using Plainly.Shared;
 using Plainly.Shared.Responses;
+using Shouldly;
 
 namespace Plainly.Api.Tests.Integration;
 
@@ -17,110 +17,110 @@ public class AppTests(AppFixture appFixture)
     public async Task GetMissingPage_ShouldReturnNotFoundResponse()
     {
         var response = await _AppFixture.Client.GetAsync("/missing-page");
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+        response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NotFound);
 
         var result = await response.Content.ReadFromJsonAsync<ErrorResponse>();
-        result.Should().NotBeNull();
-        result.Success.Should().Be(false);
-        result.Message.Should().Be(Messages.EndpointNotFound);
+        result.ShouldNotBeNull();
+        result.Success.ShouldBe(false);
+        result.Message.ShouldBe(Messages.EndpointNotFound);
     }
 
     [Fact]
     public async Task GetMethodThatThrowsException_ShouldReturnInternalServerErrorResponse()
     {
         var response = await _AppFixture.Client.GetAsync("/exception");
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.InternalServerError);
+        response.StatusCode.ShouldBe(System.Net.HttpStatusCode.InternalServerError);
 
         var result = await response.Content.ReadFromJsonAsync<ErrorResponse>();
-        result.Should().NotBeNull();
-        result.Success.Should().Be(false);
-        result.Message.Should().Be(InternalServerErrorException.DefaultMessage);
+        result.ShouldNotBeNull();
+        result.Success.ShouldBe(false);
+        result.Message.ShouldBe(InternalServerErrorException.DefaultMessage);
     }
 
     [Fact]
     public async Task GetInternalError_ShouldReturnInternalServerErrorResponse()
     {
         var response = await _AppFixture.Client.GetAsync("/internal-error");
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.InternalServerError);
+        response.StatusCode.ShouldBe(System.Net.HttpStatusCode.InternalServerError);
 
         var result = await response.Content.ReadFromJsonAsync<ErrorResponse>();
-        result.Should().NotBeNull();
-        result.Success.Should().Be(false);
-        result.Message.Should().Be(InternalServerErrorException.DefaultMessage);
+        result.ShouldNotBeNull();
+        result.Success.ShouldBe(false);
+        result.Message.ShouldBe(InternalServerErrorException.DefaultMessage);
     }
 
     [Fact]
     public async Task GetNotFoundError_ShouldReturnNotFoundResponse()
     {
         var response = await _AppFixture.Client.GetAsync("/not-found-error");
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+        response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NotFound);
 
         var result = await response.Content.ReadFromJsonAsync<ErrorResponse>();
-        result.Should().NotBeNull();
-        result.Success.Should().Be(false);
-        result.Message.Should().Be(NotFoundException.DefaultMessage);
+        result.ShouldNotBeNull();
+        result.Success.ShouldBe(false);
+        result.Message.ShouldBe(NotFoundException.DefaultMessage);
     }
 
     [Fact]
     public async Task GetUnauthorized_ShouldReturnUnauthorizedResponse()
     {
         var response = await _AppFixture.Client.GetAsync("/unauthorized-error");
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.Unauthorized);
+        response.StatusCode.ShouldBe(System.Net.HttpStatusCode.Unauthorized);
 
         var result = await response.Content.ReadFromJsonAsync<ErrorResponse>();
-        result.Should().NotBeNull();
-        result.Success.Should().Be(false);
-        result.Message.Should().Be(UnauthorizedException.DefaultMessage);
+        result.ShouldNotBeNull();
+        result.Success.ShouldBe(false);
+        result.Message.ShouldBe(UnauthorizedException.DefaultMessage);
     }
 
     [Fact]
     public async Task GetForbidden_ShouldReturnForbiddenResponse()
     {
         var response = await _AppFixture.Client.GetAsync("/forbidden-error");
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.Forbidden);
+        response.StatusCode.ShouldBe(System.Net.HttpStatusCode.Forbidden);
 
         var result = await response.Content.ReadFromJsonAsync<ErrorResponse>();
-        result.Should().NotBeNull();
-        result.Success.Should().Be(false);
-        result.Message.Should().Be(ForbiddenException.DefaultMessage);
+        result.ShouldNotBeNull();
+        result.Success.ShouldBe(false);
+        result.Message.ShouldBe(ForbiddenException.DefaultMessage);
     }
 
     [Fact]
     public async Task GetBadRequest_ShouldReturnBadRequestResponse()
     {
         var response = await _AppFixture.Client.GetAsync("/bad-request-error");
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+        response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
 
         var result = await response.Content.ReadFromJsonAsync<ErrorResponse>();
-        result.Should().NotBeNull();
-        result.Success.Should().Be(false);
-        result.Message.Should().Be(BadRequestException.DefaultMessage);
+        result.ShouldNotBeNull();
+        result.Success.ShouldBe(false);
+        result.Message.ShouldBe(BadRequestException.DefaultMessage);
     }
 
     [Fact]
     public async Task GetValidationError_ShouldReturnValidationErrorResponse()
     {
         var response = await _AppFixture.Client.GetAsync("/validation-error");
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.UnprocessableEntity);
+        response.StatusCode.ShouldBe(System.Net.HttpStatusCode.UnprocessableEntity);
 
         var result = await response.Content.ReadFromJsonAsync<ValidationErrorResponse>();
-        result.Should().NotBeNull();
-        result.Success.Should().Be(false);
-        result.Errors.Should().BeEmpty();
-        result.Message.Should().Be(ValidationException.DefaultMessage);
+        result.ShouldNotBeNull();
+        result.Success.ShouldBe(false);
+        result.Errors.ShouldBeEmpty();
+        result.Message.ShouldBe(ValidationException.DefaultMessage);
     }
 
     [Fact]
     public async Task GetValidationError_WithErrors_ShouldReturnValidationErrorWithErrorsResponse()
     {
         var response = await _AppFixture.Client.GetAsync("/validation-error-with-errors");
-        response.StatusCode.Should().Be(System.Net.HttpStatusCode.UnprocessableEntity);
+        response.StatusCode.ShouldBe(System.Net.HttpStatusCode.UnprocessableEntity);
 
         var result = await response.Content.ReadFromJsonAsync<ValidationErrorResponse>();
-        result.Should().NotBeNull();
-        result.Success.Should().Be(false);
-        result.Errors.Should().NotBeEmpty();
-        result.Message.Should().Be(ValidationException.DefaultMessage);
+        result.ShouldNotBeNull();
+        result.Success.ShouldBe(false);
+        result.Errors.ShouldNotBeEmpty();
+        result.Message.ShouldBe(ValidationException.DefaultMessage);
     }
 
 }

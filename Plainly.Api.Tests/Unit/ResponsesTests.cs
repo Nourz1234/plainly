@@ -1,5 +1,5 @@
-using FluentAssertions;
 using Plainly.Shared.Responses;
+using Shouldly;
 
 namespace Plainly.Api.Tests.Unit;
 
@@ -13,7 +13,7 @@ public class ResponsesTests
     public void SuccessResponse_With2xxStatusCode_ShouldSetSuccessTrue(int statusCode)
     {
         var response = new SuccessResponse(statusCode) { Message = "Success" };
-        response.Success.Should().BeTrue();
+        response.Success.ShouldBeTrue();
     }
 
     [Theory]
@@ -23,8 +23,8 @@ public class ResponsesTests
     public void SuccessResponse_With2xxStatusCodeAndData_ShouldSetSuccessTrueAndSetData(int statusCode, string[] data)
     {
         var response = new SuccessResponse<string[]>(statusCode) { Message = "Success", Data = data };
-        response.Success.Should().BeTrue();
-        response.Data.Should().BeEquivalentTo(data);
+        response.Success.ShouldBeTrue();
+        response.Data.ShouldBeEquivalentTo(data);
     }
 
     [Theory]
@@ -34,7 +34,7 @@ public class ResponsesTests
     public void SuccessResponse_WithNon2xxStatusCode_ShouldThrowArgumentException(int statusCode)
     {
         var act = () => new SuccessResponse(statusCode) { Message = "Success" };
-        act.Should().Throw<ArgumentException>().And.Message.Should().Be($"Success response status code must be in the 200s");
+        act.ShouldThrow<ArgumentException>().Message.ShouldBe($"Success response status code must be in the 200s");
     }
 
 
@@ -46,7 +46,7 @@ public class ResponsesTests
     public void ErrorResponse_With4xxOr5xxStatusCode_ShouldSetSuccessFalse(int statusCode)
     {
         var response = new ErrorResponse(statusCode) { Message = "Error" };
-        response.Success.Should().BeFalse();
+        response.Success.ShouldBeFalse();
     }
 
     [Theory]
@@ -56,6 +56,6 @@ public class ResponsesTests
     public void ErrorResponse_WithNon4xxOr5xxStatusCode_ShouldThrowArgumentException(int statusCode)
     {
         var act = () => new ErrorResponse(statusCode) { Message = "Error" };
-        act.Should().Throw<ArgumentException>().And.Message.Should().Be($"Error response status code must be in the 400s or 500s");
+        act.ShouldThrow<ArgumentException>().Message.ShouldBe($"Error response status code must be in the 400s or 500s");
     }
 }
