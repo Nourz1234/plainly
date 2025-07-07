@@ -6,6 +6,7 @@ using Plainly.Api.Exceptions;
 using Plainly.Api.Models;
 using Plainly.Api.Services;
 using Plainly.Shared;
+using Plainly.Shared.Actions.Auth.Register;
 using Plainly.Shared.DTOs;
 using Plainly.Shared.Responses;
 
@@ -19,7 +20,7 @@ public class AuthController(UserManager<User> userManager, SignInManager<User> s
     private readonly SignInManager<User> _SignInManager = signInManager;
     private readonly JwtService _JwtService = jwtService;
 
-    [Authorize(Policy = RegisterAction.Scope)]
+    [Authorize(Policy = RegisterAction.Policy)]
     [HttpPost("register")]
     public async Task<SuccessResponse> Register([FromBody] RegisterRequest request)
     {
