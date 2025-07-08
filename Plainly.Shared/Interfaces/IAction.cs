@@ -1,12 +1,11 @@
-using FluentValidation;
-
 namespace Plainly.Shared.Interfaces;
 
-
-public interface IAction<TRequest, TResponse>
-    where TRequest : class
-    where TResponse : class
+public interface IAction
 {
-    public string Name { get; }
-    public string Claim { get; }
+    public string DisplayName { get; }
+    public string InternalName { get; }
+    public string? Claim { get; }
 }
+
+public interface IAction<TRequest> : IAction
+{ }

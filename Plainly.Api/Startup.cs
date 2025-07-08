@@ -1,7 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using Plainly.Api.Exceptions;
-using Plainly.Api.Middleware;
 using Plainly.Shared;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -11,6 +10,9 @@ using Microsoft.EntityFrameworkCore;
 using Plainly.Api.Services;
 using Plainly.Api.Database;
 using Plainly.Api.Interfaces;
+using Plainly.Api.Infrastructure.ExceptionHandling;
+using Plainly.Api.Infrastructure.Action;
+using Plainly.Shared.Interfaces;
 
 namespace Plainly.Api;
 
@@ -51,8 +53,17 @@ public class Startup(IConfiguration configuration)
                     IssuerSigningKey = new RsaSecurityKey(rsa)
                 };
             });
-
         services.AddSingleton<IAuthTokenService>(new JwtService(Configuration));
+
+        services.AddHttpContextAccessor();
+        services.AddActionFactory();
+
+        services.Scan(scan =>
+        {
+            scan.FromAssemblyOf<IAction>()
+            .AddClasses(classes => classes.AssignableTo(typeof(IAction<>)))
+            ;
+        });
     }
 
     public void Configure(WebApplication app, IWebHostEnvironment env)

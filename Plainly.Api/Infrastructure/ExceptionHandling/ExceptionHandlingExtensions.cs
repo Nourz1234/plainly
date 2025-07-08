@@ -2,10 +2,10 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Plainly.Api.Exceptions;
 
-namespace Plainly.Api.Middleware;
+namespace Plainly.Api.Infrastructure.ExceptionHandling;
 
 
-public static class GlobalExceptionHandling
+public static class ExceptionHandlingExtensions
 {
     public static IApplicationBuilder UseGlobalExceptionHandling(this IApplicationBuilder app)
     {
@@ -26,13 +26,12 @@ public static class GlobalExceptionHandling
                 _ => new InternalServerErrorException()
             };
 
-            var result = appException.ToResponse().Convert();
+            var result = appException.ToActionResult();
 
             await WriteActionResultAsync(context, result);
         });
 
     }
-
 
     private static async Task WriteActionResultAsync(HttpContext context, IActionResult result)
     {

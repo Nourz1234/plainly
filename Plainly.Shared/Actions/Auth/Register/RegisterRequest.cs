@@ -1,3 +1,5 @@
-namespace Plainly.Shared.Auth.Register;
+using Plainly.Shared.Interfaces;
 
-public record RegisterRequest(string FullName, string Email, string Password, string ConfirmPassword);
+namespace Plainly.Shared.Actions.Auth.Register;
+
+public record RegisterRequest(RegisterForm RegisterForm) : IActionRequest<RegisterDTO>;

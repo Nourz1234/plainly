@@ -1,8 +1,9 @@
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Plainly.Api.Actions.Auth;
 using Plainly.Api.Exceptions;
+using Plainly.Api.Infrastructure.Action;
+using Plainly.Api.Infrastructure.Authorization.Attributes;
 using Plainly.Api.Models;
 using Plainly.Api.Services;
 using Plainly.Shared;
@@ -14,23 +15,16 @@ namespace Plainly.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController(UserManager<User> userManager, SignInManager<User> signInManager, JwtService jwtService) : ControllerBase
+public class AuthController(ActionHandlerFactory _ActionHandlerFactory) : ControllerBase
 {
-    private readonly UserManager<User> _UserManager = userManager;
-    private readonly SignInManager<User> _SignInManager = signInManager;
-    private readonly JwtService _JwtService = jwtService;
 
-    [Authorize(Policy = RegisterAction.Policy)]
+    [AuthorizeFor<RegisterAction>]
     [HttpPost("register")]
-    public async Task<SuccessResponse> Register([FromBody] RegisterRequest request)
+    public async Task<SuccessResponse> Register([FromBody] RegisterForm form)
     {
-        var user = new User { FullName = request.FullName, Email = request.Email, };
-        var result = await _UserManager.CreateAsync(user, request.Password);
+        var result = await _ActionHandlerFactory.GetHandler<RegisterAction, RegisterRequest, RegisterDTO>().Handle(new RegisterRequest(form));
 
-        if (!result.Succeeded)
-            throw new ValidationException(new Dictionary<string, string[]> { [""] = result.Errors.Select(x => x.Description).ToArray() });
-
-        return new SuccessResponse(201) { Message = Messages.Success };
+        return new SuccessResponse<RegisterDTO>(201) { Message = Messages.Success, Data = result };
     }
 
     [HttpPost("login")]
@@ -51,5 +45,4 @@ public class AuthController(UserManager<User> userManager, SignInManager<User> s
 }
 
 // TODO: convert to forms with validation
-public record RegisterRequest(string FullName, string Email, string Password);
 public record LoginRequest(string Email, string Password);

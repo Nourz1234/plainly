@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using Plainly.Shared.Responses;
 
 
@@ -14,4 +15,6 @@ public abstract class BaseException : Exception
     }
 
     public abstract ErrorResponse ToResponse();
+
+    public IActionResult ToActionResult() => ToResponse().Convert();
 }

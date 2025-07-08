@@ -1,11 +1,11 @@
 using FluentValidation;
 
-namespace Plainly.Shared.Auth.Register;
+namespace Plainly.Shared.Actions.Auth.Register;
 
 
-public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
+public class RegisterFormValidator : AbstractValidator<RegisterForm>
 {
-    RegisterRequestValidator()
+    RegisterFormValidator()
     {
         RuleFor(x => x.FullName).NotEmpty();
         RuleFor(x => x.Email).NotEmpty().EmailAddress();
