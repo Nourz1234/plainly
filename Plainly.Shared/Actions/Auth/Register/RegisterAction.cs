@@ -6,6 +6,6 @@ namespace Plainly.Shared.Actions.Auth.Register;
 public class RegisterAction : IAction<RegisterRequest>
 {
     public string DisplayName => "Register";
-    public string InternalName => "auth.register";
-    public string Claim => InternalName;
+    public string InternalName => "Auth.Register";
+    public string? Claim => null;
 }

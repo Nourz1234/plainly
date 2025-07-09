@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Http.Json;
-using Plainly.Shared.DTOs;
+using Plainly.Shared.Actions.Heath.GetHealth;
 using Plainly.Shared.Responses;
 using Shouldly;
 
@@ -18,7 +18,7 @@ public class HealthControllerTests(AppFixture appFixture)
         var response = await _AppFixture.Client.GetAsync("api/Health");
         response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
 
-        var result = await response.Content.ReadFromJsonAsync<SuccessResponse<HealthDTO>>();
+        var result = await response.Content.ReadFromJsonAsync<SuccessResponse<GetHealthDTO>>();
         result.ShouldNotBeNull();
         result.Data.Status.ShouldBe("Healthy");
     }

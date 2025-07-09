@@ -1,48 +1,33 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Plainly.Api.Actions.Auth;
-using Plainly.Api.Exceptions;
 using Plainly.Api.Infrastructure.Action;
 using Plainly.Api.Infrastructure.Authorization.Attributes;
-using Plainly.Api.Models;
-using Plainly.Api.Services;
 using Plainly.Shared;
+using Plainly.Shared.Actions.Auth.Login;
 using Plainly.Shared.Actions.Auth.Register;
-using Plainly.Shared.DTOs;
 using Plainly.Shared.Responses;
 
 namespace Plainly.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController(ActionHandlerFactory _ActionHandlerFactory) : ControllerBase
+public class AuthController(ActionDispatcher _ActionDispatcher) : ControllerBase
 {
 
     [AuthorizeFor<RegisterAction>]
-    [HttpPost("register")]
+    [HttpPost("Register")]
     public async Task<SuccessResponse> Register([FromBody] RegisterForm form)
     {
-        var result = await _ActionHandlerFactory.GetHandler<RegisterAction, RegisterRequest, RegisterDTO>().Handle(new RegisterRequest(form));
+        var result = await _ActionDispatcher.Dispatch(new RegisterRequest(form));
 
         return new SuccessResponse<RegisterDTO>(201) { Message = Messages.Success, Data = result };
     }
 
-    [HttpPost("login")]
-    public async Task<SuccessResponse<LoginDTO>> Login([FromBody] LoginRequest request)
+    [AuthorizeFor<RegisterAction>]
+    [HttpPost("Login")]
+    public async Task<SuccessResponse<LoginDTO>> Login([FromBody] LoginForm form)
     {
-        var user = await _UserManager.FindByEmailAsync(request.Email) ?? throw new UnauthorizedException(Messages.InvalidLoginCredentials);
-        var result = await _SignInManager.CheckPasswordSignInAsync(user, request.Password, false);
-        if (!result.Succeeded)
-            throw new UnauthorizedException();
+        var result = await _ActionDispatcher.Dispatch(new LoginRequest(form));
 
-        var token = _JwtService.GenerateToken(user);
-        return new SuccessResponse<LoginDTO>
-        {
-            Message = Messages.Success,
-            Data = new(token)
-        };
+        return new SuccessResponse<LoginDTO> { Message = Messages.Success, Data = result };
     }
 }
-
-// TODO: convert to forms with validation
-public record LoginRequest(string Email, string Password);

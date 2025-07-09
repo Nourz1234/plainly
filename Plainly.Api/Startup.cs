@@ -53,17 +53,10 @@ public class Startup(IConfiguration configuration)
                     IssuerSigningKey = new RsaSecurityKey(rsa)
                 };
             });
-        services.AddSingleton<IAuthTokenService>(new JwtService(Configuration));
 
+        services.AddSingleton(new JwtService(Configuration));
         services.AddHttpContextAccessor();
-        services.AddActionFactory();
-
-        services.Scan(scan =>
-        {
-            scan.FromAssemblyOf<IAction>()
-            .AddClasses(classes => classes.AssignableTo(typeof(IAction<>)))
-            ;
-        });
+        services.AddActions();
     }
 
     public void Configure(WebApplication app, IWebHostEnvironment env)

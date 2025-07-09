@@ -1,6 +1,6 @@
-namespace Plainly.Shared.DTOs;
+namespace Plainly.Shared.Actions.Heath.GetHealth;
 
-public record HealthDTO()
+public record GetHealthDTO()
 {
     public required string Status { get; init; }
     public required DateTime Timestamp { get; init; }

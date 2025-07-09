@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using Plainly.Api.Infrastructure.Action;
+using Plainly.Api.Infrastructure.Authorization.Attributes;
 using Plainly.Shared;
-using Plainly.Shared.DTOs;
+using Plainly.Shared.Actions.Heath.GetHealth;
 using Plainly.Shared.Responses;
 
 namespace Plainly.Api.Controllers;
@@ -8,19 +10,18 @@ namespace Plainly.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class HealthController : ControllerBase
+public class HealthController(ActionDispatcher _ActionDispatcher) : ControllerBase
 {
+    [AuthorizeFor<GetHealthAction>]
     [HttpGet]
-    public SuccessResponse<HealthDTO> Get()
+    public async Task<SuccessResponse<GetHealthDTO>> Get()
     {
-        return new SuccessResponse<HealthDTO>
+        var result = await _ActionDispatcher.Dispatch(new GetHealthRequest());
+
+        return new SuccessResponse<GetHealthDTO>
         {
             Message = Messages.Success,
-            Data = new HealthDTO
-            {
-                Status = "Healthy",
-                Timestamp = DateTime.UtcNow,
-            }
+            Data = result
         };
     }
 }

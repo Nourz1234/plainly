@@ -2,13 +2,11 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using Microsoft.IdentityModel.Tokens;
-using Plainly.Api.Interfaces;
 using Plainly.Api.Models;
 
 namespace Plainly.Api.Services;
 
-
-public class JwtService : IAuthTokenService
+public class JwtService
 {
     private readonly string _Issuer;
     private readonly string _Audience;
