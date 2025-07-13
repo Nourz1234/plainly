@@ -1,0 +1,28 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
+using Plainly.Api.Infrastructure.Authorization;
+using Plainly.Shared.Extensions;
+
+namespace Plainly.Api.Database.Seeders;
+
+public static class RoleSeeder
+{
+    public static async Task SeedAsync(IServiceProvider serviceProvider)
+    {
+        var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+        foreach (var role in Roles.All)
+        {
+            if (!await roleManager.RoleExistsAsync(role.Name))
+            {
+                await roleManager.CreateAsync(new IdentityRole(role.Name));
+            }
+
+            if (role.Scopes is not null)
+            {
+                foreach (var scope in role.Scopes)
+                    await roleManager.AddClaimAsync(new IdentityRole(role.Name), new Claim("scopes", scope.GetEnumMemberValue()));
+            }
+        }
+    }
+}

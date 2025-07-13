@@ -1,9 +1,12 @@
+using System.Diagnostics;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Plainly.Api.Exceptions;
+using Plainly.Api.Infrastructure.Web;
+using Plainly.Shared;
+using Plainly.Shared.Responses;
 
 namespace Plainly.Api.Infrastructure.ExceptionHandling;
-
 
 public static class ExceptionHandlingExtensions
 {
@@ -14,8 +17,9 @@ public static class ExceptionHandlingExtensions
 
     private static void GlobalExceptionHandler(IApplicationBuilder app)
     {
-        app.Run(async context =>
+        app.Run(async (context) =>
         {
+            var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
             var exceptionFeature = context.Features.Get<IExceptionHandlerPathFeature>();
             var exception = exceptionFeature?.Error;
 
@@ -28,16 +32,8 @@ public static class ExceptionHandlingExtensions
 
             var result = appException.ToActionResult();
 
-            await WriteActionResultAsync(context, result);
+            await context.WriteActionResultAsync(result);
         });
 
-    }
-
-    private static async Task WriteActionResultAsync(HttpContext context, IActionResult result)
-    {
-        await result.ExecuteResultAsync(new ActionContext
-        {
-            HttpContext = context,
-        });
     }
 }

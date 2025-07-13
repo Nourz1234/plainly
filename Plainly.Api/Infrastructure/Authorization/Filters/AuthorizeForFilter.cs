@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using Plainly.Api.Exceptions;
+using Plainly.Shared.Extensions;
 using Plainly.Shared.Interfaces;
 
 namespace Plainly.Api.Infrastructure.Authorization.Filters;
@@ -18,8 +19,8 @@ public class AuthorizeForFilter<TAction> : IAuthorizationFilter
 
     public void OnAuthorization(AuthorizationFilterContext context)
     {
-        var claim = _Action.Claim;
-        if (claim is null)
+        var scopes = _Action.RequiredScopes;
+        if (scopes.Length == 0)
         {
             return;
         }
@@ -31,11 +32,11 @@ public class AuthorizeForFilter<TAction> : IAuthorizationFilter
             return;
         }
 
-        if (user.IsInRole("admin"))
+        if (user.IsInRole(Roles.Admin.Name))
         {
             return;
         }
-        if (!user.HasClaim("permission", claim))
+        if (!scopes.All(scope => user.HasClaim("scopes", scope.GetEnumMemberValue())))
         {
             context.Result = new ForbiddenException().ToActionResult();
         }

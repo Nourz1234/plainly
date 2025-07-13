@@ -17,7 +17,7 @@ public class AuthController(ActionDispatcher _ActionDispatcher) : ControllerBase
     [HttpPost("Register")]
     public async Task<SuccessResponse> Register([FromBody] RegisterForm form)
     {
-        var result = await _ActionDispatcher.Dispatch(new RegisterRequest(form));
+        var result = await _ActionDispatcher.Dispatch<RegisterAction, RegisterRequest, RegisterDTO>(new RegisterRequest(form));
 
         return new SuccessResponse<RegisterDTO>(201) { Message = Messages.Success, Data = result };
     }
@@ -26,7 +26,7 @@ public class AuthController(ActionDispatcher _ActionDispatcher) : ControllerBase
     [HttpPost("Login")]
     public async Task<SuccessResponse<LoginDTO>> Login([FromBody] LoginForm form)
     {
-        var result = await _ActionDispatcher.Dispatch(new LoginRequest(form));
+        var result = await _ActionDispatcher.Dispatch<LoginAction, LoginRequest, LoginDTO>(new LoginRequest(form));
 
         return new SuccessResponse<LoginDTO> { Message = Messages.Success, Data = result };
     }

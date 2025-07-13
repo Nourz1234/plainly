@@ -8,10 +8,8 @@ namespace Plainly.Api.Tests.Integration.Controllers;
 
 [ExcludeFromCodeCoverage]
 [Collection("App collection")]
-public class HealthControllerTests(AppFixture appFixture)
+public class HealthControllerTests(AppFixture _AppFixture)
 {
-    private readonly AppFixture _AppFixture = appFixture;
-
     [Fact]
     public async Task Get_ShouldReturnHealthyResponse()
     {

@@ -28,7 +28,3 @@ public class ErrorResponse : IResponse, IConvertToActionResult
         return new ObjectResult(this) { StatusCode = _Status };
     }
 }
-
-
-
-

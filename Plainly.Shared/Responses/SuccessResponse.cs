@@ -35,7 +35,3 @@ public class SuccessResponse<T> : SuccessResponse
 
     public required T Data { get; init; }
 }
-
-
-
-

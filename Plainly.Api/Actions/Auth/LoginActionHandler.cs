@@ -8,9 +8,10 @@ using Plainly.Shared.Interfaces;
 
 namespace Plainly.Api.Actions.Auth;
 
-public class LoginActionHandler(UserManager<User> _UserManager, SignInManager<User> _SignInManager, JwtService _JwtService) : IActionHandler<LoginAction, LoginRequest, LoginDTO>
+public class LoginActionHandler(UserManager<User> _UserManager, SignInManager<User> _SignInManager, JwtService _JwtService)
+    : IActionHandler<LoginAction, LoginRequest, LoginDTO>
 {
-    public async Task<LoginDTO> Handle(LoginRequest request)
+    public async Task<LoginDTO> Handle(LoginRequest request, CancellationToken cancellationToken = default)
     {
         var loginFrom = request.LoginForm;
         var user = await _UserManager.FindByEmailAsync(loginFrom.Email) ?? throw new UnauthorizedException(Messages.InvalidLoginCredentials);

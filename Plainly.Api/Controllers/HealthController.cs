@@ -16,7 +16,7 @@ public class HealthController(ActionDispatcher _ActionDispatcher) : ControllerBa
     [HttpGet]
     public async Task<SuccessResponse<GetHealthDTO>> Get()
     {
-        var result = await _ActionDispatcher.Dispatch(new GetHealthRequest());
+        var result = await _ActionDispatcher.Dispatch<GetHealthAction, GetHealthRequest, GetHealthDTO>(new GetHealthRequest());
 
         return new SuccessResponse<GetHealthDTO>
         {

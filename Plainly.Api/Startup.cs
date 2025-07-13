@@ -9,9 +9,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Plainly.Api.Services;
 using Plainly.Api.Database;
-using Plainly.Api.Interfaces;
 using Plainly.Api.Infrastructure.ExceptionHandling;
 using Plainly.Api.Infrastructure.Action;
+using Plainly.Api.Infrastructure.Environment;
+using Plainly.Api.Database.Seeders;
+using FluentValidation;
+using System.ComponentModel;
+using System.Reflection;
+using Plainly.Api.Infrastructure.AutoValidation;
 using Plainly.Shared.Interfaces;
 
 namespace Plainly.Api;
@@ -23,7 +28,19 @@ public class Startup(IConfiguration configuration)
 
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddControllers();
+        services.AddControllers()
+            .AddAutoValidation() // Fluent Validation
+            .AddValidatorsFromAssemblyOf<IAction>(); // Add validators
+
+        // Fluent Validation
+        ValidatorOptions.Global.DisplayNameResolver = (type, memberInfo, expression) =>
+        {
+            var displayNameAttribute = memberInfo.GetCustomAttribute<DisplayNameAttribute>()
+                ?? throw new InvalidOperationException($"Form field {type.Name}.{memberInfo.Name} is missing {nameof(DisplayNameAttribute)} attribute.");
+            return displayNameAttribute.DisplayName;
+        };
+
+        // Add OpenAPI
         services.AddOpenApi();
 
         // Configure EF Core
@@ -35,6 +52,17 @@ public class Startup(IConfiguration configuration)
         services.AddIdentity<User, IdentityRole>()
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
+        services.Configure<IdentityOptions>(options =>
+        {
+            options.User.RequireUniqueEmail = true;
+            options.Password.RequireDigit = true;
+            options.Password.RequireLowercase = true;
+            options.Password.RequireUppercase = true;
+            options.Password.RequireNonAlphanumeric = true;
+            options.Password.RequiredLength = 8;
+            options.SignIn.RequireConfirmedEmail = false;
+            options.SignIn.RequireConfirmedPhoneNumber = false;
+        });
 
         // JWT Auth setup
         var rsa = RSA.Create();
@@ -78,12 +106,12 @@ public class Startup(IConfiguration configuration)
             throw new NotFoundException(Messages.EndpointNotFound);
         });
 
-        if (env.IsEnvironment("Testing"))
+        if (env.IsTesting())
         {
             AddTestRoutes(app);
         }
 
-        if (app.Environment.IsDevelopment())
+        if (env.IsDevelopment())
         {
             app.Lifetime.ApplicationStarted.Register(() =>
             {
@@ -98,6 +126,32 @@ public class Startup(IConfiguration configuration)
                 }
             });
         }
+
+        if (env.IsDevelopment() || env.IsTesting())
+        {
+            using var scope = app.Services.CreateScope();
+
+            var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+            if (env.IsTesting())
+            {
+                try
+                {
+                    dbContext.Database.EnsureDeleted();
+                }
+                catch
+                {
+                    // ignored
+                }
+                dbContext.Database.EnsureCreated();
+            }
+            else
+            {
+                dbContext.Database.Migrate();
+            }
+
+            DatabaseSeeder.SeedAllAsync(scope.ServiceProvider).Wait();
+        }
     }
 
     private static void AddTestRoutes(WebApplication app)
@@ -108,7 +162,5 @@ public class Startup(IConfiguration configuration)
         app.MapGet("/unauthorized-error", (context) => throw new UnauthorizedException());
         app.MapGet("/forbidden-error", (context) => throw new ForbiddenException());
         app.MapGet("/bad-request-error", (context) => throw new BadRequestException());
-        app.MapGet("/validation-error", (context) => throw new ValidationException());
-        app.MapGet("/validation-error-with-errors", (context) => throw new ValidationException(new Dictionary<string, string[]> { ["field1"] = ["test"] }));
     }
 }

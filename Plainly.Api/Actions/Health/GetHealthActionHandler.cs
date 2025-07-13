@@ -3,9 +3,9 @@ using Plainly.Shared.Interfaces;
 
 namespace Plainly.Api.Actions.Health;
 
-public class GetHealthActionHandler : IActionHandler<IAction<GetHealthRequest>, GetHealthRequest, GetHealthDTO>
+public class GetHealthActionHandler : IActionHandler<GetHealthAction, GetHealthRequest, GetHealthDTO>
 {
-    public Task<GetHealthDTO> Handle(GetHealthRequest request)
+    public Task<GetHealthDTO> Handle(GetHealthRequest request, CancellationToken cancellationToken = default)
     {
         return Task.FromResult(new GetHealthDTO
         {

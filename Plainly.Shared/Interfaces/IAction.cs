@@ -4,8 +4,8 @@ public interface IAction
 {
     public string DisplayName { get; }
     public string InternalName { get; }
-    public string? Claim { get; }
+    public Scopes[] RequiredScopes { get; }
 }
 
-public interface IAction<TRequest> : IAction
+public interface IAction<TRequest, TResponse> : IAction
 { }

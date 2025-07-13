@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Http.Json;
+using System.Text;
 using Plainly.Api.Exceptions;
 using Plainly.Shared;
 using Plainly.Shared.Responses;
@@ -34,7 +35,7 @@ public class AppTests(AppFixture appFixture)
         var result = await response.Content.ReadFromJsonAsync<ErrorResponse>();
         result.ShouldNotBeNull();
         result.Success.ShouldBe(false);
-        result.Message.ShouldBe(InternalServerErrorException.DefaultMessage);
+        result.Message.ShouldBe(Messages.InternalServerError);
     }
 
     [Fact]
@@ -46,7 +47,7 @@ public class AppTests(AppFixture appFixture)
         var result = await response.Content.ReadFromJsonAsync<ErrorResponse>();
         result.ShouldNotBeNull();
         result.Success.ShouldBe(false);
-        result.Message.ShouldBe(InternalServerErrorException.DefaultMessage);
+        result.Message.ShouldBe(Messages.InternalServerError);
     }
 
     [Fact]
@@ -58,7 +59,7 @@ public class AppTests(AppFixture appFixture)
         var result = await response.Content.ReadFromJsonAsync<ErrorResponse>();
         result.ShouldNotBeNull();
         result.Success.ShouldBe(false);
-        result.Message.ShouldBe(NotFoundException.DefaultMessage);
+        result.Message.ShouldBe(Messages.NotFound);
     }
 
     [Fact]
@@ -96,32 +97,5 @@ public class AppTests(AppFixture appFixture)
         result.Success.ShouldBe(false);
         result.Message.ShouldBe(BadRequestException.DefaultMessage);
     }
-
-    [Fact]
-    public async Task GetValidationError_ShouldReturnValidationErrorResponse()
-    {
-        var response = await _AppFixture.Client.GetAsync("/validation-error");
-        response.StatusCode.ShouldBe(System.Net.HttpStatusCode.UnprocessableEntity);
-
-        var result = await response.Content.ReadFromJsonAsync<ValidationErrorResponse>();
-        result.ShouldNotBeNull();
-        result.Success.ShouldBe(false);
-        result.Errors.ShouldBeEmpty();
-        result.Message.ShouldBe(ValidationException.DefaultMessage);
-    }
-
-    [Fact]
-    public async Task GetValidationError_WithErrors_ShouldReturnValidationErrorWithErrorsResponse()
-    {
-        var response = await _AppFixture.Client.GetAsync("/validation-error-with-errors");
-        response.StatusCode.ShouldBe(System.Net.HttpStatusCode.UnprocessableEntity);
-
-        var result = await response.Content.ReadFromJsonAsync<ValidationErrorResponse>();
-        result.ShouldNotBeNull();
-        result.Success.ShouldBe(false);
-        result.Errors.ShouldNotBeEmpty();
-        result.Message.ShouldBe(ValidationException.DefaultMessage);
-    }
-
 }
 

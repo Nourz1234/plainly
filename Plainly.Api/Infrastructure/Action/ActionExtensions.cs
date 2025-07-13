@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Net.Http.Headers;
+using Plainly.Api.Exceptions;
 using Plainly.Shared.Interfaces;
 
 namespace Plainly.Api.Infrastructure.Action;
@@ -15,8 +16,8 @@ public static class ActionExtensions
         services.Scan(scan =>
         {
             scan.FromAssemblyOf<IAction>()
-                .AddClasses(c => c.AssignableTo(typeof(IAction<>)))
-                .AsSelfWithInterfaces()
+                .AddClasses(c => c.AssignableTo(typeof(IAction<,>)))
+                .AsSelf()
                 .WithScopedLifetime();
             scan.FromAssemblyOf<Program>()
                 .AddClasses(c => c.AssignableTo(typeof(IActionHandler<,,>)))
