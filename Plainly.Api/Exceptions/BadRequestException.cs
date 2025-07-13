@@ -16,5 +16,9 @@ public class BadRequestException : BaseException
     public BadRequestException(string? message, Exception? innerException) : base(message ?? DefaultMessage, innerException)
     { }
 
-    public override ErrorResponse ToResponse() => new(StatusCodes.Status400BadRequest) { Message = Message };
+    public override ErrorResponse ToResponse(string traceId) => new(StatusCodes.Status400BadRequest)
+    {
+        Message = Message,
+        TraceId = traceId
+    };
 }

@@ -24,20 +24,20 @@ public class AuthorizeForFilter<TAction> : IAuthorizationFilter
             return;
         }
 
-        var user = _HttpContextAccessor.HttpContext?.User;
-        if (user is null)
-        {
-            context.Result = new UnauthorizedException().ToActionResult();
-            return;
-        }
+        // var user = _HttpContextAccessor.HttpContext?.User;
+        // if (user is null)
+        // {
+        //     context.Result = new UnauthorizedException().ToActionResult();
+        //     return;
+        // }
 
-        if (user.IsInRole("admin"))
-        {
-            return;
-        }
-        if (!user.HasClaim("permission", claim))
-        {
-            context.Result = new ForbiddenException().ToActionResult();
-        }
+        // if (user.IsInRole("admin"))
+        // {
+        //     return;
+        // }
+        // if (!user.HasClaim("permission", claim))
+        // {
+        //     context.Result = new ForbiddenException().ToActionResult();
+        // }
     }
 }

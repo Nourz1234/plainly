@@ -16,6 +16,9 @@ public class ForbiddenException : BaseException
     public ForbiddenException(string? message, Exception? innerException) : base(message ?? DefaultMessage, innerException)
     { }
 
-    public override ErrorResponse ToResponse() => new(StatusCodes.Status403Forbidden) { Message = Message };
-
+    public override ErrorResponse ToResponse(string traceId) => new(StatusCodes.Status403Forbidden)
+    {
+        Message = Message,
+        TraceId = traceId
+    };
 }

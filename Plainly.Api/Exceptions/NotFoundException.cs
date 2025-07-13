@@ -16,5 +16,9 @@ public class NotFoundException : BaseException
     public NotFoundException(string? message, Exception? innerException) : base(message ?? DefaultMessage, innerException)
     { }
 
-    public override ErrorResponse ToResponse() => new(StatusCodes.Status404NotFound) { Message = Message };
+    public override ErrorResponse ToResponse(string traceId) => new(StatusCodes.Status404NotFound)
+    {
+        Message = Message,
+        TraceId = traceId
+    };
 }

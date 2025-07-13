@@ -14,7 +14,7 @@ public abstract class BaseException : Exception
     {
     }
 
-    public abstract ErrorResponse ToResponse();
+    public abstract ErrorResponse ToResponse(string traceId);
 
-    public IActionResult ToActionResult() => ToResponse().Convert();
+    public IActionResult ToActionResult(string traceId) => ToResponse(traceId).Convert();
 }
