@@ -39,5 +39,10 @@ public class ValidationException : BaseException
         Errors = new Dictionary<string, ValidationErrorDetail[]>(errors);
     }
 
-    public override ErrorResponse ToResponse() => new ValidationErrorResponse { Message = Message, Errors = Errors };
+    public override ErrorResponse ToResponse(string traceId) => new ValidationErrorResponse
+    {
+        Message = Message,
+        Errors = Errors,
+        TraceId = traceId
+    };
 }

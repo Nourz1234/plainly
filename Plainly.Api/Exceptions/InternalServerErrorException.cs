@@ -15,5 +15,9 @@ public class InternalServerErrorException : BaseException
     public InternalServerErrorException(string? message, Exception? innerException) : base(message ?? Messages.InternalServerError, innerException)
     { }
 
-    public override ErrorResponse ToResponse() => new(StatusCodes.Status500InternalServerError) { Message = Message };
+    public override ErrorResponse ToResponse(string traceId) => new(StatusCodes.Status500InternalServerError)
+    {
+        Message = Message,
+        TraceId = traceId
+    };
 }

@@ -16,5 +16,9 @@ public class UnauthorizedException : BaseException
     public UnauthorizedException(string? message, Exception? innerException) : base(message ?? DefaultMessage, innerException)
     { }
 
-    public override ErrorResponse ToResponse() => new(StatusCodes.Status401Unauthorized) { Message = Message };
+    public override ErrorResponse ToResponse(string traceId) => new(StatusCodes.Status401Unauthorized)
+    {
+        Message = Message,
+        TraceId = traceId
+    };
 }

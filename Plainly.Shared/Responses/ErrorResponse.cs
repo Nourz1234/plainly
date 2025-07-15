@@ -22,6 +22,7 @@ public class ErrorResponse : IResponse, IConvertToActionResult
 
     public bool Success => false;
     public required string Message { get; init; }
+    public required string TraceId { get; init; }
 
     public IActionResult Convert()
     {

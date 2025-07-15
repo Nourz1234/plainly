@@ -4,6 +4,7 @@
         "ASPNETCORE",
         "Clientside",
         "Npgsql",
+        "Serilog",
         "Shouldly"
     ],
 }

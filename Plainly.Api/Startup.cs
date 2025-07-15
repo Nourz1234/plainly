@@ -18,6 +18,7 @@ using System.ComponentModel;
 using System.Reflection;
 using Plainly.Api.Infrastructure.AutoValidation;
 using Plainly.Shared.Interfaces;
+using Plainly.Api.Infrastructure.Logging.Providers;
 
 namespace Plainly.Api;
 
@@ -85,6 +86,10 @@ public class Startup(IConfiguration configuration)
         services.AddSingleton(new JwtService(Configuration));
         services.AddHttpContextAccessor();
         services.AddActions();
+
+        // Logging
+        services.AddDbContext<LoggingDbContext>(options => options.UseSqlite("Data Source=logs.db"));
+        services.AddSingleton<ILoggerProvider, DbLoggerProvider<LoggingDbContext, LogEntry>>();
     }
 
     public void Configure(WebApplication app, IWebHostEnvironment env)
@@ -105,6 +110,14 @@ public class Startup(IConfiguration configuration)
         {
             throw new NotFoundException(Messages.EndpointNotFound);
         });
+
+
+        // Create logging database
+        using (var scope = app.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<LoggingDbContext>();
+            db.Database.EnsureCreated();
+        }
 
         if (env.IsTesting())
         {

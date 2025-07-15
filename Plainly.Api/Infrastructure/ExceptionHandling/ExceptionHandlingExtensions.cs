@@ -30,10 +30,10 @@ public static class ExceptionHandlingExtensions
                 _ => new InternalServerErrorException()
             };
 
-            var result = appException.ToActionResult();
+            var traceId = Activity.Current?.TraceId.ToString() ?? context.TraceIdentifier;
+            var result = appException.ToActionResult(traceId);
 
             await context.WriteActionResultAsync(result);
         });
-
     }
 }
