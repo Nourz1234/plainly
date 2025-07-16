@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using Plainly.Api.Database;
+using Plainly.Api.Data.AppDatabase;
 using Plainly.Api.Models;
 
 namespace Plainly.Api.Tests.Integration;

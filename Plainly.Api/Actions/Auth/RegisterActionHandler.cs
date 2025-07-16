@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Plainly.Api.Exceptions;
+using Plainly.Api.Infrastructure.Jwt;
 using Plainly.Api.Models;
-using Plainly.Api.Services;
 using Plainly.Shared.Actions.Auth.Register;
 using Plainly.Shared.Interfaces;
 using Plainly.Shared.Responses;
@@ -28,7 +28,7 @@ public class RegisterActionHandler(UserManager<User> userManager, JwtService jwt
                 [""] = result.Errors.Select(x => new ValidationErrorDetail(x.Description, x.Code)).ToArray()
             });
 
-        var token = jwtService.GenerateToken(user);
+        var token = await jwtService.GenerateToken(user);
         return new RegisterDTO(token);
     }
 }

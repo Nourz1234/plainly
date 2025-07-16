@@ -1,4 +1,15 @@
-param([string]$name, [string]$environment = "Development")
+[CmdletBinding()]
+param(
+    [Parameter(Mandatory = $true)]
+    [string]$DbName,
+    [Parameter(Mandatory = $true)]
+    [string]$Name,
+    [string]$Environment = "Development"
+)
 
 $env:ASPNETCORE_ENVIRONMENT = $environment
-dotnet ef migrations add $name --project Plainly.Api --output-dir Database/Migrations --msbuildprojectextensionspath ../build/obj/Plainly.Api
+$location_map = @{
+    "App" = "Data/AppDatabase/Migrations"
+    "Log" = "Data/LogDatabase/Migrations"
+}
+dotnet ef migrations add $name --project Plainly.Api --context "$($db)DbContext" --output-dir $location_map[$db] --msbuildprojectextensionspath ./build/obj/Plainly.Api

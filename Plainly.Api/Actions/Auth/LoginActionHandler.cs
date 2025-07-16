@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Plainly.Api.Exceptions;
+using Plainly.Api.Infrastructure.Jwt;
 using Plainly.Api.Models;
-using Plainly.Api.Services;
 using Plainly.Shared;
 using Plainly.Shared.Actions.Auth.Login;
 using Plainly.Shared.Interfaces;
@@ -19,7 +19,7 @@ public class LoginActionHandler(UserManager<User> userManager, SignInManager<Use
         if (!result.Succeeded)
             throw new UnauthorizedException(Messages.InvalidLoginCredentials);
 
-        var token = jwtService.GenerateToken(user);
+        var token = await jwtService.GenerateToken(user);
         return new LoginDTO(token);
     }
 }

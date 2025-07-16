@@ -1,25 +1,25 @@
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using System.Security.Cryptography;
-using Plainly.Api.Exceptions;
-using Plainly.Shared;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using Plainly.Api.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Plainly.Api.Services;
-using Plainly.Api.Database;
-using Plainly.Api.Infrastructure.ExceptionHandling;
-using Plainly.Api.Infrastructure.Action;
-using Plainly.Api.Infrastructure.Environment;
-using Plainly.Api.Database.Seeders;
+using Microsoft.IdentityModel.Tokens;
 using FluentValidation;
-using System.ComponentModel;
-using System.Reflection;
+using Plainly.Api.Data.AppDatabase;
+using Plainly.Api.Data.AppDatabase.Seeders;
+using Plainly.Api.Data.LogDatabase;
+using Plainly.Api.Exceptions;
+using Plainly.Api.Infrastructure.Action;
 using Plainly.Api.Infrastructure.AutoValidation;
-using Plainly.Shared.Interfaces;
+using Plainly.Api.Infrastructure.Environment;
+using Plainly.Api.Infrastructure.ExceptionHandling;
+using Plainly.Api.Infrastructure.Jwt;
 using Plainly.Api.Infrastructure.Logging.Providers;
-using Plainly.Api.Infrastructure.Logging.Abstract.Models;
+using Plainly.Api.Models;
+using Plainly.Shared;
+using Plainly.Shared.Interfaces;
 
 namespace Plainly.Api;
 
@@ -91,7 +91,7 @@ public class Startup(IConfiguration configuration)
 
         // Add our custom services
         services.AddSingleton<ILoggerProvider, DbLoggerProvider<LogDbContext, LogEntry>>();
-        services.AddSingleton(new JwtService(Configuration));
+        services.AddJwtService(Configuration);
         services.AddActions();
     }
 
@@ -130,28 +130,28 @@ public class Startup(IConfiguration configuration)
             AddTestRoutes(app);
         }
 
-        if (env.IsDevelopment() || env.IsTesting())
-        {
-            using var scope = app.Services.CreateScope();
+        // if (env.IsDevelopment() || env.IsTesting())
+        // {
+        //     using var scope = app.Services.CreateScope();
 
-            var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        //     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
-            if (env.IsTesting())
-            {
-                try
-                {
-                    dbContext.Database.EnsureDeleted();
-                }
-                catch { }
-                dbContext.Database.EnsureCreated();
-            }
-            else
-            {
-                dbContext.Database.Migrate();
-            }
+        //     if (env.IsTesting())
+        //     {
+        //         try
+        //         {
+        //             dbContext.Database.EnsureDeleted();
+        //         }
+        //         catch { }
+        //         dbContext.Database.EnsureCreated();
+        //     }
+        //     else
+        //     {
+        //         dbContext.Database.Migrate();
+        //     }
 
-            DatabaseSeeder.SeedAllAsync(scope.ServiceProvider).Wait();
-        }
+        //     DatabaseSeeder.SeedAllAsync(scope.ServiceProvider).Wait();
+        // }
     }
 
     private static void AddTestRoutes(WebApplication app)

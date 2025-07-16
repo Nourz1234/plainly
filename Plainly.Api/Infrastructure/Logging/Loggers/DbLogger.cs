@@ -8,7 +8,7 @@ public class DbLogger<TDbContext, TLogEntry>(string categoryName, IServiceProvid
     where TDbContext : DbContext, ILogDbContext<TLogEntry>
     where TLogEntry : class, ILogEntry, new()
 {
-    private bool _IsSaving = false;
+    private static bool _IsSaving = false;
 
     public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
 
