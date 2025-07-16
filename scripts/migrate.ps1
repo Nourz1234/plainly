@@ -1,8 +1,7 @@
 param(
     [Parameter(Mandatory = $true)]
-    [string]$db,
-    [Parameter(Mandatory = $true)]
-    [string]$environment = "Development"
+    [string]$DbName,
+    [string]$Environment = "Development"
 )
 
 $env:ASPNETCORE_ENVIRONMENT = $environment
