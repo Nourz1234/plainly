@@ -8,6 +8,5 @@ public static class Roles
 {
     public static readonly Role Admin = new("Admin", null);
 
-
     public static readonly Role[] All = [Admin];
 }

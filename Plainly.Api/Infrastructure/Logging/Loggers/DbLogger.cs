@@ -4,22 +4,15 @@ using Plainly.Api.Infrastructure.Logging.Interfaces;
 
 namespace Plainly.Api.Infrastructure.Logging.Loggers;
 
-public class DbLogger<TDbContext, TLogEntry> : ILogger
-    where TDbContext : DbContext, ILoggingDbContext<TLogEntry>
+public class DbLogger<TDbContext, TLogEntry>(string categoryName, IServiceProvider serviceProvider) : ILogger
+    where TDbContext : DbContext, ILogDbContext<TLogEntry>
     where TLogEntry : class, ILogEntry, new()
 {
-    private bool _IsRunning = false;
-    private readonly string _CategoryName;
-    private readonly IServiceProvider _ServiceProvider;
-
-    public DbLogger(string categoryName, IServiceProvider serviceProvider)
-    {
-        _CategoryName = categoryName;
-        _ServiceProvider = serviceProvider;
-    }
+    private bool _IsSaving = false;
 
     public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
-    public bool IsEnabled(LogLevel logLevel) => true;
+
+    public bool IsEnabled(LogLevel logLevel) => !(_IsSaving && categoryName.StartsWith("Microsoft.EntityFrameworkCore"));
 
     public void Log<TState>(
         LogLevel logLevel,
@@ -28,26 +21,26 @@ public class DbLogger<TDbContext, TLogEntry> : ILogger
         Exception? exception,
         Func<TState, Exception?, string> formatter)
     {
-        if (_IsRunning) return;
-        _IsRunning = true;
+        if (!IsEnabled(logLevel))
+            return;
 
         var message = formatter(state, exception);
 
-        // Create scope manually to resolve scoped DbContext
-        using var scope = _ServiceProvider.CreateScope();
+        using var scope = serviceProvider.CreateScope();
         var dbContext = scope.ServiceProvider.GetRequiredService<TDbContext>();
 
         dbContext.Logs.Add(new TLogEntry()
         {
             Timestamp = DateTime.UtcNow,
             Level = logLevel.ToString(),
-            Category = _CategoryName,
+            Category = categoryName,
             Message = message,
             Exception = exception?.ToString(),
             TraceId = Activity.Current?.TraceId.ToString()
         });
 
+        _IsSaving = true;
         dbContext.SaveChanges();
-        _IsRunning = false;
+        _IsSaving = false;
     }
 }

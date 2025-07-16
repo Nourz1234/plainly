@@ -45,7 +45,7 @@ public class ResponsesTests
 
     public void ErrorResponse_With4xxOr5xxStatusCode_ShouldSetSuccessFalse(int statusCode)
     {
-        var response = new ErrorResponse(statusCode) { Message = "Error" };
+        var response = new ErrorResponse(statusCode) { Message = "Error", TraceId = "TraceId" };
         response.Success.ShouldBeFalse();
     }
 
@@ -55,7 +55,7 @@ public class ResponsesTests
     [InlineData(301)]
     public void ErrorResponse_WithNon4xxOr5xxStatusCode_ShouldThrowArgumentException(int statusCode)
     {
-        var act = () => new ErrorResponse(statusCode) { Message = "Error" };
+        var act = () => new ErrorResponse(statusCode) { Message = "Error", TraceId = "TraceId" };
         act.ShouldThrow<ArgumentException>().Message.ShouldBe($"Error response status code must be in the 400s or 500s");
     }
 }

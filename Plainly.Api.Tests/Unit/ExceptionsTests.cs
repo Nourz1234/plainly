@@ -36,7 +36,7 @@ public class ExceptionsTests
     public void ForbiddenException_DefaultConstructor_ShouldSetDefaultMessage()
     {
         var exception = new ForbiddenException();
-        exception.Message.ShouldBe(ForbiddenException.DefaultMessage);
+        exception.Message.ShouldBe(Messages.Forbidden);
     }
 
     [Fact]
@@ -60,7 +60,7 @@ public class ExceptionsTests
     public void BadRequestException_DefaultConstructor_ShouldSetDefaultMessage()
     {
         var exception = new BadRequestException();
-        exception.Message.ShouldBe(BadRequestException.DefaultMessage);
+        exception.Message.ShouldBe(Messages.BadRequest);
     }
 
     [Fact]
@@ -108,7 +108,7 @@ public class ExceptionsTests
     public void UnauthorizedException_DefaultConstructor_ShouldSetDefaultMessage()
     {
         var exception = new UnauthorizedException();
-        exception.Message.ShouldBe(UnauthorizedException.DefaultMessage);
+        exception.Message.ShouldBe(Messages.Unauthorized);
     }
 
     [Fact]

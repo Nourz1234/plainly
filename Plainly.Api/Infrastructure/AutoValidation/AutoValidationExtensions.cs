@@ -4,7 +4,6 @@ using Plainly.Api.Infrastructure.AutoValidation.Filters;
 
 namespace Plainly.Api.Infrastructure.AutoValidation;
 
-
 public static class AutoValidationExtensions
 {
     public static IMvcBuilder AddAutoValidation(this IMvcBuilder builder)

@@ -1,24 +1,31 @@
 using System.ComponentModel.DataAnnotations;
-using System.Diagnostics.CodeAnalysis;
 using Plainly.Api.Infrastructure.Logging.Interfaces;
 
 namespace Plainly.Api.Models;
 
 public class LogEntry : ILogEntry
 {
+    [Key]
     public int Id { get; set; }
+
     [Required]
-    [NotNull]
     public DateTime Timestamp { get; set; }
+
     [Required]
-    [NotNull]
-    public string? Level { get; set; }
+    [StringLength(16)]
+    public string Level { get; set; } = string.Empty;
+
     [Required]
-    [NotNull]
-    public string? Category { get; set; }
+    [StringLength(256)]
+    public string Category { get; set; } = string.Empty;
+
     [Required]
-    [NotNull]
-    public string? Message { get; set; }
+    [MaxLength]
+    public string Message { get; set; } = string.Empty;
+
+    [MaxLength]
     public string? Exception { get; set; }
+
+    [StringLength(64)]
     public string? TraceId { get; set; }
 }

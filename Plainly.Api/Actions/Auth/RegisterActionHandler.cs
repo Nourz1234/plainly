@@ -9,7 +9,7 @@ using Plainly.Shared.Responses;
 
 namespace Plainly.Api.Actions.Auth;
 
-public class RegisterActionHandler(UserManager<User> _UserManager, JwtService _JwtService)
+public class RegisterActionHandler(UserManager<User> userManager, JwtService jwtService)
     : IActionHandler<RegisterAction, RegisterRequest, RegisterDTO>
 {
     public async Task<RegisterDTO> Handle(RegisterRequest request, CancellationToken cancellationToken = default)
@@ -21,14 +21,14 @@ public class RegisterActionHandler(UserManager<User> _UserManager, JwtService _J
             UserName = Guid.NewGuid().ToString(),
             Email = registerForm.Email,
         };
-        var result = await _UserManager.CreateAsync(user, registerForm.Password);
+        var result = await userManager.CreateAsync(user, registerForm.Password);
         if (!result.Succeeded)
             throw new ValidationException(errors: new()
             {
                 [""] = result.Errors.Select(x => new ValidationErrorDetail(x.Description, x.Code)).ToArray()
             });
 
-        var token = _JwtService.GenerateToken(user);
+        var token = jwtService.GenerateToken(user);
         return new RegisterDTO(token);
     }
 }

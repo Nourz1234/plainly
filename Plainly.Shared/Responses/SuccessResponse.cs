@@ -1,31 +1,20 @@
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Plainly.Shared.Interfaces;
+using Plainly.Shared.Abstract;
 
 namespace Plainly.Shared.Responses;
 
-public class SuccessResponse : IResponse, IConvertToActionResult
+public class SuccessResponse : BaseResponse
 {
-    public SuccessResponse() : this(StatusCodes.Status200OK) { }
+    public SuccessResponse() : base(StatusCodes.Status200OK) { }
 
-    public SuccessResponse(int status)
+    public SuccessResponse(int status) : base(status)
     {
         if (status is not (>= 200 and <= 299))
             throw new ArgumentException("Success response status code must be in the 200s");
-
-        _Status = status;
     }
 
-    private readonly int _Status;
-
-    public bool Success => true;
-    public required string Message { get; init; }
-
-    public IActionResult Convert()
-    {
-        return new OkObjectResult(this) { StatusCode = _Status };
-    }
+    public override bool Success => true;
+    public required override string Message { get; init; }
 }
 
 public class SuccessResponse<T> : SuccessResponse

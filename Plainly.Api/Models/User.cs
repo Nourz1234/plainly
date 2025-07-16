@@ -10,8 +10,9 @@ public class User : IdentityUser, IBaseModel
     public DateTime? ModifiedAt { get; set; }
     [Required]
     [MinLength(3)]
+    [StringLength(64)]
     public required string FullName { get; set; }
     public DateTime? LastLoginAt { get; set; }
-    public bool IsActive { get; set; }
+    public bool IsActive { get; set; } = true;
     public bool IsDeleted { get; set; }
 }

@@ -8,18 +8,18 @@ using Plainly.Shared.Interfaces;
 
 namespace Plainly.Api.Actions.Auth;
 
-public class LoginActionHandler(UserManager<User> _UserManager, SignInManager<User> _SignInManager, JwtService _JwtService)
+public class LoginActionHandler(UserManager<User> userManager, SignInManager<User> signInManager, JwtService jwtService)
     : IActionHandler<LoginAction, LoginRequest, LoginDTO>
 {
     public async Task<LoginDTO> Handle(LoginRequest request, CancellationToken cancellationToken = default)
     {
         var loginFrom = request.LoginForm;
-        var user = await _UserManager.FindByEmailAsync(loginFrom.Email) ?? throw new UnauthorizedException(Messages.InvalidLoginCredentials);
-        var result = await _SignInManager.CheckPasswordSignInAsync(user, loginFrom.Password, false);
+        var user = await userManager.FindByEmailAsync(loginFrom.Email) ?? throw new UnauthorizedException(Messages.InvalidLoginCredentials);
+        var result = await signInManager.CheckPasswordSignInAsync(user, loginFrom.Password, false);
         if (!result.Succeeded)
             throw new UnauthorizedException(Messages.InvalidLoginCredentials);
 
-        var token = _JwtService.GenerateToken(user);
+        var token = jwtService.GenerateToken(user);
         return new LoginDTO(token);
     }
 }

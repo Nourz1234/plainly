@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Plainly.Api.Infrastructure.Action;
+using Plainly.Api.Infrastructure.Action.Services;
 using Plainly.Api.Infrastructure.Authorization.Attributes;
 using Plainly.Shared;
 using Plainly.Shared.Actions.Auth.Login;
@@ -10,14 +10,14 @@ namespace Plainly.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthController(ActionDispatcher _ActionDispatcher) : ControllerBase
+public class AuthController(ActionDispatcher actionDispatcher) : ControllerBase
 {
 
     [AuthorizeFor<RegisterAction>]
     [HttpPost("Register")]
     public async Task<SuccessResponse> Register([FromBody] RegisterForm form)
     {
-        var result = await _ActionDispatcher.Dispatch<RegisterAction, RegisterRequest, RegisterDTO>(new RegisterRequest(form));
+        var result = await actionDispatcher.Dispatch<RegisterAction, RegisterRequest, RegisterDTO>(new RegisterRequest(form));
 
         return new SuccessResponse<RegisterDTO>(201) { Message = Messages.Success, Data = result };
     }
@@ -26,7 +26,7 @@ public class AuthController(ActionDispatcher _ActionDispatcher) : ControllerBase
     [HttpPost("Login")]
     public async Task<SuccessResponse<LoginDTO>> Login([FromBody] LoginForm form)
     {
-        var result = await _ActionDispatcher.Dispatch<LoginAction, LoginRequest, LoginDTO>(new LoginRequest(form));
+        var result = await actionDispatcher.Dispatch<LoginAction, LoginRequest, LoginDTO>(new LoginRequest(form));
 
         return new SuccessResponse<LoginDTO> { Message = Messages.Success, Data = result };
     }

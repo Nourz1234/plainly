@@ -1,14 +1,11 @@
-using Microsoft.AspNetCore.Mvc;
+using System.Diagnostics;
 
 namespace Plainly.Api.Infrastructure.Web;
 
 public static class HttpContextExtensions
 {
-    public static async Task WriteActionResultAsync(this HttpContext context, IActionResult result)
+    public static string GetTraceId(this HttpContext context)
     {
-        await result.ExecuteResultAsync(new ActionContext
-        {
-            HttpContext = context,
-        });
+        return Activity.Current?.TraceId.ToString() ?? context.TraceIdentifier;
     }
 }

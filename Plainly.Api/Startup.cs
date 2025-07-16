@@ -19,6 +19,7 @@ using System.Reflection;
 using Plainly.Api.Infrastructure.AutoValidation;
 using Plainly.Shared.Interfaces;
 using Plainly.Api.Infrastructure.Logging.Providers;
+using Plainly.Api.Infrastructure.Logging.Abstract.Models;
 
 namespace Plainly.Api;
 
@@ -29,11 +30,12 @@ public class Startup(IConfiguration configuration)
 
     public void ConfigureServices(IServiceCollection services)
     {
+        // Add controllers
         services.AddControllers()
-            .AddAutoValidation() // Fluent Validation
+            .AddAutoValidation() // Add auto validation using FluentValidation
             .AddValidatorsFromAssemblyOf<IAction>(); // Add validators
 
-        // Fluent Validation
+        // Customize FluentValidation display name resolver
         ValidatorOptions.Global.DisplayNameResolver = (type, memberInfo, expression) =>
         {
             var displayNameAttribute = memberInfo.GetCustomAttribute<DisplayNameAttribute>()
@@ -44,10 +46,14 @@ public class Startup(IConfiguration configuration)
         // Add OpenAPI
         services.AddOpenApi();
 
-        // Configure EF Core
+        // Add App DB Context
         services.AddDbContext<AppDbContext>(
             options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"))
         );
+
+        // Add Logging DB Context
+        services.AddDbContext<LogDbContext>(
+            options => options.UseSqlite(Configuration.GetConnectionString("LoggingConnection")));
 
         // Add Identity
         services.AddIdentity<User, IdentityRole>()
@@ -83,49 +89,28 @@ public class Startup(IConfiguration configuration)
                 };
             });
 
+        // Add our custom services
+        services.AddSingleton<ILoggerProvider, DbLoggerProvider<LogDbContext, LogEntry>>();
         services.AddSingleton(new JwtService(Configuration));
-        services.AddHttpContextAccessor();
         services.AddActions();
-
-        // Logging
-        services.AddDbContext<LoggingDbContext>(options => options.UseSqlite("Data Source=logs.db"));
-        services.AddSingleton<ILoggerProvider, DbLoggerProvider<LoggingDbContext, LogEntry>>();
     }
 
     public void Configure(WebApplication app, IWebHostEnvironment env)
     {
-        if (env.IsDevelopment())
-        {
-            app.MapOpenApi();
-        }
-
         app.UseGlobalExceptionHandling();
         app.UseHttpsRedirection();
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
         app.UseRouting();
+        app.MapFallback(context => throw new NotFoundException(Messages.EndpointNotFound));
 
-        app.MapFallback(context =>
-        {
-            throw new NotFoundException(Messages.EndpointNotFound);
-        });
-
-
-        // Create logging database
-        using (var scope = app.Services.CreateScope())
-        {
-            var db = scope.ServiceProvider.GetRequiredService<LoggingDbContext>();
-            db.Database.EnsureCreated();
-        }
-
-        if (env.IsTesting())
-        {
-            AddTestRoutes(app);
-        }
 
         if (env.IsDevelopment())
         {
+            app.MapOpenApi();
+
+            // Print all endpoints
             app.Lifetime.ApplicationStarted.Register(() =>
             {
                 var endpointDataSource = app.Services.GetRequiredService<EndpointDataSource>();
@@ -140,6 +125,11 @@ public class Startup(IConfiguration configuration)
             });
         }
 
+        if (env.IsTesting())
+        {
+            AddTestRoutes(app);
+        }
+
         if (env.IsDevelopment() || env.IsTesting())
         {
             using var scope = app.Services.CreateScope();
@@ -152,10 +142,7 @@ public class Startup(IConfiguration configuration)
                 {
                     dbContext.Database.EnsureDeleted();
                 }
-                catch
-                {
-                    // ignored
-                }
+                catch { }
                 dbContext.Database.EnsureCreated();
             }
             else

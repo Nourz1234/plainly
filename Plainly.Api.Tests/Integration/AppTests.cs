@@ -1,7 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Net.Http.Json;
-using System.Text;
-using Plainly.Api.Exceptions;
 using Plainly.Shared;
 using Plainly.Shared.Responses;
 using Shouldly;
@@ -71,7 +69,7 @@ public class AppTests(AppFixture appFixture)
         var result = await response.Content.ReadFromJsonAsync<ErrorResponse>();
         result.ShouldNotBeNull();
         result.Success.ShouldBe(false);
-        result.Message.ShouldBe(UnauthorizedException.DefaultMessage);
+        result.Message.ShouldBe(Messages.Unauthorized);
     }
 
     [Fact]
@@ -83,7 +81,7 @@ public class AppTests(AppFixture appFixture)
         var result = await response.Content.ReadFromJsonAsync<ErrorResponse>();
         result.ShouldNotBeNull();
         result.Success.ShouldBe(false);
-        result.Message.ShouldBe(ForbiddenException.DefaultMessage);
+        result.Message.ShouldBe(Messages.Forbidden);
     }
 
     [Fact]
@@ -95,7 +93,7 @@ public class AppTests(AppFixture appFixture)
         var result = await response.Content.ReadFromJsonAsync<ErrorResponse>();
         result.ShouldNotBeNull();
         result.Success.ShouldBe(false);
-        result.Message.ShouldBe(BadRequestException.DefaultMessage);
+        result.Message.ShouldBe(Messages.BadRequest);
     }
 }
 

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Design;
 namespace Plainly.Api.Database;
 
 [ExcludeFromCodeCoverage]
-public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
+public class DesignTimeAppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
 {
     public AppDbContext CreateDbContext(string[] args)
     {

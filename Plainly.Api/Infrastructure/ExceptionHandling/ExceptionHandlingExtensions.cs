@@ -1,6 +1,4 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
 using Plainly.Api.Exceptions;
 using Plainly.Api.Infrastructure.Web;
 using Plainly.Shared;
@@ -17,23 +15,19 @@ public static class ExceptionHandlingExtensions
 
     private static void GlobalExceptionHandler(IApplicationBuilder app)
     {
-        app.Run(async (context) =>
+        app.Run(async context =>
         {
-            var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
             var exceptionFeature = context.Features.Get<IExceptionHandlerPathFeature>();
             var exception = exceptionFeature?.Error;
+            var traceId = context.GetTraceId();
 
-            var appException = exception switch
+            ErrorResponse response = exception switch
             {
-                BaseException baseException => baseException,
-                Exception inner => new InternalServerErrorException(null, inner),
-                _ => new InternalServerErrorException()
+                BaseException baseException => baseException.ToResponse(traceId),
+                _ => new ErrorResponse { Message = Messages.InternalServerError, TraceId = traceId },
             };
 
-            var traceId = Activity.Current?.TraceId.ToString() ?? context.TraceIdentifier;
-            var result = appException.ToActionResult(traceId);
-
-            await context.WriteActionResultAsync(result);
+            await context.Response.WriteAsJsonAsync(response);
         });
     }
 }
