@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Plainly.Api.Infrastructure.Action;
+using Plainly.Api.Infrastructure.Actions;
 using Plainly.Api.Infrastructure.Authorization;
 using Plainly.Shared;
 using Plainly.Shared.Actions.Auth.Login;
@@ -22,7 +22,7 @@ public class AuthController(ActionDispatcher actionDispatcher) : ControllerBase
         return new SuccessResponse<RegisterDTO>(201) { Message = Messages.Success, Data = result };
     }
 
-    [AuthorizeFor<RegisterAction>]
+    [AuthorizeFor<LoginAction>]
     [HttpPost("Login")]
     public async Task<SuccessResponse<LoginDTO>> Login([FromBody] LoginForm form)
     {

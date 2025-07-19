@@ -11,15 +11,16 @@ using Plainly.Api.Data.AppDatabase;
 using Plainly.Api.Data.AppDatabase.Seeders;
 using Plainly.Api.Data.LogDatabase;
 using Plainly.Api.Exceptions;
-using Plainly.Api.Infrastructure.Action;
 using Plainly.Api.Infrastructure.AutoValidation;
 using Plainly.Api.Infrastructure.Environment;
 using Plainly.Api.Infrastructure.ExceptionHandling;
 using Plainly.Api.Infrastructure.Jwt;
 using Plainly.Api.Infrastructure.Logging.Providers;
-using Plainly.Api.Models;
 using Plainly.Shared;
 using Plainly.Shared.Interfaces;
+using Plainly.Api.Infrastructure.Actions;
+using Plainly.Api.Entities;
+using System.Diagnostics;
 
 namespace Plainly.Api;
 
@@ -105,62 +106,60 @@ public class Startup(IConfiguration configuration)
         app.UseRouting();
         app.MapFallback(context => throw new NotFoundException(Messages.EndpointNotFound));
 
-
         if (env.IsDevelopment())
         {
-            app.MapOpenApi();
-
-            // Print all endpoints
-            app.Lifetime.ApplicationStarted.Register(() =>
-            {
-                var endpointDataSource = app.Services.GetRequiredService<EndpointDataSource>();
-                Console.WriteLine("Registered Endpoints:");
-                foreach (var endpoint in endpointDataSource.Endpoints)
-                {
-                    if (endpoint is RouteEndpoint routeEndpoint)
-                    {
-                        Console.WriteLine($"  {routeEndpoint.DisplayName} - {routeEndpoint.RoutePattern.RawText}");
-                    }
-                }
-            });
+            ConfigureDevelopment(app, env);
         }
-
-        if (env.IsTesting())
+        else if (env.IsTesting())
         {
-            AddTestRoutes(app);
+            ConfigureTesting(app, env);
         }
-
-        // if (env.IsDevelopment() || env.IsTesting())
-        // {
-        //     using var scope = app.Services.CreateScope();
-
-        //     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-
-        //     if (env.IsTesting())
-        //     {
-        //         try
-        //         {
-        //             dbContext.Database.EnsureDeleted();
-        //         }
-        //         catch { }
-        //         dbContext.Database.EnsureCreated();
-        //     }
-        //     else
-        //     {
-        //         dbContext.Database.Migrate();
-        //     }
-
-        //     DatabaseSeeder.SeedAllAsync(scope.ServiceProvider).Wait();
-        // }
     }
 
-    private static void AddTestRoutes(WebApplication app)
+    public void ConfigureDevelopment(WebApplication app, IWebHostEnvironment env)
     {
+        app.MapOpenApi();
+
+        // Print all endpoints
+        app.Lifetime.ApplicationStarted.Register(() =>
+        {
+            var endpointDataSource = app.Services.GetRequiredService<EndpointDataSource>();
+            Debug.WriteLine("Registered Endpoints:");
+            foreach (var endpoint in endpointDataSource.Endpoints)
+            {
+                if (endpoint is RouteEndpoint routeEndpoint)
+                {
+                    Debug.WriteLine($"  {routeEndpoint.DisplayName} - {routeEndpoint.RoutePattern.RawText}");
+                }
+            }
+        });
+
+        // Run migrations and seeders
+        using var scope = app.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        dbContext.Database.Migrate();
+        DatabaseSeeder.SeedAllAsync(scope.ServiceProvider).Wait();
+    }
+
+    public void ConfigureTesting(WebApplication app, IWebHostEnvironment env)
+    {
+        // Add test routes
         app.MapGet("/exception", (context) => throw new Exception());
         app.MapGet("/internal-error", (context) => throw new InternalServerErrorException());
         app.MapGet("/not-found-error", (context) => throw new NotFoundException());
         app.MapGet("/unauthorized-error", (context) => throw new UnauthorizedException());
         app.MapGet("/forbidden-error", (context) => throw new ForbiddenException());
         app.MapGet("/bad-request-error", (context) => throw new BadRequestException());
+
+
+        // Reset database
+        using var scope = app.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+        try { dbContext.Database.EnsureDeleted(); }
+        catch { }
+        dbContext.Database.EnsureCreated();
+        DatabaseSeeder.SeedAllAsync(scope.ServiceProvider).Wait();
     }
 }

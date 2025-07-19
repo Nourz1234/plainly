@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 
-namespace Plainly.Shared.Abstract;
+namespace Plainly.Shared.Abstractions;
 
-public abstract class BaseResponse(int _Status) : IConvertToActionResult
+public abstract class BaseResponse(int status) : IConvertToActionResult
 {
     public abstract bool Success { get; }
 
@@ -11,6 +11,6 @@ public abstract class BaseResponse(int _Status) : IConvertToActionResult
 
     public IActionResult Convert()
     {
-        return new ObjectResult(this) { StatusCode = _Status };
+        return new ObjectResult(this) { StatusCode = status };
     }
 }

@@ -1,8 +1,8 @@
 using System.Reflection;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Plainly.Api.Entities;
 using Plainly.Api.Interfaces;
-using Plainly.Api.Models;
 
 namespace Plainly.Api.Data.AppDatabase;
 
@@ -10,6 +10,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
 {
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
     }
 
@@ -27,7 +28,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : IdentityDbCo
 
     private void UpdateTimestamps()
     {
-        var entries = ChangeTracker.Entries<IBaseModel>().Where(e => e.State == EntityState.Modified);
+        var entries = ChangeTracker.Entries<IEntity>().Where(e => e.State == EntityState.Modified);
         foreach (var entry in entries)
         {
             entry.Entity.ModifiedAt = DateTime.UtcNow;

@@ -11,4 +11,5 @@ public static class Messages
     public const string EndpointNotFound = "The requested endpoint could not be found.";
     public const string InvalidLoginCredentials = "Invalid email or password.";
     public const string ValidationError = "One or more validation errors occurred.";
+    public const string UserIsNotActive = "User is not active. Please contact your administrator.";
 }

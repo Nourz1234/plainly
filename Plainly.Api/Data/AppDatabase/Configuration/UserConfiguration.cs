@@ -1,17 +1,15 @@
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Plainly.Api.Models;
+using Plainly.Api.Entities;
 
 namespace Plainly.Api.Data.AppDatabase.Configuration;
 
-// public class UserConfiguration : IEntityTypeConfiguration<User>
-// {
-//     public void Configure(EntityTypeBuilder<User> builder)
-//     {
-//         builder.HasKey(m => m.Id);
-//         builder.Property(m => m.CreatedAt)
-//                 .IsRequired()
-//                 .HasColumnType("Date")
-//                 .HasDefaultValueSql("GetDate()");
-//     }
-// }
+public class UserConfiguration : EntityConfiguration<User>
+{
+    public override void Configure(EntityTypeBuilder<User> builder)
+    {
+        base.Configure(builder);
+        builder.Property(e => e.FullName)
+            .IsRequired()
+            .HasMaxLength(64);
+    }
+}

@@ -1,6 +1,6 @@
 using Plainly.Shared.Interfaces;
 
-namespace Plainly.Api.Infrastructure.Action;
+namespace Plainly.Api.Infrastructure.Actions;
 
 public static class DependencyInjection
 {

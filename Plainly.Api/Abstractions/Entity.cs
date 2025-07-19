@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using Plainly.Api.Interfaces;
 
-namespace Plainly.Api.Models;
+namespace Plainly.Api.Abstractions;
 
-public abstract class BaseModel : IBaseModel
+public abstract class Entity : IEntity
 {
     [Key]
     public int Id { get; set; }

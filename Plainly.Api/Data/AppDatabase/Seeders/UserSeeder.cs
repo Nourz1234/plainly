@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
+using Plainly.Api.Entities;
 using Plainly.Api.Infrastructure.Authorization;
-using Plainly.Api.Models;
 
 namespace Plainly.Api.Data.AppDatabase.Seeders;
 

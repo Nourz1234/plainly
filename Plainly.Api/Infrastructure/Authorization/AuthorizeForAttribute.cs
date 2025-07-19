@@ -3,6 +3,6 @@ using Plainly.Shared.Interfaces;
 
 namespace Plainly.Api.Infrastructure.Authorization;
 
-public class AuthorizeFor<TAction> : TypeFilterAttribute<AuthorizeForFilter<TAction>>
+public class AuthorizeForAttribute<TAction> : TypeFilterAttribute<AuthorizeForFilter<TAction>>
     where TAction : IAction
 { }

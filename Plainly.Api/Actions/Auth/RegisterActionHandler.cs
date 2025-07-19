@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
+using Plainly.Api.Entities;
 using Plainly.Api.Exceptions;
 using Plainly.Api.Infrastructure.Jwt;
-using Plainly.Api.Models;
 using Plainly.Shared.Actions.Auth.Register;
 using Plainly.Shared.Interfaces;
 using Plainly.Shared.Responses;
@@ -20,6 +20,7 @@ public class RegisterActionHandler(UserManager<User> userManager, JwtService jwt
             FullName = registerForm.FullName,
             UserName = Guid.NewGuid().ToString(),
             Email = registerForm.Email,
+            IsActive = true,
         };
         var result = await userManager.CreateAsync(user, registerForm.Password);
         if (!result.Succeeded)

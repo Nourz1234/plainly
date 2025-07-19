@@ -2,7 +2,7 @@ using Plainly.Api.Exceptions;
 using Plainly.Shared;
 using Plainly.Shared.Interfaces;
 
-namespace Plainly.Api.Infrastructure.Action;
+namespace Plainly.Api.Infrastructure.Actions;
 
 public class ActionDispatcher(IServiceProvider serviceProvider)
 {

@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Plainly.Api.Entities;
 using Plainly.Api.Infrastructure.Logging.Interfaces;
-using Plainly.Api.Models;
 
 namespace Plainly.Api.Data.LogDatabase;
 

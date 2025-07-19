@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Plainly.Api.Models;
+using Plainly.Api.Entities;
 
 namespace Plainly.Api.Infrastructure.Jwt;
 

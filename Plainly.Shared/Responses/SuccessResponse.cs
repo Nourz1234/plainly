@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Http;
-using Plainly.Shared.Abstract;
+using Plainly.Shared.Abstractions;
 
 namespace Plainly.Shared.Responses;
 

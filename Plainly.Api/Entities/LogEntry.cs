@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Plainly.Api.Infrastructure.Logging.Interfaces;
 
-namespace Plainly.Api.Models;
+namespace Plainly.Api.Entities;
 
 public class LogEntry : ILogEntry
 {
@@ -12,11 +12,11 @@ public class LogEntry : ILogEntry
     public DateTime Timestamp { get; set; }
 
     [Required]
-    [StringLength(16)]
+    [MaxLength(16)]
     public string Level { get; set; } = string.Empty;
 
     [Required]
-    [StringLength(256)]
+    [MaxLength(256)]
     public string Category { get; set; } = string.Empty;
 
     [Required]
@@ -26,6 +26,6 @@ public class LogEntry : ILogEntry
     [MaxLength]
     public string? Exception { get; set; }
 
-    [StringLength(64)]
+    [MaxLength(64)]
     public string? TraceId { get; set; }
 }

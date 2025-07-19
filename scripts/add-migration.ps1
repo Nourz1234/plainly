@@ -12,4 +12,4 @@ $location_map = @{
     "App" = "Data/AppDatabase/Migrations"
     "Log" = "Data/LogDatabase/Migrations"
 }
-dotnet ef migrations add $name --project Plainly.Api --context "$($db)DbContext" --output-dir $location_map[$db] --msbuildprojectextensionspath ./build/obj/Plainly.Api
+dotnet ef migrations add $Name --project Plainly.Api --context "$($DbName)DbContext" --output-dir $location_map[$DbName] --msbuildprojectextensionspath ./build/obj/Plainly.Api
