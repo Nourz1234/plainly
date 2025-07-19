@@ -1,8 +1,10 @@
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http;
 using Plainly.Shared.Abstractions;
 
 namespace Plainly.Shared.Responses;
 
+[JsonDerivedType(typeof(ValidationErrorResponse))]
 public class ErrorResponse : BaseResponse
 {
     public ErrorResponse() : base(StatusCodes.Status500InternalServerError) { }

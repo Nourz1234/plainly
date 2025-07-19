@@ -5,11 +5,11 @@ namespace Plainly.Shared.Actions.Auth.Register;
 public record RegisterForm()
 {
     [DisplayName("Full Name")]
-    public required string FullName { get; init; }
+    public string FullName { get; init; } = string.Empty;
     [DisplayName("Email Address")]
-    public required string Email { get; init; }
+    public string Email { get; init; } = string.Empty;
     [DisplayName("Password")]
-    public required string Password { get; init; }
+    public string Password { get; init; } = string.Empty;
     [DisplayName("Confirm Password")]
-    public required string ConfirmPassword { get; init; }
+    public string ConfirmPassword { get; init; } = string.Empty;
 }

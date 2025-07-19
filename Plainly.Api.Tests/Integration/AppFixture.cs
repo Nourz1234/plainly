@@ -7,7 +7,7 @@ using Plainly.Api.Entities;
 namespace Plainly.Api.Tests.Integration;
 
 [ExcludeFromCodeCoverage]
-public class AppFixture()
+public class AppFixture
 {
     private static readonly TestAppFactory Factory = new();
 

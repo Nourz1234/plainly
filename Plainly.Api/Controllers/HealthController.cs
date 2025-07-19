@@ -12,7 +12,7 @@ namespace Plainly.Api.Controllers;
 [Route("api/[controller]")]
 public class HealthController(ActionDispatcher actionDispatcher) : ControllerBase
 {
-    [AuthorizeFor<GetHealthAction>]
+    [AuthorizeAction<GetHealthAction>]
     [HttpGet]
     public async Task<SuccessResponse<GetHealthDTO>> Get()
     {

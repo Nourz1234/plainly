@@ -9,18 +9,20 @@ using Microsoft.IdentityModel.Tokens;
 using FluentValidation;
 using Plainly.Api.Data.AppDatabase;
 using Plainly.Api.Data.AppDatabase.Seeders;
-using Plainly.Api.Data.LogDatabase;
 using Plainly.Api.Exceptions;
 using Plainly.Api.Infrastructure.AutoValidation;
 using Plainly.Api.Infrastructure.Environment;
 using Plainly.Api.Infrastructure.ExceptionHandling;
 using Plainly.Api.Infrastructure.Jwt;
-using Plainly.Api.Infrastructure.Logging.Providers;
 using Plainly.Shared;
 using Plainly.Shared.Interfaces;
 using Plainly.Api.Infrastructure.Actions;
 using Plainly.Api.Entities;
 using System.Diagnostics;
+using Plainly.Api.Infrastructure.Logging;
+using Microsoft.AspNetCore.Mvc;
+using Plainly.Shared.Responses;
+using Plainly.Api.Infrastructure.Web;
 
 namespace Plainly.Api;
 
@@ -52,10 +54,6 @@ public class Startup(IConfiguration configuration)
             options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"))
         );
 
-        // Add Logging DB Context
-        services.AddDbContext<LogDbContext>(
-            options => options.UseSqlite(Configuration.GetConnectionString("LoggingConnection")));
-
         // Add Identity
         services.AddIdentity<User, IdentityRole>()
             .AddEntityFrameworkStores<AppDbContext>()
@@ -63,11 +61,12 @@ public class Startup(IConfiguration configuration)
         services.Configure<IdentityOptions>(options =>
         {
             options.User.RequireUniqueEmail = true;
-            options.Password.RequireDigit = true;
-            options.Password.RequireLowercase = true;
-            options.Password.RequireUppercase = true;
-            options.Password.RequireNonAlphanumeric = true;
-            options.Password.RequiredLength = 8;
+            // will handle password validation with FluentValidation
+            options.Password.RequireDigit = false;
+            options.Password.RequireLowercase = false;
+            options.Password.RequireUppercase = false;
+            options.Password.RequireNonAlphanumeric = false;
+            options.Password.RequiredLength = 1;
             options.SignIn.RequireConfirmedEmail = false;
             options.SignIn.RequireConfirmedPhoneNumber = false;
         });
@@ -91,9 +90,22 @@ public class Startup(IConfiguration configuration)
             });
 
         // Add our custom services
-        services.AddSingleton<ILoggerProvider, DbLoggerProvider<LogDbContext, LogEntry>>();
+        services.AddDbLogging(Configuration);
         services.AddJwtService(Configuration);
         services.AddActions();
+
+        services.Configure<ApiBehaviorOptions>(options =>
+        {
+            options.InvalidModelStateResponseFactory = context =>
+            {
+                // TODO: Add logging
+                return new ErrorResponse(StatusCodes.Status400BadRequest)
+                {
+                    Message = Messages.BadRequest,
+                    TraceId = context.HttpContext.GetTraceId()
+                }.Convert();
+            };
+        });
     }
 
     public void Configure(WebApplication app, IWebHostEnvironment env)
@@ -108,15 +120,15 @@ public class Startup(IConfiguration configuration)
 
         if (env.IsDevelopment())
         {
-            ConfigureDevelopment(app, env);
+            ConfigureDevelopment(app);
         }
         else if (env.IsTesting())
         {
-            ConfigureTesting(app, env);
+            ConfigureTesting(app);
         }
     }
 
-    public void ConfigureDevelopment(WebApplication app, IWebHostEnvironment env)
+    protected void ConfigureDevelopment(WebApplication app)
     {
         app.MapOpenApi();
 
@@ -142,7 +154,7 @@ public class Startup(IConfiguration configuration)
         DatabaseSeeder.SeedAllAsync(scope.ServiceProvider).Wait();
     }
 
-    public void ConfigureTesting(WebApplication app, IWebHostEnvironment env)
+    protected void ConfigureTesting(WebApplication app)
     {
         // Add test routes
         app.MapGet("/exception", (context) => throw new Exception());

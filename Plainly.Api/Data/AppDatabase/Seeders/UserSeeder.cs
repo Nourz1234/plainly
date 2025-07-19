@@ -26,7 +26,6 @@ public static class UserSeeder
                 userModel = new User
                 {
                     FullName = fullName,
-                    UserName = Guid.NewGuid().ToString(),
                     Email = email,
                     EmailConfirmed = true
                 };

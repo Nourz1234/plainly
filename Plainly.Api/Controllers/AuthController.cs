@@ -13,7 +13,7 @@ namespace Plainly.Api.Controllers;
 public class AuthController(ActionDispatcher actionDispatcher) : ControllerBase
 {
 
-    [AuthorizeFor<RegisterAction>]
+    [AuthorizeAction<RegisterAction>]
     [HttpPost("Register")]
     public async Task<SuccessResponse> Register([FromBody] RegisterForm form)
     {
@@ -22,7 +22,7 @@ public class AuthController(ActionDispatcher actionDispatcher) : ControllerBase
         return new SuccessResponse<RegisterDTO>(201) { Message = Messages.Success, Data = result };
     }
 
-    [AuthorizeFor<LoginAction>]
+    [AuthorizeAction<LoginAction>]
     [HttpPost("Login")]
     public async Task<SuccessResponse<LoginDTO>> Login([FromBody] LoginForm form)
     {

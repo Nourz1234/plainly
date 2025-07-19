@@ -54,10 +54,10 @@ Jwt__PublicKey=[public key]
 
 Create migration:
 ```sh
-.\scripts\add-migration.ps1 MigrationName [Env]
+.\scripts\add-migration.ps1 DB MigrationName [Env]
 ```
 
 Run migration:
 ```sh
-.\scripts\migrate.ps1 [Env]
+.\scripts\migrate.ps1 DB [Env]
 ```

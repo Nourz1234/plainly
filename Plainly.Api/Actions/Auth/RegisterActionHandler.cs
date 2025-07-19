@@ -18,7 +18,6 @@ public class RegisterActionHandler(UserManager<User> userManager, JwtService jwt
         var user = new User
         {
             FullName = registerForm.FullName,
-            UserName = Guid.NewGuid().ToString(),
             Email = registerForm.Email,
             IsActive = true,
         };

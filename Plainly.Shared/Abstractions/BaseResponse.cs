@@ -9,6 +9,7 @@ public abstract class BaseResponse(int status) : IConvertToActionResult
 
     public required abstract string Message { get; init; }
 
+    public int GetStatusCode() => status;
     public IActionResult Convert()
     {
         return new ObjectResult(this) { StatusCode = status };

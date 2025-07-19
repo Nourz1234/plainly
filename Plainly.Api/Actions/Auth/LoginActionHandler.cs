@@ -22,6 +22,9 @@ public class LoginActionHandler(UserManager<User> userManager, SignInManager<Use
         if (!user.IsActive)
             throw new UnauthorizedException(Messages.UserIsNotActive);
 
+        user.LastLoginAt = DateTime.UtcNow;
+        await userManager.UpdateAsync(user);
+
         var token = await jwtService.GenerateToken(user);
         return new LoginDTO(token);
     }

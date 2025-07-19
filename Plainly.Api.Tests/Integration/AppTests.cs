@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Net;
 using System.Net.Http.Json;
 using Plainly.Shared;
 using Plainly.Shared.Responses;
@@ -16,11 +17,11 @@ public class AppTests(AppFixture appFixture)
     public async Task GetMissingPage_ShouldReturnNotFoundResponse()
     {
         var response = await _AppFixture.Client.GetAsync("/missing-page");
-        response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NotFound);
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
 
         var result = await response.Content.ReadFromJsonAsync<ErrorResponse>();
         result.ShouldNotBeNull();
-        result.Success.ShouldBe(false);
+        result.Success.ShouldBeFalse();
         result.Message.ShouldBe(Messages.EndpointNotFound);
     }
 
@@ -28,11 +29,11 @@ public class AppTests(AppFixture appFixture)
     public async Task GetMethodThatThrowsException_ShouldReturnInternalServerErrorResponse()
     {
         var response = await _AppFixture.Client.GetAsync("/exception");
-        response.StatusCode.ShouldBe(System.Net.HttpStatusCode.InternalServerError);
+        response.StatusCode.ShouldBe(HttpStatusCode.InternalServerError);
 
         var result = await response.Content.ReadFromJsonAsync<ErrorResponse>();
         result.ShouldNotBeNull();
-        result.Success.ShouldBe(false);
+        result.Success.ShouldBeFalse();
         result.Message.ShouldBe(Messages.InternalServerError);
     }
 
@@ -40,11 +41,11 @@ public class AppTests(AppFixture appFixture)
     public async Task GetInternalError_ShouldReturnInternalServerErrorResponse()
     {
         var response = await _AppFixture.Client.GetAsync("/internal-error");
-        response.StatusCode.ShouldBe(System.Net.HttpStatusCode.InternalServerError);
+        response.StatusCode.ShouldBe(HttpStatusCode.InternalServerError);
 
         var result = await response.Content.ReadFromJsonAsync<ErrorResponse>();
         result.ShouldNotBeNull();
-        result.Success.ShouldBe(false);
+        result.Success.ShouldBeFalse();
         result.Message.ShouldBe(Messages.InternalServerError);
     }
 
@@ -52,11 +53,11 @@ public class AppTests(AppFixture appFixture)
     public async Task GetNotFoundError_ShouldReturnNotFoundResponse()
     {
         var response = await _AppFixture.Client.GetAsync("/not-found-error");
-        response.StatusCode.ShouldBe(System.Net.HttpStatusCode.NotFound);
+        response.StatusCode.ShouldBe(HttpStatusCode.NotFound);
 
         var result = await response.Content.ReadFromJsonAsync<ErrorResponse>();
         result.ShouldNotBeNull();
-        result.Success.ShouldBe(false);
+        result.Success.ShouldBeFalse();
         result.Message.ShouldBe(Messages.NotFound);
     }
 
@@ -64,11 +65,11 @@ public class AppTests(AppFixture appFixture)
     public async Task GetUnauthorized_ShouldReturnUnauthorizedResponse()
     {
         var response = await _AppFixture.Client.GetAsync("/unauthorized-error");
-        response.StatusCode.ShouldBe(System.Net.HttpStatusCode.Unauthorized);
+        response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
 
         var result = await response.Content.ReadFromJsonAsync<ErrorResponse>();
         result.ShouldNotBeNull();
-        result.Success.ShouldBe(false);
+        result.Success.ShouldBeFalse();
         result.Message.ShouldBe(Messages.Unauthorized);
     }
 
@@ -76,11 +77,11 @@ public class AppTests(AppFixture appFixture)
     public async Task GetForbidden_ShouldReturnForbiddenResponse()
     {
         var response = await _AppFixture.Client.GetAsync("/forbidden-error");
-        response.StatusCode.ShouldBe(System.Net.HttpStatusCode.Forbidden);
+        response.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
 
         var result = await response.Content.ReadFromJsonAsync<ErrorResponse>();
         result.ShouldNotBeNull();
-        result.Success.ShouldBe(false);
+        result.Success.ShouldBeFalse();
         result.Message.ShouldBe(Messages.Forbidden);
     }
 
@@ -88,11 +89,11 @@ public class AppTests(AppFixture appFixture)
     public async Task GetBadRequest_ShouldReturnBadRequestResponse()
     {
         var response = await _AppFixture.Client.GetAsync("/bad-request-error");
-        response.StatusCode.ShouldBe(System.Net.HttpStatusCode.BadRequest);
+        response.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
 
         var result = await response.Content.ReadFromJsonAsync<ErrorResponse>();
         result.ShouldNotBeNull();
-        result.Success.ShouldBe(false);
+        result.Success.ShouldBeFalse();
         result.Message.ShouldBe(Messages.BadRequest);
     }
 }

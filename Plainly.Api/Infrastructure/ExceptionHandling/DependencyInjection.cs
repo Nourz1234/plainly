@@ -27,6 +27,7 @@ public static class DependencyInjection
                 _ => new ErrorResponse { Message = Messages.InternalServerError, TraceId = traceId },
             };
 
+            context.Response.StatusCode = response.GetStatusCode();
             await context.Response.WriteAsJsonAsync(response);
         });
     }

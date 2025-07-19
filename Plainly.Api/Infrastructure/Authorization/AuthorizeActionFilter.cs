@@ -9,7 +9,7 @@ using Plainly.Shared.Responses;
 
 namespace Plainly.Api.Infrastructure.Authorization;
 
-public class AuthorizeForFilter<TAction>(TAction action) : IAuthorizationFilter
+public class AuthorizeActionFilter<TAction>(TAction action) : IAuthorizationFilter
     where TAction : IAction
 {
     public void OnAuthorization(AuthorizationFilterContext context)
