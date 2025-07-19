@@ -12,4 +12,5 @@ public enum ErrorCode
     PasswordMissingDigit,
     PasswordMissingSpecial,
     PasswordMismatch,
+    UnknownField,
 }

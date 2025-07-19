@@ -46,6 +46,12 @@ public class Startup(IConfiguration configuration)
             return displayNameAttribute.DisplayName;
         };
 
+        // Add JSON options
+        services.Configure<JsonOptions>(options =>
+        {
+            options.JsonSerializerOptions.UnmappedMemberHandling = System.Text.Json.Serialization.JsonUnmappedMemberHandling.Disallow;
+        });
+
         // Add OpenAPI
         services.AddOpenApi();
 
@@ -99,6 +105,26 @@ public class Startup(IConfiguration configuration)
             options.InvalidModelStateResponseFactory = context =>
             {
                 // TODO: Add logging
+                var extraFields = context.ModelState
+                    .Where(x => x.Key.StartsWith("$."))
+                    .Select(x => x.Key.Replace("$.", ""))
+                    .ToArray();
+                if (extraFields.Length > 0)
+                {
+                    var errors = new Dictionary<string, ValidationErrorDetail[]>
+                    {
+                        [""] = extraFields.Select(
+                            field => new ValidationErrorDetail(string.Format(Messages.UnknownField, field), ErrorCode.UnknownField.ToString())
+                        ).ToArray()
+                    };
+                    return new ValidationErrorResponse
+                    {
+                        Message = Messages.ValidationError,
+                        Errors = errors,
+                        TraceId = context.HttpContext.GetTraceId()
+                    }.Convert();
+                }
+
                 return new ErrorResponse(StatusCodes.Status400BadRequest)
                 {
                     Message = Messages.BadRequest,

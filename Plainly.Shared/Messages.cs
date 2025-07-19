@@ -12,4 +12,5 @@ public static class Messages
     public const string InvalidLoginCredentials = "Invalid email or password.";
     public const string ValidationError = "One or more validation errors occurred.";
     public const string UserIsNotActive = "User is not active. Please contact your administrator.";
+    public const string UnknownField = "'{0}' is not a recognized field.";
 }

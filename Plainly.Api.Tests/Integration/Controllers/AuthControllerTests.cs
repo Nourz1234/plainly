@@ -17,8 +17,8 @@ public class AuthControllerTests(AppFixture appFixture) : IAsyncLifetime
 {
     private readonly AppFixture _AppFixture = appFixture;
     private static (string FullName, string Email, string Password) _AdminUser = ("Admin", "admin@plainly.com", "123456");
-    private static (string FullName, string Email, string Password) _TestUser = ("Test", "test1@plainly.com", "123456");
-    private static (string FullName, string Email, string Password) _InActiveUser = ("Test", "test2@plainly.com", "123456");
+    private static (string FullName, string Email, string Password) _TestUser = ("Test", "test@plainly.com", "123456");
+    private static (string FullName, string Email, string Password) _InActiveUser = ("InActive", "in-active@plainly.com", "123456");
 
     public async Task InitializeAsync()
     {
