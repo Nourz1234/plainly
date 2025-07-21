@@ -13,4 +13,6 @@ public static class Messages
     public const string ValidationError = "One or more validation errors occurred.";
     public const string UserIsNotActive = "User is not active. Please contact your administrator.";
     public const string UnknownField = "'{0}' is not a recognized field.";
+    public const string UserIsLockedOut = "User is locked out due to too many failed login attempts.";
+    public const string EmailNotConfirmed = "Please confirm your email address.";
 }

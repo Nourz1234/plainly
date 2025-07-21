@@ -5,6 +5,8 @@ namespace Plainly.Shared;
 [DataContract]
 public enum Scopes
 {
+    [EnumMember(Value = "User")]
+    ManageUser,
     [EnumMember(Value = "User.Create")]
     CreateUser,
     [EnumMember(Value = "User.View")]
@@ -13,4 +15,6 @@ public enum Scopes
     EditUser,
     [EnumMember(Value = "User.Delete")]
     DeleteUser,
+    [EnumMember(Value = "User.Profile")]
+    Profile,
 }

@@ -23,6 +23,7 @@ using Plainly.Api.Infrastructure.Logging;
 using Microsoft.AspNetCore.Mvc;
 using Plainly.Shared.Responses;
 using Plainly.Api.Infrastructure.Web;
+using Plainly.Api.Infrastructure.Identity;
 
 namespace Plainly.Api;
 
@@ -98,6 +99,7 @@ public class Startup(IConfiguration configuration)
         // Add our custom services
         services.AddDbLogging(Configuration);
         services.AddJwtService(Configuration);
+        services.AddUserProvider<User>();
         services.AddActions();
 
         services.Configure<ApiBehaviorOptions>(options =>

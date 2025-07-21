@@ -8,7 +8,7 @@ using Plainly.Shared.Interfaces;
 
 namespace Plainly.Api.Actions.Auth;
 
-public class LoginActionHandler(UserManager<User> userManager, SignInManager<User> signInManager, JwtService jwtService)
+public class LoginActionHandler(UserManager<Entities.User> userManager, SignInManager<Entities.User> signInManager, JwtService jwtService)
     : IActionHandler<LoginAction, LoginRequest, LoginDTO>
 {
     public async Task<LoginDTO> Handle(LoginRequest request, CancellationToken cancellationToken = default)
@@ -17,7 +17,13 @@ public class LoginActionHandler(UserManager<User> userManager, SignInManager<Use
         var user = await userManager.FindByEmailAsync(loginFrom.Email) ?? throw new UnauthorizedException(Messages.InvalidLoginCredentials);
         var result = await signInManager.CheckPasswordSignInAsync(user, loginFrom.Password, false);
         if (!result.Succeeded)
+        {
+            if (result.IsLockedOut)
+                throw new UnauthorizedException(Messages.UserIsLockedOut);
+            if (result.IsNotAllowed)
+                throw new UnauthorizedException(Messages.EmailNotConfirmed);
             throw new UnauthorizedException(Messages.InvalidLoginCredentials);
+        }
 
         if (!user.IsActive)
             throw new UnauthorizedException(Messages.UserIsNotActive);

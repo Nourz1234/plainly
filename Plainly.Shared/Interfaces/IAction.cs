@@ -7,5 +7,8 @@ public interface IAction
     public Scopes[] RequiredScopes { get; }
 }
 
+public interface IAction<TRequest> : IAction
+{ }
+
 public interface IAction<TRequest, TResponse> : IAction
 { }

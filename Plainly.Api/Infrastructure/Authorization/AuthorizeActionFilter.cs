@@ -37,7 +37,10 @@ public class AuthorizeActionFilter<TAction>(TAction action) : IAuthorizationFilt
             return;
         }
 
-        if (!scopes.All(scope => user.HasClaim("scopes", scope.GetEnumMemberValue())))
+        var userScopes = user.FindAll("scopes").Select(c => c.Value).ToArray();
+        bool hasScope(string scope) => userScopes.Any(userScope => userScope == scope || scope.StartsWith(userScope + "."));
+
+        if (!scopes.Select(x => x.GetEnumMemberValue()).All(hasScope))
         {
             context.Result = new ErrorResponse(StatusCodes.Status403Forbidden)
             {
