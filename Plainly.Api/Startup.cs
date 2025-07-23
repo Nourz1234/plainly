@@ -68,7 +68,7 @@ public class Startup(IConfiguration configuration)
         services.Configure<IdentityOptions>(options =>
         {
             options.User.RequireUniqueEmail = true;
-            // will handle password validation with FluentValidation
+            // Should handle password validation with FluentValidation
             options.Password.RequireDigit = false;
             options.Password.RequireLowercase = false;
             options.Password.RequireUppercase = false;
@@ -79,11 +79,15 @@ public class Startup(IConfiguration configuration)
         });
 
         // JWT Auth setup
-        var rsa = RSA.Create();
-        rsa.ImportFromPem(Configuration["Jwt:PublicKey"]);
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
             .AddJwtBearer(options =>
             {
+                var rsa = RSA.Create();
+                rsa.ImportFromPem(Configuration["Jwt:PublicKey"]);
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
@@ -102,6 +106,7 @@ public class Startup(IConfiguration configuration)
         services.AddUserProvider<User>();
         services.AddActions();
 
+        // Customize 400 response
         services.Configure<ApiBehaviorOptions>(options =>
         {
             options.InvalidModelStateResponseFactory = context =>
@@ -138,13 +143,17 @@ public class Startup(IConfiguration configuration)
 
     public void Configure(WebApplication app, IWebHostEnvironment env)
     {
-        app.UseGlobalExceptionHandling();
-        app.UseHttpsRedirection();
-        app.UseAuthentication();
-        app.UseAuthorization();
-        app.MapControllers();
         app.UseRouting();
+
+        app.UseHttpsRedirection();
+        app.UseGlobalExceptionHandling();
+
+        app.UseAuthorization();
+        app.UseAuthentication();
+
+        app.MapControllers();
         app.MapFallback(context => throw new NotFoundException(Messages.EndpointNotFound));
+
 
         if (env.IsDevelopment())
         {

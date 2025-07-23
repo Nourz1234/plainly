@@ -2,7 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Http.Json;
 using Bogus;
-using Plainly.Api.Entities;
+using Plainly.Api.Tests.Integration.Data;
 using Plainly.Shared;
 using Plainly.Shared.Actions.Auth.Login;
 using Plainly.Shared.Actions.Auth.Register;
@@ -13,32 +13,9 @@ namespace Plainly.Api.Tests.Integration.Controllers;
 
 [ExcludeFromCodeCoverage]
 [Collection("App collection")]
-public class AuthControllerTests(AppFixture appFixture) : IAsyncLifetime
+public class AuthControllerTests(AppFixture appFixture)
 {
     private readonly AppFixture _AppFixture = appFixture;
-    private static (string FullName, string Email, string Password) _AdminUser = ("Admin", "admin@plainly.com", "123456");
-    private static (string FullName, string Email, string Password) _TestUser = ("Test", "test@plainly.com", "123456");
-    private static (string FullName, string Email, string Password) _InActiveUser = ("InActive", "in-active@plainly.com", "123456");
-
-    public async Task InitializeAsync()
-    {
-        await _AppFixture.UserManager.CreateAsync(new User
-        {
-            FullName = _TestUser.FullName,
-            Email = _TestUser.Email,
-            EmailConfirmed = true
-        }, _TestUser.Password);
-        await _AppFixture.UserManager.CreateAsync(new User
-        {
-            FullName = _InActiveUser.FullName,
-            Email = _InActiveUser.Email,
-            EmailConfirmed = true,
-            IsActive = false
-        }, _InActiveUser.Password);
-    }
-
-    public Task DisposeAsync() => Task.CompletedTask;
-
     const string StrongPassword = "Test@1234";
     const string WeakPassword = "123456";
 
@@ -215,8 +192,8 @@ public class AuthControllerTests(AppFixture appFixture) : IAsyncLifetime
     {
         var form = new LoginForm
         {
-            Email = _AdminUser.Email,
-            Password = _AdminUser.Password
+            Email = Users.AdminUser.Email,
+            Password = Users.AdminUser.Password
         };
         var payload = JsonContent.Create(form);
         var response = await _AppFixture.Client.PostAsync("api/Auth/Login", payload);
@@ -234,8 +211,8 @@ public class AuthControllerTests(AppFixture appFixture) : IAsyncLifetime
     {
         var form = new LoginForm
         {
-            Email = _TestUser.Email,
-            Password = _TestUser.Password
+            Email = Users.TestUser.Email,
+            Password = Users.TestUser.Password
         };
         var payload = JsonContent.Create(form);
         var response = await _AppFixture.Client.PostAsync("api/Auth/Login", payload);
@@ -253,8 +230,8 @@ public class AuthControllerTests(AppFixture appFixture) : IAsyncLifetime
     {
         var form = new LoginForm
         {
-            Email = _InActiveUser.Email,
-            Password = _InActiveUser.Password
+            Email = Users.InActiveUser.Email,
+            Password = Users.InActiveUser.Password
         };
         var payload = JsonContent.Create(form);
         var response = await _AppFixture.Client.PostAsync("api/Auth/Login", payload);
@@ -273,7 +250,7 @@ public class AuthControllerTests(AppFixture appFixture) : IAsyncLifetime
         var form = new LoginForm
         {
             Email = "invalid-email",
-            Password = _TestUser.Password
+            Password = Users.TestUser.Password
         };
         var payload = JsonContent.Create(form);
         var response = await _AppFixture.Client.PostAsync("api/Auth/Login", payload);
@@ -292,8 +269,8 @@ public class AuthControllerTests(AppFixture appFixture) : IAsyncLifetime
     public async Task Login_InvalidCredentials_ShouldReturnUnauthorized()
     {
         (string email, string password)[] creds = [
-            (_TestUser.Email, "invalid-password"),
-            ("test@example.com", "123456"),
+            (Users.TestUser.Email, "invalid-password"),
+            ("test@example.com", Users.TestUser.Password),
         ];
 
         foreach (var (email, password) in creds)

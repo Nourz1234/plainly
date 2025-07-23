@@ -1,12 +1,11 @@
-using Microsoft.AspNetCore.Http.HttpResults;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
-using Plainly.Api.Entities;
-using Plainly.Api.Exceptions;
 using Plainly.Api.Extensions;
 using Plainly.Api.Infrastructure.Jwt;
+using Plainly.Shared;
 using Plainly.Shared.Actions.Auth.Register;
+using Plainly.Shared.Extensions;
 using Plainly.Shared.Interfaces;
-using Plainly.Shared.Responses;
 
 namespace Plainly.Api.Actions.Auth;
 
@@ -24,6 +23,10 @@ public class RegisterActionHandler(UserManager<Entities.User> userManager, JwtSe
         };
         var result = await userManager.CreateAsync(user, registerForm.Password);
         result.ThrowIfFailed();
+
+        await userManager.AddClaimsAsync(user, [
+            new Claim("scopes", Scopes.Profile.GetEnumMemberValue()),
+        ]);
 
         var token = await jwtService.GenerateToken(user);
         return new RegisterDTO(token);
