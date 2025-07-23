@@ -1,11 +1,13 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Threading.Tasks;
+using Plainly.Api.Data.AppDatabase.Seeders;
 
 namespace Plainly.Api;
 
 [ExcludeFromCodeCoverage]
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
         var startup = new Startup(builder.Configuration);
@@ -14,8 +16,15 @@ public class Program
 
         var app = builder.Build();
 
-        startup.Configure(app, builder.Environment);
+        await startup.Configure(app, builder.Environment);
 
-        app.Run();
+        if (args.Contains("--seed"))
+        {
+            await DatabaseSeeder.SeedAllAsync(app.Services);
+        }
+        else
+        {
+            await app.RunAsync();
+        }
     }
 }

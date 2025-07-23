@@ -141,7 +141,7 @@ public class Startup(IConfiguration configuration)
         });
     }
 
-    public void Configure(WebApplication app, IWebHostEnvironment env)
+    public async Task Configure(WebApplication app, IWebHostEnvironment env)
     {
         app.UseRouting();
 
@@ -157,15 +157,15 @@ public class Startup(IConfiguration configuration)
 
         if (env.IsDevelopment())
         {
-            ConfigureDevelopment(app);
+            await ConfigureDevelopment(app);
         }
         else if (env.IsTesting())
         {
-            ConfigureTesting(app);
+            await ConfigureTesting(app);
         }
     }
 
-    protected void ConfigureDevelopment(WebApplication app)
+    protected async Task ConfigureDevelopment(WebApplication app)
     {
         app.MapOpenApi();
 
@@ -188,10 +188,10 @@ public class Startup(IConfiguration configuration)
         var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
         dbContext.Database.Migrate();
-        DatabaseSeeder.SeedAllAsync(scope.ServiceProvider).Wait();
+        await DatabaseSeeder.SeedAllAsync(scope.ServiceProvider);
     }
 
-    protected void ConfigureTesting(WebApplication app)
+    protected async Task ConfigureTesting(WebApplication app)
     {
         // Add test routes
         app.MapGet("/exception", (context) => throw new Exception());
@@ -209,6 +209,6 @@ public class Startup(IConfiguration configuration)
         try { dbContext.Database.EnsureDeleted(); }
         catch { }
         dbContext.Database.EnsureCreated();
-        DatabaseSeeder.SeedAllAsync(scope.ServiceProvider).Wait();
+        await DatabaseSeeder.SeedAllAsync(scope.ServiceProvider);
     }
 }

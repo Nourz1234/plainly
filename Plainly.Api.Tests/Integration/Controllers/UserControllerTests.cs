@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Http.Json;
 using Plainly.Api.Tests.Integration.Data;
@@ -7,7 +8,7 @@ using Shouldly;
 
 namespace Plainly.Api.Tests.Integration.Controllers;
 
-
+[ExcludeFromCodeCoverage]
 [Collection("App collection")]
 public class UserControllerTests(AppFixture appFixture)
 {

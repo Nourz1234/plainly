@@ -15,7 +15,6 @@ namespace Plainly.Api.Tests.Integration.Controllers;
 [Collection("App collection")]
 public class AuthControllerTests(AppFixture appFixture)
 {
-    private readonly AppFixture _AppFixture = appFixture;
     const string StrongPassword = "Test@1234";
     const string WeakPassword = "123456";
 
@@ -66,7 +65,7 @@ public class AuthControllerTests(AppFixture appFixture)
     {
         var form = GenerateRegisterForm_Valid();
         var payload = JsonContent.Create(form);
-        var response = await _AppFixture.Client.PostAsync("api/Auth/Register", payload);
+        var response = await appFixture.Client.PostAsync("api/Auth/Register", payload);
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
 
         // check response
@@ -76,12 +75,12 @@ public class AuthControllerTests(AppFixture appFixture)
         result.Data.Token.ShouldNotBeNullOrWhiteSpace();
 
         // verify that the user was created
-        var user = await _AppFixture.UserManager.FindByEmailAsync(form.Email);
+        var user = await appFixture.UserManager.FindByEmailAsync(form.Email);
         user.ShouldNotBeNull();
         user.FullName.ShouldBe(form.FullName);
 
         // verify password
-        var passwordCheckResult = await _AppFixture.SignInManager.CheckPasswordSignInAsync(user, form.Password, false);
+        var passwordCheckResult = await appFixture.SignInManager.CheckPasswordSignInAsync(user, form.Password, false);
         passwordCheckResult.Succeeded.ShouldBeTrue();
     }
 
@@ -90,7 +89,7 @@ public class AuthControllerTests(AppFixture appFixture)
     {
         var form = GenerateRegisterForm_InvalidEmail();
         var payload = JsonContent.Create(form);
-        var response = await _AppFixture.Client.PostAsync("api/Auth/Register", payload);
+        var response = await appFixture.Client.PostAsync("api/Auth/Register", payload);
         response.StatusCode.ShouldBe(HttpStatusCode.UnprocessableEntity);
 
         // check response
@@ -105,7 +104,7 @@ public class AuthControllerTests(AppFixture appFixture)
     public async Task Register_EmptyRequiredFields_ShouldReturnValidationError()
     {
         var payload = JsonContent.Create(new { });
-        var response = await _AppFixture.Client.PostAsync("api/Auth/Register", payload);
+        var response = await appFixture.Client.PostAsync("api/Auth/Register", payload);
         response.StatusCode.ShouldBe(HttpStatusCode.UnprocessableEntity);
 
         // error codes map
@@ -134,10 +133,10 @@ public class AuthControllerTests(AppFixture appFixture)
     {
         var form = GenerateRegisterForm_Valid();
         var payload = JsonContent.Create(form);
-        var response = await _AppFixture.Client.PostAsync("api/Auth/Register", payload);
+        var response = await appFixture.Client.PostAsync("api/Auth/Register", payload);
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
 
-        response = await _AppFixture.Client.PostAsync("api/Auth/Register", payload);
+        response = await appFixture.Client.PostAsync("api/Auth/Register", payload);
         response.StatusCode.ShouldBe(HttpStatusCode.UnprocessableEntity);
 
         var errorDescriber = new Microsoft.AspNetCore.Identity.IdentityErrorDescriber();
@@ -155,7 +154,7 @@ public class AuthControllerTests(AppFixture appFixture)
     {
         var form = GenerateRegisterForm_WeakPassword();
         var payload = JsonContent.Create(form);
-        var response = await _AppFixture.Client.PostAsync("api/Auth/Register", payload);
+        var response = await appFixture.Client.PostAsync("api/Auth/Register", payload);
         response.StatusCode.ShouldBe(HttpStatusCode.UnprocessableEntity);
 
         string[] expectedErrors = [
@@ -177,7 +176,7 @@ public class AuthControllerTests(AppFixture appFixture)
     {
         var form = GenerateRegisterForm_PasswordMismatch();
         var payload = JsonContent.Create(form);
-        var response = await _AppFixture.Client.PostAsync("api/Auth/Register", payload);
+        var response = await appFixture.Client.PostAsync("api/Auth/Register", payload);
         response.StatusCode.ShouldBe(HttpStatusCode.UnprocessableEntity);
 
         var result = await response.Content.ReadFromJsonAsync<ValidationErrorResponse>();
@@ -196,7 +195,7 @@ public class AuthControllerTests(AppFixture appFixture)
             Password = Users.AdminUser.Password
         };
         var payload = JsonContent.Create(form);
-        var response = await _AppFixture.Client.PostAsync("api/Auth/Login", payload);
+        var response = await appFixture.Client.PostAsync("api/Auth/Login", payload);
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
         // check response
@@ -215,7 +214,7 @@ public class AuthControllerTests(AppFixture appFixture)
             Password = Users.TestUser.Password
         };
         var payload = JsonContent.Create(form);
-        var response = await _AppFixture.Client.PostAsync("api/Auth/Login", payload);
+        var response = await appFixture.Client.PostAsync("api/Auth/Login", payload);
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
         // check response
@@ -234,7 +233,7 @@ public class AuthControllerTests(AppFixture appFixture)
             Password = Users.InActiveUser.Password
         };
         var payload = JsonContent.Create(form);
-        var response = await _AppFixture.Client.PostAsync("api/Auth/Login", payload);
+        var response = await appFixture.Client.PostAsync("api/Auth/Login", payload);
         response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
 
         // check response
@@ -253,7 +252,7 @@ public class AuthControllerTests(AppFixture appFixture)
             Password = Users.TestUser.Password
         };
         var payload = JsonContent.Create(form);
-        var response = await _AppFixture.Client.PostAsync("api/Auth/Login", payload);
+        var response = await appFixture.Client.PostAsync("api/Auth/Login", payload);
         response.StatusCode.ShouldBe(HttpStatusCode.UnprocessableEntity);
 
         // check response
@@ -281,7 +280,7 @@ public class AuthControllerTests(AppFixture appFixture)
                 Password = password
             };
             var payload = JsonContent.Create(form);
-            var response = await _AppFixture.Client.PostAsync("api/Auth/Login", payload);
+            var response = await appFixture.Client.PostAsync("api/Auth/Login", payload);
             response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
 
             // check response
