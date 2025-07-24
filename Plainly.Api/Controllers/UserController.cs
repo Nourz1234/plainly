@@ -22,11 +22,11 @@ public class UserController(ActionDispatcher actionDispatcher) : ControllerBase
     }
 
     [AuthorizeAction<EditProfileAction>]
-    [HttpPost("Profile")]
-    public async Task<SuccessResponse> EditProfile(EditProfileFrom form)
+    [HttpPatch("Profile")]
+    public async Task<SuccessResponse<EditProfileDTO>> EditProfile(EditProfileFrom form)
     {
-        await actionDispatcher.Dispatch<EditProfileAction, EditProfileRequest>(new EditProfileRequest(form));
+        var result = await actionDispatcher.Dispatch<EditProfileAction, EditProfileRequest, EditProfileDTO>(new EditProfileRequest(form));
 
-        return new SuccessResponse { Message = Messages.Success };
+        return new SuccessResponse<EditProfileDTO> { Message = Messages.Success, Data = result };
     }
 }

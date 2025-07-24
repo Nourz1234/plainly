@@ -16,6 +16,11 @@
 
   <ItemGroup>
     <Using Include="Xunit" />
+    <Using Include="System.Net" />
+    <Using Include="System.Net.Http.Json" />
+    <Using Include="Shouldly" />
+    <Using Include="Plainly.Shared" />
+    <Using Include="Plainly.Shared.Responses" />
   </ItemGroup>
 
   <ItemGroup>

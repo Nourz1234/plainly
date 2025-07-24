@@ -2,7 +2,7 @@ using Plainly.Shared.Interfaces;
 
 namespace Plainly.Shared.Actions.User.EditProfile;
 
-public class EditProfileAction : IAction<EditProfileRequest>
+public class EditProfileAction : IAction<EditProfileRequest, EditProfileDTO>
 {
     public string DisplayName => "Edit Profile";
 

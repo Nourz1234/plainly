@@ -23,9 +23,11 @@ public class AppFixture : IAsyncLifetime
 
     public async Task<HttpClient> GetClientForUser(User user)
     {
-        var client = Factory.CreateClient();
         var userEntity = await UserManager.FindByEmailAsync(user.Email);
         var token = await JwtService.GenerateToken(userEntity!);
+        DbContext.ChangeTracker.Clear();
+
+        var client = Factory.CreateClient();
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         return client;
     }
@@ -34,8 +36,7 @@ public class AppFixture : IAsyncLifetime
     {
         // TODO: potentially run seeders
 
-        var testUsers = new User[] { Users.TestUser, Users.NoScopesUser, Users.InActiveUser };
-        foreach (var user in testUsers)
+        foreach (var user in Users.All)
         {
             var userEntity = new Entities.User
             {

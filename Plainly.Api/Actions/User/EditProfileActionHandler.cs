@@ -6,9 +6,9 @@ using Plainly.Shared.Interfaces;
 
 namespace Plainly.Api.Actions.User;
 
-public class EditProfileActionHandler(UserManager<Entities.User> userManager, UserProvider<Entities.User> userProvider) : IActionHandler<EditProfileAction, EditProfileRequest>
+public class EditProfileActionHandler(UserManager<Entities.User> userManager, UserProvider<Entities.User> userProvider) : IActionHandler<EditProfileAction, EditProfileRequest, EditProfileDTO>
 {
-    public async Task Handle(EditProfileRequest request, CancellationToken token = default)
+    public async Task<EditProfileDTO> Handle(EditProfileRequest request, CancellationToken token = default)
     {
         var user = await userProvider.GetCurrentOrFailAsync();
         var form = request.Form;
@@ -20,5 +20,7 @@ public class EditProfileActionHandler(UserManager<Entities.User> userManager, Us
 
         var result = await userManager.UpdateAsync(user);
         result.ThrowIfFailed();
+
+        return new EditProfileDTO(user.FullName, user.Email!);
     }
 }

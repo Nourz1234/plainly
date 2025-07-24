@@ -1,7 +1,4 @@
 using Plainly.Api.Exceptions;
-using Plainly.Shared;
-using Plainly.Shared.Responses;
-using Shouldly;
 
 namespace Plainly.Api.Tests.Unit;
 

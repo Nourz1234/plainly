@@ -10,5 +10,5 @@ public interface IAction
 public interface IAction<TRequest> : IAction
 { }
 
-public interface IAction<TRequest, TResponse> : IAction
+public interface IAction<TRequest, TResponse> : IAction<TRequest>
 { }
