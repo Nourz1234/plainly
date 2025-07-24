@@ -65,11 +65,11 @@ public class AuthControllerTests(AppFixture appFixture)
     {
         var form = GenerateRegisterForm_Valid();
         var payload = JsonContent.Create(form);
-        var response = await appFixture.Client.PostAsync("api/Auth/Register", payload);
+        var response = await appFixture.Client.PostAsync("api/Auth/Register", payload, TestContext.Current.CancellationToken);
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
 
         // check response
-        var result = await response.Content.ReadFromJsonAsync<SuccessResponse<RegisterDTO>>();
+        var result = await response.Content.ReadFromJsonAsync<SuccessResponse<RegisterDTO>>(TestContext.Current.CancellationToken);
         result.ShouldNotBeNull();
         result.Data.Token.ShouldBeOfType<string>();
         result.Data.Token.ShouldNotBeNullOrWhiteSpace();
@@ -89,11 +89,11 @@ public class AuthControllerTests(AppFixture appFixture)
     {
         var form = GenerateRegisterForm_InvalidEmail();
         var payload = JsonContent.Create(form);
-        var response = await appFixture.Client.PostAsync("api/Auth/Register", payload);
+        var response = await appFixture.Client.PostAsync("api/Auth/Register", payload,TestContext.Current.CancellationToken);
         response.StatusCode.ShouldBe(HttpStatusCode.UnprocessableEntity);
 
         // check response
-        var result = await response.Content.ReadFromJsonAsync<ValidationErrorResponse>();
+        var result = await response.Content.ReadFromJsonAsync<ValidationErrorResponse>(TestContext.Current.CancellationToken);
         result.ShouldNotBeNull();
         result.Success.ShouldBeFalse();
         result.Errors.ContainsKey(nameof(RegisterForm.Email)).ShouldBeTrue();
@@ -104,7 +104,7 @@ public class AuthControllerTests(AppFixture appFixture)
     public async Task Register_EmptyRequiredFields_ShouldReturnValidationError()
     {
         var payload = JsonContent.Create(new { });
-        var response = await appFixture.Client.PostAsync("api/Auth/Register", payload);
+        var response = await appFixture.Client.PostAsync("api/Auth/Register", payload,TestContext.Current.CancellationToken);
         response.StatusCode.ShouldBe(HttpStatusCode.UnprocessableEntity);
 
         // error codes map
@@ -116,7 +116,7 @@ public class AuthControllerTests(AppFixture appFixture)
         ];
 
         // check response
-        var result = await response.Content.ReadFromJsonAsync<ValidationErrorResponse>();
+        var result = await response.Content.ReadFromJsonAsync<ValidationErrorResponse>(TestContext.Current.CancellationToken);
         result.ShouldNotBeNull();
         result.Success.ShouldBeFalse();
         foreach (var (fieldName, errorCode) in fields)
@@ -133,15 +133,15 @@ public class AuthControllerTests(AppFixture appFixture)
     {
         var form = GenerateRegisterForm_Valid();
         var payload = JsonContent.Create(form);
-        var response = await appFixture.Client.PostAsync("api/Auth/Register", payload);
+        var response = await appFixture.Client.PostAsync("api/Auth/Register", payload,TestContext.Current.CancellationToken);
         response.StatusCode.ShouldBe(HttpStatusCode.Created);
 
-        response = await appFixture.Client.PostAsync("api/Auth/Register", payload);
+        response = await appFixture.Client.PostAsync("api/Auth/Register", payload,TestContext.Current.CancellationToken);
         response.StatusCode.ShouldBe(HttpStatusCode.UnprocessableEntity);
 
         var errorDescriber = new Microsoft.AspNetCore.Identity.IdentityErrorDescriber();
 
-        var result = await response.Content.ReadFromJsonAsync<ValidationErrorResponse>();
+        var result = await response.Content.ReadFromJsonAsync<ValidationErrorResponse>(TestContext.Current.CancellationToken);
         result.ShouldNotBeNull();
         result.Success.ShouldBeFalse();
         result.Errors.ContainsKey("").ShouldBeTrue();
@@ -154,7 +154,7 @@ public class AuthControllerTests(AppFixture appFixture)
     {
         var form = GenerateRegisterForm_WeakPassword();
         var payload = JsonContent.Create(form);
-        var response = await appFixture.Client.PostAsync("api/Auth/Register", payload);
+        var response = await appFixture.Client.PostAsync("api/Auth/Register", payload,TestContext.Current.CancellationToken);
         response.StatusCode.ShouldBe(HttpStatusCode.UnprocessableEntity);
 
         string[] expectedErrors = [
@@ -164,7 +164,7 @@ public class AuthControllerTests(AppFixture appFixture)
             ErrorCode.PasswordMissingLowercase.ToString(),
         ];
 
-        var result = await response.Content.ReadFromJsonAsync<ValidationErrorResponse>();
+        var result = await response.Content.ReadFromJsonAsync<ValidationErrorResponse>(TestContext.Current.CancellationToken);
         result.ShouldNotBeNull();
         result.Success.ShouldBeFalse();
         result.Errors.ContainsKey(nameof(RegisterForm.Password)).ShouldBeTrue();
@@ -176,10 +176,10 @@ public class AuthControllerTests(AppFixture appFixture)
     {
         var form = GenerateRegisterForm_PasswordMismatch();
         var payload = JsonContent.Create(form);
-        var response = await appFixture.Client.PostAsync("api/Auth/Register", payload);
+        var response = await appFixture.Client.PostAsync("api/Auth/Register", payload,TestContext.Current.CancellationToken);
         response.StatusCode.ShouldBe(HttpStatusCode.UnprocessableEntity);
 
-        var result = await response.Content.ReadFromJsonAsync<ValidationErrorResponse>();
+        var result = await response.Content.ReadFromJsonAsync<ValidationErrorResponse>(TestContext.Current.CancellationToken);
         result.ShouldNotBeNull();
         result.Success.ShouldBeFalse();
         result.Errors.ContainsKey(nameof(RegisterForm.ConfirmPassword)).ShouldBeTrue();
@@ -195,11 +195,11 @@ public class AuthControllerTests(AppFixture appFixture)
             Password = Users.AdminUser.Password
         };
         var payload = JsonContent.Create(form);
-        var response = await appFixture.Client.PostAsync("api/Auth/Login", payload);
+        var response = await appFixture.Client.PostAsync("api/Auth/Login", payload,TestContext.Current.CancellationToken);
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
         // check response
-        var result = await response.Content.ReadFromJsonAsync<SuccessResponse<LoginDTO>>();
+        var result = await response.Content.ReadFromJsonAsync<SuccessResponse<LoginDTO>>(TestContext.Current.CancellationToken);
         result.ShouldNotBeNull();
         result.Data.Token.ShouldBeOfType<string>();
         result.Data.Token.ShouldNotBeNullOrWhiteSpace();
@@ -214,11 +214,11 @@ public class AuthControllerTests(AppFixture appFixture)
             Password = Users.TestUser.Password
         };
         var payload = JsonContent.Create(form);
-        var response = await appFixture.Client.PostAsync("api/Auth/Login", payload);
+        var response = await appFixture.Client.PostAsync("api/Auth/Login", payload, TestContext.Current.CancellationToken);
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
         // check response
-        var result = await response.Content.ReadFromJsonAsync<SuccessResponse<LoginDTO>>();
+        var result = await response.Content.ReadFromJsonAsync<SuccessResponse<LoginDTO>>(TestContext.Current.CancellationToken);
         result.ShouldNotBeNull();
         result.Data.Token.ShouldBeOfType<string>();
         result.Data.Token.ShouldNotBeNullOrWhiteSpace();
@@ -233,11 +233,11 @@ public class AuthControllerTests(AppFixture appFixture)
             Password = Users.InActiveUser.Password
         };
         var payload = JsonContent.Create(form);
-        var response = await appFixture.Client.PostAsync("api/Auth/Login", payload);
+        var response = await appFixture.Client.PostAsync("api/Auth/Login", payload,TestContext.Current.CancellationToken);
         response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
 
         // check response
-        var result = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+        var result = await response.Content.ReadFromJsonAsync<ErrorResponse>(TestContext.Current.CancellationToken);
         result.ShouldNotBeNull();
         result.Success.ShouldBeFalse();
         result.Message.ShouldBe(Messages.UserIsNotActive);
@@ -252,11 +252,11 @@ public class AuthControllerTests(AppFixture appFixture)
             Password = Users.TestUser.Password
         };
         var payload = JsonContent.Create(form);
-        var response = await appFixture.Client.PostAsync("api/Auth/Login", payload);
+        var response = await appFixture.Client.PostAsync("api/Auth/Login", payload,TestContext.Current.CancellationToken);
         response.StatusCode.ShouldBe(HttpStatusCode.UnprocessableEntity);
 
         // check response
-        var result = await response.Content.ReadFromJsonAsync<ValidationErrorResponse>();
+        var result = await response.Content.ReadFromJsonAsync<ValidationErrorResponse>(TestContext.Current.CancellationToken);
         result.ShouldNotBeNull();
         result.Success.ShouldBeFalse();
         result.Errors.ContainsKey(nameof(LoginForm.Email)).ShouldBeTrue();
@@ -280,11 +280,11 @@ public class AuthControllerTests(AppFixture appFixture)
                 Password = password
             };
             var payload = JsonContent.Create(form);
-            var response = await appFixture.Client.PostAsync("api/Auth/Login", payload);
+            var response = await appFixture.Client.PostAsync("api/Auth/Login", payload,TestContext.Current.CancellationToken);
             response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
 
             // check response
-            var result = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+            var result = await response.Content.ReadFromJsonAsync<ErrorResponse>(TestContext.Current.CancellationToken);
             result.ShouldNotBeNull();
             result.Success.ShouldBeFalse();
             result.Message.ShouldBe(Messages.InvalidLoginCredentials);

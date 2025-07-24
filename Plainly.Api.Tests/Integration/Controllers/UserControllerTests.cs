@@ -16,10 +16,10 @@ public class UserControllerTests(AppFixture appFixture)
     public async Task ViewProfile_AuthedUser_ShouldReturnProfileInfo()
     {
         var client = await appFixture.GetClientForUser(Users.TestUser);
-        var response = await client.GetAsync("api/User/Profile");
+        var response = await client.GetAsync("api/User/Profile", TestContext.Current.CancellationToken);
         response.StatusCode.ShouldBe(HttpStatusCode.OK);
 
-        var result = await response.Content.ReadFromJsonAsync<SuccessResponse<ViewProfileDTO>>();
+        var result = await response.Content.ReadFromJsonAsync<SuccessResponse<ViewProfileDTO>>(cancellationToken: TestContext.Current.CancellationToken);
         result.ShouldNotBeNull();
         result.Data.FullName.ShouldBe(Users.TestUser.FullName);
         result.Data.Email.ShouldBe(Users.TestUser.Email);
@@ -29,14 +29,14 @@ public class UserControllerTests(AppFixture appFixture)
     public async Task ViewProfile_InsufficientScopes_ShouldReturnForbidden()
     {
         var client = await appFixture.GetClientForUser(Users.NoScopesUser);
-        var response = await client.GetAsync("api/User/Profile");
+        var response = await client.GetAsync("api/User/Profile", TestContext.Current.CancellationToken);
         response.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
     }
 
     [Fact]
     public async Task ViewProfile_UnauthedUser_ShouldReturnUnauthorized()
     {
-        var response = await appFixture.Client.GetAsync("api/User/Profile");
+        var response = await appFixture.Client.GetAsync("api/User/Profile", TestContext.Current.CancellationToken);
         response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
     }
 }

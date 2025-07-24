@@ -30,7 +30,7 @@ public class AppFixture : IAsyncLifetime
         return client;
     }
 
-    public async Task InitializeAsync()
+    public async ValueTask InitializeAsync()
     {
         // TODO: potentially run seeders
 
@@ -56,7 +56,7 @@ public class AppFixture : IAsyncLifetime
         }
     }
 
-    public Task DisposeAsync() => Task.CompletedTask;
+    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
 
 }
 

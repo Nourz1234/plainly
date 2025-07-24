@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Threading.Tasks;
 using Plainly.Api.Data.AppDatabase.Seeders;
 
 namespace Plainly.Api;

@@ -13,10 +13,10 @@ public class HealthControllerTests(AppFixture _AppFixture)
     [Fact]
     public async Task Get_ShouldReturnHealthyResponse()
     {
-        var response = await _AppFixture.Client.GetAsync("api/Health");
+        var response = await _AppFixture.Client.GetAsync("api/Health", TestContext.Current.CancellationToken);
         response.StatusCode.ShouldBe(System.Net.HttpStatusCode.OK);
 
-        var result = await response.Content.ReadFromJsonAsync<SuccessResponse<GetHealthDTO>>();
+        var result = await response.Content.ReadFromJsonAsync<SuccessResponse<GetHealthDTO>>(cancellationToken: TestContext.Current.CancellationToken);
         result.ShouldNotBeNull();
         result.Data.Status.ShouldBe("Healthy");
     }

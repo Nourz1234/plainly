@@ -1,0 +1,33 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run Tests with Coverage",
+            "type": "shell",
+            "command": "dotnet test -- --coverage --coverage-output-format cobertura --coverage-output coverage.cobertura.xml",
+            "problemMatcher": [],
+            "group": "build",
+            "detail": "Run xUnit tests and generate coverage output"
+        },
+        {
+            "label": "Generate Coverage HTML Report",
+            "type": "shell",
+            "command": "ReportGenerator -reports:build/bin/Plainly.Api.Tests/Debug/net9.0/TestResults/coverage.cobertura.xml -targetdir:CoverageReport",
+            "problemMatcher": [],
+            "dependsOn": "Run Tests with Coverage",
+            "group": "build",
+            "detail": "Generate HTML report from coverage"
+        },
+        {
+            "label": "Generate and Open Coverage Report",
+            "type": "shell",
+            "command": "start CoverageReport/index.html", // Windows
+            // "command": "xdg-open CoverageReport/index.html", // Linux
+            // "command": "open CoverageReport/index.html",     // macOS
+            "problemMatcher": [],
+            "dependsOn": "Generate Coverage HTML Report",
+            "group": "none",
+            "detail": "Open the generated HTML coverage report in browser"
+          }
+    ]
+}
