@@ -12,7 +12,7 @@ using Plainly.Api.Data.AppDatabase;
 namespace Plainly.Api.Data.AppDatabase.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250717083003_InitialCreate")]
+    [Migration("20250727082128_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -190,9 +190,7 @@ namespace Plainly.Api.Data.AppDatabase.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false);
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("LastLoginAt")
                         .HasColumnType("timestamp with time zone");
