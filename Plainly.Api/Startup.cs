@@ -24,6 +24,7 @@ using Microsoft.AspNetCore.Mvc;
 using Plainly.Shared.Responses;
 using Plainly.Api.Infrastructure.Web;
 using Plainly.Api.Infrastructure.Identity;
+using System.Text.Json;
 
 namespace Plainly.Api;
 
@@ -88,6 +89,8 @@ public class Startup(IConfiguration configuration)
             {
                 var rsa = RSA.Create();
                 rsa.ImportFromPem(Configuration["Jwt:PublicKey"]);
+                var parameter = rsa.ExportParameters(false);
+                // JsonSerializer.Deserialize(parameter)
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
