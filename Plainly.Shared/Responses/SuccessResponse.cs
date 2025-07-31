@@ -1,26 +1,18 @@
 using Microsoft.AspNetCore.Http;
-using Plainly.Shared.Abstractions;
+using Plainly.Shared.Builders;
 
 namespace Plainly.Shared.Responses;
 
-public class SuccessResponse : BaseResponse
+public record SuccessResponse() : BaseResponse()
 {
-    public SuccessResponse() : base(StatusCodes.Status200OK) { }
+    public static SuccessResponseBuilder Ok()
+        => new(StatusCodes.Status200OK, Messages.Success);
 
-    public SuccessResponse(int status) : base(status)
-    {
-        if (status is not (>= 200 and <= 299))
-            throw new ArgumentException("Success response status code must be in the 200s");
-    }
-
-    public override bool Success => true;
-    public required override string Message { get; init; }
+    public static SuccessResponseBuilder Created()
+        => new(StatusCodes.Status201Created, Messages.Success);
 }
 
-public class SuccessResponse<T> : SuccessResponse
+public record SuccessResponse<T>() : SuccessResponse()
 {
-    public SuccessResponse() : base() { }
-    public SuccessResponse(int status) : base(status) { }
-
     public required T Data { get; init; }
 }

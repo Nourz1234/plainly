@@ -1,14 +1,11 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
-using Plainly.Api.Exceptions;
-using Plainly.Shared;
 
 namespace Plainly.Api.Infrastructure.Identity;
 
 public class UserProvider<T>(IHttpContextAccessor httpContextAccessor, UserManager<T> userManager)
     where T : class
 {
-    public async Task<T> GetCurrentOrFailAsync() => await GetCurrentAsync() ?? throw new UnauthorizedException(Messages.Unauthorized);
     public async Task<T?> GetCurrentAsync()
     {
         if (httpContextAccessor.HttpContext is not { User: ClaimsPrincipal user })

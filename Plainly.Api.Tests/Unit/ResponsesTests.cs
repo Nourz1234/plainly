@@ -1,61 +1,71 @@
-using Plainly.Shared.Responses;
-using Shouldly;
+using Microsoft.AspNetCore.Http;
 
 namespace Plainly.Api.Tests.Unit;
 
 public class ResponsesTests
 {
-    [Theory]
-    [InlineData(200)]
-    [InlineData(201)]
-    [InlineData(204)]
-
-    public void SuccessResponse_With2xxStatusCode_ShouldSetSuccessTrue(int statusCode)
+    [Fact]
+    public void OkResponse_ShouldReturnStatus200()
     {
-        var response = new SuccessResponse(statusCode) { Message = "Success" };
+        var response = SuccessResponse.Ok().Build();
         response.Success.ShouldBeTrue();
+        response.StatusCode.ShouldBe(StatusCodes.Status200OK);
     }
 
-    [Theory]
-    [InlineData(200, new string[] { "Data1", "Data2" })]
-    [InlineData(201, new string[] { "Data1", "Data2" })]
-
-    public void SuccessResponse_With2xxStatusCodeAndData_ShouldSetSuccessTrueAndSetData(int statusCode, string[] data)
+    [Fact]
+    public void CreatedResponse_ShouldReturnStatus201()
     {
-        var response = new SuccessResponse<string[]>(statusCode) { Message = "Success", Data = data };
+        var response = SuccessResponse.Created().Build();
         response.Success.ShouldBeTrue();
-        response.Data.ShouldBeEquivalentTo(data);
-    }
-
-    [Theory]
-    [InlineData(301)]
-    [InlineData(404)]
-    [InlineData(500)]
-    public void SuccessResponse_WithNon2xxStatusCode_ShouldThrowArgumentException(int statusCode)
-    {
-        var act = () => new SuccessResponse(statusCode) { Message = "Success" };
-        act.ShouldThrow<ArgumentException>().Message.ShouldBe($"Success response status code must be in the 200s");
+        response.StatusCode.ShouldBe(StatusCodes.Status201Created);
     }
 
 
-    [Theory]
-    [InlineData(400)]
-    [InlineData(404)]
-    [InlineData(500)]
-
-    public void ErrorResponse_With4xxOr5xxStatusCode_ShouldSetSuccessFalse(int statusCode)
+    [Fact]
+    public void InternalServerErrorResponse_ShouldReturnStatus500()
     {
-        var response = new ErrorResponse(statusCode) { Message = "Error", TraceId = "TraceId" };
+        var response = ErrorResponse.InternalServerError().Build();
         response.Success.ShouldBeFalse();
+        response.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
     }
 
-    [Theory]
-    [InlineData(200)]
-    [InlineData(201)]
-    [InlineData(301)]
-    public void ErrorResponse_WithNon4xxOr5xxStatusCode_ShouldThrowArgumentException(int statusCode)
+    [Fact]
+    public void BadRequestResponse_ShouldReturnStatus400()
     {
-        var act = () => new ErrorResponse(statusCode) { Message = "Error", TraceId = "TraceId" };
-        act.ShouldThrow<ArgumentException>().Message.ShouldBe($"Error response status code must be in the 400s or 500s");
+        var response = ErrorResponse.BadRequest().Build();
+        response.Success.ShouldBeFalse();
+        response.StatusCode.ShouldBe(StatusCodes.Status400BadRequest);
+    }
+
+    [Fact]
+    public void UnauthorizedResponse_ShouldReturnStatus401()
+    {
+        var response = ErrorResponse.Unauthorized().Build();
+        response.Success.ShouldBeFalse();
+        response.StatusCode.ShouldBe(StatusCodes.Status401Unauthorized);
+    }
+
+    [Fact]
+    public void ForbiddenResponse_ShouldReturnStatus403()
+    {
+        var response = ErrorResponse.Forbidden().Build();
+        response.Success.ShouldBeFalse();
+        response.StatusCode.ShouldBe(StatusCodes.Status403Forbidden);
+    }
+
+    [Fact]
+    public void NotFoundResponse_ShouldReturnStatus404()
+    {
+        var response = ErrorResponse.NotFound().Build();
+        response.Success.ShouldBeFalse();
+        response.StatusCode.ShouldBe(StatusCodes.Status404NotFound);
+    }
+
+    [Fact]
+    public void ValidationErrorResponse_ShouldReturnStatus422()
+    {
+        var response = ErrorResponse.ValidationError().Build();
+        response.Success.ShouldBeFalse();
+        response.StatusCode.ShouldBe(StatusCodes.Status422UnprocessableEntity);
     }
 }

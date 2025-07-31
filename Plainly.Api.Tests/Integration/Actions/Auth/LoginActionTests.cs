@@ -78,11 +78,11 @@ public class LoginActionTests(AppFixture appFixture) : BaseActionTest<LoginActio
         response.StatusCode.ShouldBe(HttpStatusCode.UnprocessableEntity);
 
         // check response
-        var result = await GetValidationErrorAsync(response, TestContext.Current.CancellationToken);
+        var result = await GetErrorAsync(response, TestContext.Current.CancellationToken);
         result.ShouldNotBeNull();
         result.Success.ShouldBeFalse();
-        result.Errors.ContainsKey(nameof(LoginForm.Email)).ShouldBeTrue();
-        result.Errors[nameof(LoginForm.Email)].ShouldContain(x => x.ErrorCode == ErrorCode.InvalidEmail.ToString());
+        result.Errors.ShouldNotBeEmpty();
+        result.Errors.ShouldContain(e => e.Field == nameof(LoginForm.Email) && e.Code == ErrorCode.InvalidEmail.ToString());
     }
 
     [Fact]

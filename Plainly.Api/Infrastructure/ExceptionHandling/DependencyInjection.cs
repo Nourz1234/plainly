@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Diagnostics;
-using Plainly.Api.Exceptions;
 using Plainly.Api.Infrastructure.Web;
-using Plainly.Shared;
 using Plainly.Shared.Responses;
 
 namespace Plainly.Api.Infrastructure.ExceptionHandling;
@@ -24,10 +22,10 @@ public static class DependencyInjection
             ErrorResponse response = exception switch
             {
                 BaseException baseException => baseException.ToResponse(traceId),
-                _ => new ErrorResponse { Message = Messages.InternalServerError, TraceId = traceId },
+                _ => ErrorResponse.InternalServerError().WithTraceId(traceId).Build(),
             };
 
-            context.Response.StatusCode = response.GetStatusCode();
+            context.Response.StatusCode = response.StatusCode;
             await context.Response.WriteAsJsonAsync(response);
         });
     }

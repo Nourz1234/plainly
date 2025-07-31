@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Plainly.Api.Infrastructure.Actions;
 using Plainly.Api.Infrastructure.Authorization;
-using Plainly.Shared;
 using Plainly.Shared.Actions.Heath.GetHealth;
 using Plainly.Shared.Responses;
 
@@ -18,10 +17,6 @@ public class HealthController(ActionDispatcher actionDispatcher) : ControllerBas
     {
         var result = await actionDispatcher.Dispatch<GetHealthAction, GetHealthRequest, GetHealthDTO>(new GetHealthRequest());
 
-        return new SuccessResponse<GetHealthDTO>
-        {
-            Message = Messages.Success,
-            Data = result
-        };
+        return SuccessResponse.Ok().Build(result);
     }
 }

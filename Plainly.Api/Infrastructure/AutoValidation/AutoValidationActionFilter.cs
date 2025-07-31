@@ -1,7 +1,6 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Plainly.Api.Infrastructure.Web;
-using Plainly.Shared;
 using Plainly.Shared.Responses;
 
 namespace Plainly.Api.Infrastructure.AutoValidation;
@@ -20,23 +19,16 @@ public class AutoValidationActionFilter(IServiceProvider serviceProvider) : IAsy
                 continue;
 
             var validationContext = new ValidationContext<object>(model);
-
             var result = validator.Validate(validationContext);
             if (!result.IsValid)
             {
-                var errors = result.Errors
-                    .GroupBy(e => e.PropertyName)
-                    .ToDictionary(
-                        g => g.Key,
-                        g => g.Select(e => new ValidationErrorDetail(e.ErrorMessage, e.ErrorCode)).ToArray()
-                    );
+                var errors = result.Errors.Select(e => new ErrorDetail(e.ErrorCode, e.ErrorMessage, e.PropertyName)).ToArray();
 
-                context.Result = new ValidationErrorResponse
-                {
-                    Message = Messages.ValidationError,
-                    Errors = errors,
-                    TraceId = context.HttpContext.GetTraceId()
-                }.Convert();
+                context.Result = ErrorResponse.ValidationError()
+                    .WithErrors(errors)
+                    .WithTraceId(context.HttpContext.GetTraceId())
+                    .Build()
+                    .ToActionResult();
                 return;
             }
         }

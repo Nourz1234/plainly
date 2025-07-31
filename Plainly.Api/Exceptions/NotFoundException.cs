@@ -1,3 +1,4 @@
+using Plainly.Api.Infrastructure.ExceptionHandling;
 using Plainly.Shared;
 using Plainly.Shared.Responses;
 
@@ -15,9 +16,5 @@ public class NotFoundException : BaseException
     public NotFoundException(string? message, Exception? innerException) : base(message ?? Messages.NotFound, innerException)
     { }
 
-    public override ErrorResponse ToResponse(string traceId) => new(StatusCodes.Status404NotFound)
-    {
-        Message = Message,
-        TraceId = traceId
-    };
+    public override ErrorResponse ToResponse(string traceId) => ErrorResponse.NotFound().WithMessage(Message).WithTraceId(traceId).Build();
 }

@@ -1,9 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Net;
-using System.Net.Http.Json;
-using Plainly.Shared;
-using Plainly.Shared.Responses;
-using Shouldly;
 
 namespace Plainly.Api.Tests.Integration;
 

@@ -1,8 +1,5 @@
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Plainly.Api.Exceptions;
 using Plainly.Api.Infrastructure.Web;
-using Plainly.Shared;
 using Plainly.Shared.Extensions;
 using Plainly.Shared.Interfaces;
 using Plainly.Shared.Responses;
@@ -23,11 +20,7 @@ public class AuthorizeActionFilter<TAction>(TAction action) : IAuthorizationFilt
         var user = context.HttpContext.User;
         if (user.Identity is null || !user.Identity.IsAuthenticated)
         {
-            context.Result = new ErrorResponse(StatusCodes.Status401Unauthorized)
-            {
-                Message = Messages.Unauthorized,
-                TraceId = context.HttpContext.GetTraceId()
-            }.Convert();
+            context.Result = ErrorResponse.Unauthorized().WithTraceId(context.HttpContext.GetTraceId()).Build().ToActionResult();
             return;
         }
 
@@ -42,11 +35,8 @@ public class AuthorizeActionFilter<TAction>(TAction action) : IAuthorizationFilt
 
         if (!scopes.Select(x => x.GetEnumMemberValue()).All(hasScope))
         {
-            context.Result = new ErrorResponse(StatusCodes.Status403Forbidden)
-            {
-                Message = Messages.Forbidden,
-                TraceId = context.HttpContext.GetTraceId()
-            }.Convert();
+            context.Result = ErrorResponse.Forbidden().WithTraceId(context.HttpContext.GetTraceId()).Build().ToActionResult();
+            return;
         }
     }
 }

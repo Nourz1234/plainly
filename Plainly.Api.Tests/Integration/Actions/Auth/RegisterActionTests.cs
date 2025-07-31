@@ -54,11 +54,11 @@ public class RegisterActionTests(AppFixture appFixture) : BaseActionTest<Registe
         response.StatusCode.ShouldBe(HttpStatusCode.UnprocessableEntity);
 
         // check response
-        var result = await GetValidationErrorAsync(response, TestContext.Current.CancellationToken);
+        var result = await GetErrorAsync(response, TestContext.Current.CancellationToken);
         result.ShouldNotBeNull();
         result.Success.ShouldBeFalse();
-        result.Errors.ContainsKey(nameof(RegisterForm.Email)).ShouldBeTrue();
-        result.Errors[nameof(RegisterForm.Email)].ShouldContain(x => x.ErrorCode == ErrorCode.InvalidEmail.ToString());
+        result.Errors.ShouldNotBeEmpty();
+        result.Errors.ShouldContain(e => e.Field == nameof(RegisterForm.Email) && e.Code == ErrorCode.InvalidEmail.ToString());
     }
 
     [Fact]
@@ -77,15 +77,13 @@ public class RegisterActionTests(AppFixture appFixture) : BaseActionTest<Registe
         ];
 
         // check response
-        var result = await GetValidationErrorAsync(response, TestContext.Current.CancellationToken);
+        var result = await GetErrorAsync(response, TestContext.Current.CancellationToken);
         result.ShouldNotBeNull();
         result.Success.ShouldBeFalse();
+        result.Errors.ShouldNotBeEmpty();
         foreach (var (fieldName, errorCode) in fields)
         {
-            result.Errors.ContainsKey(fieldName).ShouldBeTrue();
-            var errors = result.Errors[fieldName];
-            errors.ShouldNotBeEmpty();
-            errors.ShouldContain(x => x.ErrorCode == errorCode);
+            result.Errors.ShouldContain(e => e.Field == fieldName && e.Code == errorCode);
         }
     }
 
@@ -102,11 +100,11 @@ public class RegisterActionTests(AppFixture appFixture) : BaseActionTest<Registe
 
         var errorDescriber = new Microsoft.AspNetCore.Identity.IdentityErrorDescriber();
 
-        var result = await GetValidationErrorAsync(response, TestContext.Current.CancellationToken);
+        var result = await GetErrorAsync(response, TestContext.Current.CancellationToken);
         result.ShouldNotBeNull();
         result.Success.ShouldBeFalse();
-        result.Errors.ContainsKey("").ShouldBeTrue();
-        result.Errors[""].ShouldContain(x => x.ErrorCode == errorDescriber.DuplicateEmail(form.Email).Code);
+        result.Errors.ShouldNotBeEmpty();
+        result.Errors.ShouldContain(e => e.Code == errorDescriber.DuplicateEmail(form.Email).Code);
     }
 
 
@@ -118,18 +116,21 @@ public class RegisterActionTests(AppFixture appFixture) : BaseActionTest<Registe
         var response = await PerformActionAsync(payload, TestContext.Current.CancellationToken);
         response.StatusCode.ShouldBe(HttpStatusCode.UnprocessableEntity);
 
-        string[] expectedErrors = [
+        string[] expectedErrorCodes = [
             ErrorCode.PasswordTooShort.ToString(),
             ErrorCode.PasswordMissingSpecial.ToString(),
             ErrorCode.PasswordMissingUppercase.ToString(),
             ErrorCode.PasswordMissingLowercase.ToString(),
         ];
 
-        var result = await GetValidationErrorAsync(response, TestContext.Current.CancellationToken);
+        var result = await GetErrorAsync(response, TestContext.Current.CancellationToken);
         result.ShouldNotBeNull();
         result.Success.ShouldBeFalse();
-        result.Errors.ContainsKey(nameof(RegisterForm.Password)).ShouldBeTrue();
-        result.Errors[nameof(RegisterForm.Password)].ShouldAllBe(x => expectedErrors.Contains(x.ErrorCode));
+        result.Errors.ShouldNotBeEmpty();
+        foreach (var errorCode in expectedErrorCodes)
+        {
+            result.Errors.ShouldContain(e => e.Field == nameof(RegisterForm.Password) && e.Code == errorCode.ToString());
+        }
     }
 
     [Fact]
@@ -140,12 +141,10 @@ public class RegisterActionTests(AppFixture appFixture) : BaseActionTest<Registe
         var response = await PerformActionAsync(payload, TestContext.Current.CancellationToken);
         response.StatusCode.ShouldBe(HttpStatusCode.UnprocessableEntity);
 
-        var result = await GetValidationErrorAsync(response, TestContext.Current.CancellationToken);
+        var result = await GetErrorAsync(response, TestContext.Current.CancellationToken);
         result.ShouldNotBeNull();
         result.Success.ShouldBeFalse();
-        result.Errors.ContainsKey(nameof(RegisterForm.ConfirmPassword)).ShouldBeTrue();
-        result.Errors[nameof(RegisterForm.ConfirmPassword)].ShouldContain(x => x.ErrorCode == ErrorCode.PasswordMismatch.ToString());
+        result.Errors.ShouldNotBeEmpty();
+        result.Errors.ShouldContain(e => e.Field == nameof(RegisterForm.ConfirmPassword) && e.Code == ErrorCode.PasswordMismatch.ToString());
     }
-
-
 }

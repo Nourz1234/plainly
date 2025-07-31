@@ -1,3 +1,4 @@
+using Plainly.Api.Infrastructure.ExceptionHandling;
 using Plainly.Shared;
 using Plainly.Shared.Responses;
 
@@ -15,9 +16,5 @@ public class UnauthorizedException : BaseException
     public UnauthorizedException(string? message, Exception? innerException) : base(message ?? Messages.Unauthorized, innerException)
     { }
 
-    public override ErrorResponse ToResponse(string traceId) => new(StatusCodes.Status401Unauthorized)
-    {
-        Message = Message,
-        TraceId = traceId
-    };
+    public override ErrorResponse ToResponse(string traceId) => ErrorResponse.Unauthorized().WithMessage(Message).WithTraceId(traceId).Build();
 }

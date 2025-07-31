@@ -1,21 +1,32 @@
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http;
-using Plainly.Shared.Abstractions;
+using Plainly.Shared.Builders;
 
 namespace Plainly.Shared.Responses;
 
-[JsonDerivedType(typeof(ValidationErrorResponse))]
-public class ErrorResponse : BaseResponse
+public record ErrorResponse() : BaseResponse()
 {
-    public ErrorResponse() : base(StatusCodes.Status500InternalServerError) { }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public ErrorDetail[]? Errors { get; init; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? TraceId { get; init; }
 
-    public ErrorResponse(int status) : base(status)
-    {
-        if (status is not (>= 400 and <= 599))
-            throw new ArgumentException("Error response status code must be in the 400s or 500s");
-    }
 
-    public override bool Success => false;
-    public required override string Message { get; init; }
-    public required string TraceId { get; init; }
+    public static ErrorResponseBuilder InternalServerError()
+        => new(StatusCodes.Status500InternalServerError, Messages.InternalServerError);
+
+    public static ErrorResponseBuilder BadRequest()
+        => new(StatusCodes.Status400BadRequest, Messages.BadRequest);
+
+    public static ErrorResponseBuilder Unauthorized()
+        => new(StatusCodes.Status401Unauthorized, Messages.Unauthorized);
+
+    public static ErrorResponseBuilder Forbidden()
+        => new(StatusCodes.Status403Forbidden, Messages.Forbidden);
+
+    public static ErrorResponseBuilder NotFound()
+        => new(StatusCodes.Status404NotFound, Messages.NotFound);
+
+    public static ErrorResponseBuilder ValidationError()
+        => new(StatusCodes.Status422UnprocessableEntity, Messages.ValidationError);
 }

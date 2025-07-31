@@ -18,7 +18,7 @@ public class UserController(ActionDispatcher actionDispatcher) : ControllerBase
     {
         var result = await actionDispatcher.Dispatch<ViewProfileAction, ViewProfileRequest, ViewProfileDTO>(new ViewProfileRequest());
 
-        return new SuccessResponse<ViewProfileDTO> { Message = Messages.Success, Data = result };
+        return SuccessResponse.Ok().Build(result);
     }
 
     [AuthorizeAction<EditProfileAction>]
@@ -27,6 +27,6 @@ public class UserController(ActionDispatcher actionDispatcher) : ControllerBase
     {
         var result = await actionDispatcher.Dispatch<EditProfileAction, EditProfileRequest, EditProfileDTO>(new EditProfileRequest(form));
 
-        return new SuccessResponse<EditProfileDTO> { Message = Messages.Success, Data = result };
+        return SuccessResponse.Ok().Build(result);
     }
 }

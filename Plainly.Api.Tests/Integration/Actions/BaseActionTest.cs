@@ -1,7 +1,5 @@
-using System.Net.Http.Json;
 using Plainly.Api.Tests.Integration.Data;
 using Plainly.Shared.Interfaces;
-using Plainly.Shared.Responses;
 
 namespace Plainly.Api.Tests.Integration.Actions;
 
@@ -69,11 +67,6 @@ public abstract class BaseActionTest<TAction, TRequest, TResponse>(AppFixture ap
     protected Task<ErrorResponse?> GetErrorAsync(HttpResponseMessage response, CancellationToken cancellationToken = default)
     {
         return response.Content.ReadFromJsonAsync<ErrorResponse>(cancellationToken);
-    }
-
-    protected Task<ValidationErrorResponse?> GetValidationErrorAsync(HttpResponseMessage response, CancellationToken cancellationToken = default)
-    {
-        return response.Content.ReadFromJsonAsync<ValidationErrorResponse>(cancellationToken);
     }
 }
 

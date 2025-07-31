@@ -1,8 +1,7 @@
-using Microsoft.AspNetCore.Mvc;
 using Plainly.Shared.Responses;
 
 
-namespace Plainly.Api.Exceptions;
+namespace Plainly.Api.Infrastructure.ExceptionHandling;
 
 public abstract class BaseException : Exception
 {

@@ -142,7 +142,7 @@ public class ExceptionsTests
     [Fact]
     public void ValidationException_WithErrors_ShouldSetErrors()
     {
-        var errors = new Dictionary<string, ValidationErrorDetail[]> { ["field1"] = [new("test", "test")] };
+        var errors = new ErrorDetail[] { new("test", "test") };
         var exception = new ValidationException("Test message", errors);
         exception.Message.ShouldBe("Test message");
         exception.Errors.ShouldBeEquivalentTo(errors);
@@ -160,7 +160,7 @@ public class ExceptionsTests
     [Fact]
     public void ValidationException_WithErrorsAndInnerException_ShouldSetErrorsAndInnerException()
     {
-        var errors = new Dictionary<string, ValidationErrorDetail[]> { ["field1"] = [new("test", "test")] };
+        var errors = new ErrorDetail[] { new("test", "test") };
         var innerException = new Exception();
         var exception = new ValidationException("Test message", errors, innerException);
         exception.Message.ShouldBe("Test message");

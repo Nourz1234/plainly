@@ -9,9 +9,9 @@ public static class IdentityResultExtensions
     public static void ThrowIfFailed(this IdentityResult result)
     {
         if (!result.Succeeded)
-            throw new ValidationException(errors: new()
-            {
-                [""] = result.Errors.Select(x => new ValidationErrorDetail(x.Description, x.Code)).ToArray()
-            });
+        {
+            var errors = result.Errors.Select(error => new ErrorDetail(error.Code, error.Description)).ToArray();
+            throw new ValidationException(errors);
+        }
     }
 }

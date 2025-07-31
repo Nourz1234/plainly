@@ -21,10 +21,9 @@ using Plainly.Api.Entities;
 using System.Diagnostics;
 using Plainly.Api.Infrastructure.Logging;
 using Microsoft.AspNetCore.Mvc;
-using Plainly.Shared.Responses;
 using Plainly.Api.Infrastructure.Web;
 using Plainly.Api.Infrastructure.Identity;
-using System.Text.Json;
+using Plainly.Shared.Responses;
 
 namespace Plainly.Api;
 
@@ -121,25 +120,17 @@ public class Startup(IConfiguration configuration)
                     .ToArray();
                 if (extraFields.Length > 0)
                 {
-                    var errors = new Dictionary<string, ValidationErrorDetail[]>
-                    {
-                        [""] = extraFields.Select(
-                            field => new ValidationErrorDetail(string.Format(Messages.UnknownField, field), ErrorCode.UnknownField.ToString())
-                        ).ToArray()
-                    };
-                    return new ValidationErrorResponse
-                    {
-                        Message = Messages.ValidationError,
-                        Errors = errors,
-                        TraceId = context.HttpContext.GetTraceId()
-                    }.Convert();
+                    var errors = extraFields.Select(
+                        field => new ErrorDetail(ErrorCode.UnknownField.ToString(), string.Format(Messages.UnknownField, field))
+                    ).ToArray();
+                    return ErrorResponse.ValidationError()
+                        .WithErrors(errors)
+                        .WithTraceId(context.HttpContext.GetTraceId())
+                        .Build()
+                        .ToActionResult();
                 }
 
-                return new ErrorResponse(StatusCodes.Status400BadRequest)
-                {
-                    Message = Messages.BadRequest,
-                    TraceId = context.HttpContext.GetTraceId()
-                }.Convert();
+                return ErrorResponse.BadRequest().WithTraceId(context.HttpContext.GetTraceId()).Build().ToActionResult();
             };
         });
     }
