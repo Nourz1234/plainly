@@ -4,7 +4,6 @@ using Plainly.Api.Extensions;
 using Plainly.Api.Infrastructure.Jwt;
 using Plainly.Shared;
 using Plainly.Shared.Actions.Auth.Register;
-using Plainly.Shared.Extensions;
 using Plainly.Shared.Interfaces;
 
 namespace Plainly.Api.Actions.Auth;

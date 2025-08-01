@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Plainly.Api.Infrastructure.Actions;
 using Plainly.Api.Infrastructure.Authorization;
-using Plainly.Shared;
 using Plainly.Shared.Actions.User.EditProfile;
 using Plainly.Shared.Actions.User.ViewProfile;
 using Plainly.Shared.Responses;

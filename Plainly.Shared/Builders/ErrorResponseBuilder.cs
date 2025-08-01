@@ -7,8 +7,8 @@ public class ErrorResponseBuilder
     protected readonly bool _Success = false;
     protected readonly int _StatusCode;
     protected string _Message;
+    protected string? _ErrorCode;
     protected ErrorDetail[]? _Errors;
-    protected string? _TraceId;
 
     internal ErrorResponseBuilder(int statusCode, string message)
     {
@@ -28,11 +28,6 @@ public class ErrorResponseBuilder
         return this;
     }
 
-    public ErrorResponseBuilder WithTraceId(string traceId)
-    {
-        _TraceId = traceId;
-        return this;
-    }
 
-    public ErrorResponse Build() => new() { Success = _Success, StatusCode = _StatusCode, Message = _Message, Errors = _Errors, TraceId = _TraceId };
+    public ErrorResponse Build(string traceId) => new() { Success = _Success, StatusCode = _StatusCode, Message = _Message, Errors = _Errors, TraceId = traceId };
 }

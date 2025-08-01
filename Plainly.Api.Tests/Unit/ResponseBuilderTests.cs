@@ -5,7 +5,7 @@ namespace Plainly.Api.Tests.Unit;
 public class ResponseBuilderTests
 {
     [Fact]
-    public void SuccessResponse_NoMessage_ShouldShouldSetDefaultMessage()
+    public void SuccessResponse_Default_ShouldSetDefaultMessage()
     {
         var response = SuccessResponse.Ok().Build();
         response.Success.ShouldBeTrue();
@@ -14,7 +14,7 @@ public class ResponseBuilderTests
     }
 
     [Fact]
-    public void SuccessResponse_WithMessage_ShouldShouldSetMessage()
+    public void SuccessResponse_WithMessage_ShouldSetMessage()
     {
         var message = "Test message";
         var response = SuccessResponse.Ok().WithMessage(message).Build();
@@ -24,7 +24,7 @@ public class ResponseBuilderTests
     }
 
     [Fact]
-    public void SuccessResponse_WithData_ShouldShouldSetData()
+    public void SuccessResponse_WithData_ShouldSetData()
     {
         var data = new { Id = 1, Name = "Test" };
         var response = SuccessResponse.Ok().Build(data);
@@ -35,7 +35,7 @@ public class ResponseBuilderTests
     }
 
     [Fact]
-    public void SuccessResponse_WithMessageAndData_ShouldShouldSetData()
+    public void SuccessResponse_WithMessageAndData_ShouldSetData()
     {
         var message = "Test message";
         var data = new { Id = 1, Name = "Test" };
@@ -47,44 +47,38 @@ public class ResponseBuilderTests
     }
 
     [Fact]
-    public void ErrorResponse_NoMessage_ShouldShouldSetDefaultMessage()
-    {
-        var response = ErrorResponse.BadRequest().Build();
-        response.Success.ShouldBeFalse();
-        response.StatusCode.ShouldBe(StatusCodes.Status400BadRequest);
-        response.Message.ShouldBe(Messages.BadRequest);
-    }
-
-    [Fact]
-    public void ErrorResponse_WithMessage_ShouldShouldSetMessage()
-    {
-        var message = "Test message";
-        var response = ErrorResponse.BadRequest().WithMessage(message).Build();
-        response.Success.ShouldBeFalse();
-        response.StatusCode.ShouldBe(StatusCodes.Status400BadRequest);
-        response.Message.ShouldBe(message);
-    }
-
-    [Fact]
-    public void ErrorResponse_WithErrors_ShouldSetErrors()
-    {
-        var errors = new ErrorDetail[] { new("test", "test") };
-        var response = ErrorResponse.BadRequest().WithErrors(errors).Build();
-        response.Success.ShouldBeFalse();
-        response.StatusCode.ShouldBe(StatusCodes.Status400BadRequest);
-        response.Message.ShouldBe(Messages.BadRequest);
-        response.Errors.ShouldBe(errors);
-    }
-
-    [Fact]
-    public void ErrorResponse_WithTraceId_ShouldSetTraceId()
+    public void ErrorResponse_Default_ShouldSetDefaultMessage()
     {
         var traceId = "test-trace-id";
-        var response = ErrorResponse.BadRequest().WithTraceId(traceId).Build();
+        var response = ErrorResponse.BadRequest().Build(traceId);
         response.Success.ShouldBeFalse();
         response.StatusCode.ShouldBe(StatusCodes.Status400BadRequest);
         response.Message.ShouldBe(Messages.BadRequest);
         response.TraceId.ShouldBe(traceId);
     }
 
+    [Fact]
+    public void ErrorResponse_WithMessage_ShouldSetMessage()
+    {
+        var traceId = "test-trace-id";
+        var message = "Test message";
+        var response = ErrorResponse.BadRequest().WithMessage(message).Build(traceId);
+        response.Success.ShouldBeFalse();
+        response.StatusCode.ShouldBe(StatusCodes.Status400BadRequest);
+        response.Message.ShouldBe(message);
+        response.TraceId.ShouldBe(traceId);
+    }
+
+    [Fact]
+    public void ErrorResponse_WithErrors_ShouldSetErrors()
+    {
+        var traceId = "test-trace-id";
+        var errors = new ErrorDetail[] { new("test", "test") };
+        var response = ErrorResponse.BadRequest().WithErrors(errors).Build(traceId);
+        response.Success.ShouldBeFalse();
+        response.StatusCode.ShouldBe(StatusCodes.Status400BadRequest);
+        response.Message.ShouldBe(Messages.BadRequest);
+        response.Errors.ShouldBe(errors);
+        response.TraceId.ShouldBe(traceId);
+    }
 }

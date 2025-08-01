@@ -1,5 +1,4 @@
-namespace Plainly.Api.Infrastructure.Environment;
-
+namespace Plainly.Api.Extensions;
 
 public static class EnvironmentExtensions
 {

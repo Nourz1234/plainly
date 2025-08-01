@@ -1,12 +1,13 @@
-using Plainly.Api.Infrastructure.ExceptionHandling;
 using Plainly.Shared;
-using Plainly.Shared.Responses;
+using Plainly.Shared.Interfaces;
 
 
 namespace Plainly.Api.Exceptions;
 
-public class ForbiddenException : BaseException
+public class ForbiddenException : Exception, IHttpException
 {
+    public int StatusCode => StatusCodes.Status403Forbidden;
+
     public ForbiddenException() : base(Messages.Forbidden)
     { }
 
@@ -15,6 +16,4 @@ public class ForbiddenException : BaseException
 
     public ForbiddenException(string? message, Exception? innerException) : base(message ?? Messages.Forbidden, innerException)
     { }
-
-    public override ErrorResponse ToResponse(string traceId) => ErrorResponse.Forbidden().WithMessage(Message).WithTraceId(traceId).Build();
 }

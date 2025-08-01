@@ -46,6 +46,11 @@ public abstract class BaseActionTest(AppFixture appFixture)
     {
         return PerformActionAsync(null, content, asUser, cancellationToken);
     }
+
+    protected Task<ErrorResponse?> GetErrorAsync(HttpResponseMessage response, CancellationToken cancellationToken = default)
+    {
+        return response.Content.ReadFromJsonAsync<ErrorResponse>(cancellationToken);
+    }
 }
 
 public abstract class BaseActionTest<TAction, TRequest>(AppFixture appFixture) : BaseActionTest(appFixture)
@@ -62,11 +67,6 @@ public abstract class BaseActionTest<TAction, TRequest, TResponse>(AppFixture ap
     protected Task<SuccessResponse<TResponse>?> GetResultAsync(HttpResponseMessage response, CancellationToken cancellationToken = default)
     {
         return response.Content.ReadFromJsonAsync<SuccessResponse<TResponse>>(cancellationToken);
-    }
-
-    protected Task<ErrorResponse?> GetErrorAsync(HttpResponseMessage response, CancellationToken cancellationToken = default)
-    {
-        return response.Content.ReadFromJsonAsync<ErrorResponse>(cancellationToken);
     }
 }
 

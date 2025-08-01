@@ -4,9 +4,9 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Plainly.Api.Data.AppDatabase;
+using Plainly.Api.Extensions;
 using Plainly.Api.Infrastructure.Jwt;
 using Plainly.Api.Tests.Integration.Data;
-using Plainly.Shared.Extensions;
 
 namespace Plainly.Api.Tests.Integration;
 

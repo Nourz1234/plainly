@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Identity;
-using Plainly.Api.Entities;
 using Plainly.Api.Exceptions;
 using Plainly.Api.Infrastructure.Jwt;
 using Plainly.Shared;

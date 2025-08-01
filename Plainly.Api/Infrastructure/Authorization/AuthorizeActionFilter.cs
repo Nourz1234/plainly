@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc.Filters;
-using Plainly.Api.Infrastructure.Web;
-using Plainly.Shared.Extensions;
+using Plainly.Api.Extensions;
 using Plainly.Shared.Interfaces;
 using Plainly.Shared.Responses;
 
@@ -11,8 +10,8 @@ public class AuthorizeActionFilter<TAction>(TAction action) : IAuthorizationFilt
 {
     public void OnAuthorization(AuthorizationFilterContext context)
     {
-        var scopes = action.RequiredScopes;
-        if (scopes.Length == 0)
+        var actionScopes = action.RequiredScopes.Select(x => x.GetEnumMemberValue()).ToArray();
+        if (actionScopes.Length == 0)
         {
             return;
         }
@@ -20,7 +19,7 @@ public class AuthorizeActionFilter<TAction>(TAction action) : IAuthorizationFilt
         var user = context.HttpContext.User;
         if (user.Identity is null || !user.Identity.IsAuthenticated)
         {
-            context.Result = ErrorResponse.Unauthorized().WithTraceId(context.HttpContext.GetTraceId()).Build().ToActionResult();
+            context.Result = ErrorResponse.Unauthorized().Build(context.HttpContext.GetTraceId()).ToActionResult();
             return;
         }
 
@@ -31,11 +30,11 @@ public class AuthorizeActionFilter<TAction>(TAction action) : IAuthorizationFilt
         }
 
         var userScopes = user.FindAll("scopes").Select(c => c.Value).ToArray();
-        bool hasScope(string scope) => userScopes.Any(userScope => userScope == scope || scope.StartsWith(userScope + "."));
+        bool userHasScope(string scope) => userScopes.Any(userScope => userScope == scope || scope.StartsWith(userScope + "."));
 
-        if (!scopes.Select(x => x.GetEnumMemberValue()).All(hasScope))
+        if (!actionScopes.All(userHasScope))
         {
-            context.Result = ErrorResponse.Forbidden().WithTraceId(context.HttpContext.GetTraceId()).Build().ToActionResult();
+            context.Result = ErrorResponse.Forbidden().Build(context.HttpContext.GetTraceId()).ToActionResult();
             return;
         }
     }

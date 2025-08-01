@@ -1,7 +1,7 @@
 using System.Reflection;
 using System.Runtime.Serialization;
 
-namespace Plainly.Shared.Extensions;
+namespace Plainly.Api.Extensions;
 
 public static class EnumExtensions
 {

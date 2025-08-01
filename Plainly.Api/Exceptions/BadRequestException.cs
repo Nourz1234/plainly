@@ -1,12 +1,13 @@
-using Plainly.Api.Infrastructure.ExceptionHandling;
 using Plainly.Shared;
-using Plainly.Shared.Responses;
+using Plainly.Shared.Interfaces;
 
 
 namespace Plainly.Api.Exceptions;
 
-public class BadRequestException : BaseException
+public class BadRequestException : Exception, IHttpException
 {
+    public int StatusCode => StatusCodes.Status400BadRequest;
+
     public BadRequestException() : base(Messages.BadRequest)
     { }
 
@@ -15,6 +16,4 @@ public class BadRequestException : BaseException
 
     public BadRequestException(string? message, Exception? innerException) : base(message ?? Messages.BadRequest, innerException)
     { }
-
-    public override ErrorResponse ToResponse(string traceId) => ErrorResponse.BadRequest().WithMessage(Message).WithTraceId(traceId).Build();
 }

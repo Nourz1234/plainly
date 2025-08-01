@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using Plainly.Api.Tests.Integration.Data;
 using Plainly.Shared.Interfaces;
 
@@ -12,6 +13,12 @@ public abstract class AuthedActionTest<TAction, TRequest>(AppFixture appFixture)
     {
         var response = await PerformActionAsync(TestContext.Current.CancellationToken);
         response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+
+        var result = await GetErrorAsync(response, TestContext.Current.CancellationToken);
+        result.ShouldNotBeNull();
+        result.Success.ShouldBeFalse();
+        result.StatusCode.ShouldBe(StatusCodes.Status401Unauthorized);
+        result.TraceId.ShouldNotBeEmpty();
     }
 
     [Fact]
@@ -19,6 +26,12 @@ public abstract class AuthedActionTest<TAction, TRequest>(AppFixture appFixture)
     {
         var response = await PerformActionAsync(Users.NoScopesUser, TestContext.Current.CancellationToken);
         response.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+
+        var result = await GetErrorAsync(response, TestContext.Current.CancellationToken);
+        result.ShouldNotBeNull();
+        result.Success.ShouldBeFalse();
+        result.StatusCode.ShouldBe(StatusCodes.Status403Forbidden);
+        result.TraceId.ShouldNotBeEmpty();
     }
 }
 

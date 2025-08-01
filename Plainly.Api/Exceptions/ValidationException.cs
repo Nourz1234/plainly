@@ -1,12 +1,14 @@
-using Plainly.Api.Infrastructure.ExceptionHandling;
 using Plainly.Shared;
+using Plainly.Shared.Interfaces;
 using Plainly.Shared.Responses;
 
 
 namespace Plainly.Api.Exceptions;
 
-public class ValidationException : BaseException
+public class ValidationException : Exception, IHttpException, IExceptionWithErrors
 {
+    public int StatusCode => StatusCodes.Status422UnprocessableEntity;
+
     public ErrorDetail[]? Errors { get; } = null;
 
 
@@ -36,10 +38,4 @@ public class ValidationException : BaseException
     {
         Errors = errors;
     }
-
-    public override ErrorResponse ToResponse(string traceId) => Errors switch
-    {
-        null => ErrorResponse.ValidationError().WithMessage(Message).WithTraceId(traceId).Build(),
-        _ => ErrorResponse.ValidationError().WithMessage(Message).WithErrors(Errors).WithTraceId(traceId).Build(),
-    };
 }

@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace Plainly.Api.Infrastructure.Web;
+namespace Plainly.Api.Extensions;
 
 public static class HttpContextExtensions
 {

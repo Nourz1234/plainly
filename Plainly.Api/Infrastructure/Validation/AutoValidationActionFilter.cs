@@ -1,9 +1,9 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Plainly.Api.Infrastructure.Web;
+using Plainly.Api.Extensions;
 using Plainly.Shared.Responses;
 
-namespace Plainly.Api.Infrastructure.AutoValidation;
+namespace Plainly.Api.Infrastructure.Validation;
 
 public class AutoValidationActionFilter(IServiceProvider serviceProvider) : IAsyncActionFilter
 {
@@ -26,8 +26,7 @@ public class AutoValidationActionFilter(IServiceProvider serviceProvider) : IAsy
 
                 context.Result = ErrorResponse.ValidationError()
                     .WithErrors(errors)
-                    .WithTraceId(context.HttpContext.GetTraceId())
-                    .Build()
+                    .Build(context.HttpContext.GetTraceId())
                     .ToActionResult();
                 return;
             }
