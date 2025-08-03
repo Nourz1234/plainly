@@ -5,8 +5,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Plainly.Api.Data.AppDatabase;
 using Plainly.Api.Extensions;
-using Plainly.Api.Infrastructure.Jwt;
 using Plainly.Api.Tests.Integration.Data;
+using Plainly.Infrastructure.Jwt;
+using Plainly.Infrastructure.Persistence.AppDatabase.Entities;
 
 namespace Plainly.Api.Tests.Integration;
 
@@ -17,8 +18,8 @@ public class AppFixture : IAsyncLifetime
 
     public readonly HttpClient Client = Factory.CreateClient();
     public readonly AppDbContext DbContext = Factory.Services.GetRequiredService<AppDbContext>();
-    public readonly UserManager<Entities.User> UserManager = Factory.Services.GetRequiredService<UserManager<Entities.User>>();
-    public readonly SignInManager<Entities.User> SignInManager = Factory.Services.GetRequiredService<SignInManager<Entities.User>>();
+    public readonly UserManager<Plainly.Infrastructure.Persistence.AppDatabase.Entities.User> UserManager = Factory.Services.GetRequiredService<UserManager<Plainly.Infrastructure.Persistence.AppDatabase.Entities.User>>();
+    public readonly SignInManager<Plainly.Infrastructure.Persistence.AppDatabase.Entities.User> SignInManager = Factory.Services.GetRequiredService<SignInManager<Plainly.Infrastructure.Persistence.AppDatabase.Entities.User>>();
     public readonly JwtService JwtService = Factory.Services.GetRequiredService<JwtService>();
 
     public async Task<HttpClient> GetClientForUser(User user)

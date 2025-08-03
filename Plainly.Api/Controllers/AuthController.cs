@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Plainly.Api.Infrastructure.Actions;
+using Plainly.Api.Actions;
 using Plainly.Api.Infrastructure.Authorization;
 using Plainly.Shared.Actions.Auth.Login;
 using Plainly.Shared.Actions.Auth.Register;
