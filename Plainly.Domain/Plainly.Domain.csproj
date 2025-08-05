@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Plainly.Shared\Plainly.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

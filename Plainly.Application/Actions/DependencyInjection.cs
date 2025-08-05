@@ -1,6 +1,7 @@
+using Microsoft.Extensions.DependencyInjection;
 using Plainly.Shared.Interfaces;
 
-namespace Plainly.Api.Actions;
+namespace Plainly.Application.Actions;
 
 public static class DependencyInjection
 {
@@ -12,11 +13,11 @@ public static class DependencyInjection
         // Add actions and action handlers
         services.Scan(scan =>
         {
-            scan.FromAssemblyOf<IAction>()
+            scan.FromAssemblyOf<Plainly.Shared.Main>()
                 .AddClasses(c => c.AssignableTo(typeof(IAction<,>)))
                 .AsSelf()
                 .WithScopedLifetime();
-            scan.FromAssemblyOf<Program>()
+            scan.FromAssemblyOf<Plainly.Application.Main>()
                 .AddClasses(c => c.AssignableTo(typeof(IActionHandler<,,>)))
                 .AsImplementedInterfaces()
                 .WithScopedLifetime();

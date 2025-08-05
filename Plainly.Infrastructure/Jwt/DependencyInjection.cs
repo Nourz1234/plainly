@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Plainly.Application.Interface;
 
 namespace Plainly.Infrastructure.Jwt;
 
@@ -32,7 +33,7 @@ public static class DependencyInjection
                 };
             });
         // Add service
-        services.AddScoped<JwtService>();
+        services.AddScoped<IJwtService, JwtService>();
         // Add options
         services.Configure<JwtOptions>(configuration.GetSection("Jwt"));
         return services;

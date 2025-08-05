@@ -9,4 +9,6 @@ public interface IUser : IEntity
     string Id { get; set; }
     string FullName { get; set; }
     string? Email { get; set; }
+    bool IsActive { get; set; }
+    DateTime? LastLoginAt { get; set; }
 }

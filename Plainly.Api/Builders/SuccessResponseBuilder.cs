@@ -1,17 +1,19 @@
 using Plainly.Shared.Responses;
 
-namespace Plainly.Shared.Builders;
+namespace Plainly.Api.Builders;
 
 
 public class SuccessResponseBuilder
 {
+
+    public static SuccessResponseBuilder Ok() => new(StatusCodes.Status200OK, Domain.Messages.Success);
+    public static SuccessResponseBuilder Created() => new(StatusCodes.Status201Created, Domain.Messages.Success);
+
     protected readonly bool _Success = true;
     protected readonly int _StatusCode;
     protected string _Message;
-    protected ErrorDetail[]? _Errors;
-    protected string? _TraceId;
 
-    internal SuccessResponseBuilder(int statusCode, string message)
+    private SuccessResponseBuilder(int statusCode, string message)
     {
         _StatusCode = statusCode;
         _Message = message;

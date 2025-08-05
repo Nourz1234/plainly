@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Plainly.Api.Builders;
+using Plainly.Api.Exceptions;
 using Plainly.Api.Extensions;
+using Plainly.Domain;
 using Plainly.Shared;
-using Plainly.Shared.Interfaces;
+using Plainly.Shared.Extensions;
 using Plainly.Shared.Responses;
 
 namespace Plainly.Api.ExceptionHandling;
@@ -28,12 +31,12 @@ public static class DependencyInjection
     {
         var exceptionFeature = context.Features.Get<IExceptionHandlerPathFeature>();
         var exception = exceptionFeature?.Error;
-        var traceId = context.GetTraceId();
 
         ErrorResponse response = exception switch
         {
-            IHttpException baseException => ErrorResponse.FromException(baseException).Build(traceId),
-            _ => ErrorResponse.InternalServerError().Build(traceId),
+            ApiException apiException => ErrorResponseBuilder.FromApiException(apiException).Build(context),
+            DomainError domainError => ErrorResponseBuilder.FromDomainError(domainError).Build(context),
+            _ => ErrorResponseBuilder.FromErrorCode(ErrorCode.InternalError).Build(context),
         };
 
         context.Response.StatusCode = response.StatusCode;
@@ -50,14 +53,14 @@ public static class DependencyInjection
         if (extraFields.Length > 0)
         {
             var errors = extraFields.Select(
-                field => new ErrorDetail(ErrorCode.UnknownField.ToString(), string.Format(Messages.UnknownField, field))
+                field => new ErrorDetail(ValidationError.UnknownField.ToString(), ValidationError.UnknownField.GetDescription(), field)
             ).ToArray();
-            return ErrorResponse.ValidationError()
+            return ErrorResponseBuilder.FromErrorCode(ErrorCode.ValidationError)
                 .WithErrors(errors)
-                .Build(context.HttpContext.GetTraceId())
+                .Build(context.HttpContext)
                 .ToActionResult();
         }
 
-        return ErrorResponse.BadRequest().Build(context.HttpContext.GetTraceId()).ToActionResult();
+        return ErrorResponseBuilder.FromErrorCode(ErrorCode.BadRequest).Build(context.HttpContext).ToActionResult();
     }
 }

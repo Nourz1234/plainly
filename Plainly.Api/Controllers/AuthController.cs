@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using Plainly.Api.Actions;
-using Plainly.Api.Infrastructure.Authorization;
+using Plainly.Api.Authorization;
+using Plainly.Api.Builders;
+using Plainly.Application.Actions;
 using Plainly.Shared.Actions.Auth.Login;
 using Plainly.Shared.Actions.Auth.Register;
 using Plainly.Shared.Responses;
@@ -18,7 +19,7 @@ public class AuthController(ActionDispatcher actionDispatcher) : ControllerBase
     {
         var result = await actionDispatcher.Dispatch<RegisterAction, RegisterRequest, RegisterDTO>(new RegisterRequest(form));
 
-        return SuccessResponse.Created().Build(result);
+        return SuccessResponseBuilder.Created().Build(result);
     }
 
     [AuthorizeAction<LoginAction>]
@@ -27,6 +28,6 @@ public class AuthController(ActionDispatcher actionDispatcher) : ControllerBase
     {
         var result = await actionDispatcher.Dispatch<LoginAction, LoginRequest, LoginDTO>(new LoginRequest(form));
 
-        return SuccessResponse.Ok().Build(result);
+        return SuccessResponseBuilder.Ok().Build(result);
     }
 }

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using Plainly.Api.Actions;
-using Plainly.Api.Infrastructure.Authorization;
+using Plainly.Api.Authorization;
+using Plainly.Api.Builders;
+using Plainly.Application.Actions;
 using Plainly.Shared.Actions.User.EditProfile;
 using Plainly.Shared.Actions.User.ViewProfile;
 using Plainly.Shared.Responses;
@@ -17,7 +18,7 @@ public class UserController(ActionDispatcher actionDispatcher) : ControllerBase
     {
         var result = await actionDispatcher.Dispatch<ViewProfileAction, ViewProfileRequest, ViewProfileDTO>(new ViewProfileRequest());
 
-        return SuccessResponse.Ok().Build(result);
+        return SuccessResponseBuilder.Ok().Build(result);
     }
 
     [AuthorizeAction<EditProfileAction>]
@@ -26,6 +27,6 @@ public class UserController(ActionDispatcher actionDispatcher) : ControllerBase
     {
         var result = await actionDispatcher.Dispatch<EditProfileAction, EditProfileRequest, EditProfileDTO>(new EditProfileRequest(form));
 
-        return SuccessResponse.Ok().Build(result);
+        return SuccessResponseBuilder.Ok().Build(result);
     }
 }

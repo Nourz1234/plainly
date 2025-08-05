@@ -2,15 +2,13 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Plainly.Domain.Interfaces;
 using Plainly.Domain.Interfaces.Repositories;
+using Plainly.Infrastructure.Extensions;
 using Plainly.Infrastructure.Persistence.AppDatabase.Entities;
 
 namespace Plainly.Infrastructure.Persistence.AppDatabase.Repositories;
 
 public class UserRepository(UserManager<User> userManager) : IUserRepository
 {
-    private static User AsUser(IUser user) => user as User ?? throw new ArgumentException("Must be of type User", nameof(user));
-
-
     public async Task<IUser> CreateAsync(string fullName, string email, string password)
     {
         var userEntity = new User
@@ -19,7 +17,7 @@ public class UserRepository(UserManager<User> userManager) : IUserRepository
             Email = email,
         };
         var result = await userManager.CreateAsync(userEntity, password);
-        // result.ThrowIfFailed();
+        result.ThrowIfFailed();
         return userEntity;
     }
 
@@ -39,36 +37,38 @@ public class UserRepository(UserManager<User> userManager) : IUserRepository
     }
     public async Task<string[]> GetRolesAsync(IUser user)
     {
-        return (await userManager.GetRolesAsync(AsUser(user))).ToArray();
+        return (await userManager.GetRolesAsync(user.AsEntity())).ToArray();
     }
 
     public Task AddRoleAsync(IUser user, string role)
     {
-        return userManager.AddToRoleAsync(AsUser(user), role);
+        return userManager.AddToRoleAsync(user.AsEntity(), role);
     }
 
     public async Task RemoveRoleAsync(IUser user, string role)
     {
-        await userManager.RemoveFromRoleAsync(AsUser(user), role);
+        await userManager.RemoveFromRoleAsync(user.AsEntity(), role);
     }
 
     public Task AddClaimAsync(IUser user, Claim claim)
     {
-        return userManager.AddClaimAsync(AsUser(user), claim);
+        return userManager.AddClaimAsync(user.AsEntity(), claim);
     }
 
     public async Task<Claim[]> GetClaimsAsync(IUser user)
     {
-        return (await userManager.GetClaimsAsync(AsUser(user))).ToArray();
+        return (await userManager.GetClaimsAsync(user.AsEntity())).ToArray();
     }
 
     public async Task RemoveClaimAsync(IUser user, Claim claim)
     {
-        await userManager.RemoveClaimAsync(AsUser(user), claim);
+        var result = await userManager.RemoveClaimAsync(user.AsEntity(), claim);
+        result.ThrowIfFailed();
     }
 
     public async Task UpdateAsync(IUser user)
     {
-        await userManager.UpdateAsync(AsUser(user));
+        var result = await userManager.UpdateAsync(user.AsEntity());
+        result.ThrowIfFailed();
     }
 }

@@ -1,4 +1,5 @@
 using Bogus;
+using Plainly.Domain;
 using Plainly.Shared.Actions.Auth.Register;
 
 namespace Plainly.Api.Tests.Integration.Actions.Auth;
@@ -58,7 +59,7 @@ public class RegisterActionTests(AppFixture appFixture) : BaseActionTest<Registe
         result.ShouldNotBeNull();
         result.Success.ShouldBeFalse();
         result.Errors.ShouldNotBeEmpty();
-        result.Errors.ShouldContain(e => e.Field == nameof(RegisterForm.Email) && e.Code == ErrorCode.InvalidEmail.ToString());
+        result.Errors.ShouldContain(e => e.Field == nameof(RegisterForm.Email) && e.Code == ValidationError.InvalidEmail.ToString());
     }
 
     [Fact]
@@ -71,9 +72,9 @@ public class RegisterActionTests(AppFixture appFixture) : BaseActionTest<Registe
         // error codes map
         (string fieldName, string errorCode)[] fields =
         [
-            (nameof(RegisterForm.FullName), ErrorCode.FullNameRequired.ToString()),
-            (nameof(RegisterForm.Email), ErrorCode.EmailRequired.ToString()),
-            (nameof(RegisterForm.Password), ErrorCode.PasswordRequired.ToString()),
+            (nameof(RegisterForm.FullName), ValidationError.FullNameRequired.ToString()),
+            (nameof(RegisterForm.Email), ValidationError.EmailRequired.ToString()),
+            (nameof(RegisterForm.Password), ValidationError.PasswordRequired.ToString()),
         ];
 
         // check response
@@ -117,10 +118,10 @@ public class RegisterActionTests(AppFixture appFixture) : BaseActionTest<Registe
         response.StatusCode.ShouldBe(HttpStatusCode.UnprocessableEntity);
 
         string[] expectedErrorCodes = [
-            ErrorCode.PasswordTooShort.ToString(),
-            ErrorCode.PasswordMissingSpecial.ToString(),
-            ErrorCode.PasswordMissingUppercase.ToString(),
-            ErrorCode.PasswordMissingLowercase.ToString(),
+            ValidationError.PasswordTooShort.ToString(),
+            ValidationError.PasswordMissingSpecial.ToString(),
+            ValidationError.PasswordMissingUppercase.ToString(),
+            ValidationError.PasswordMissingLowercase.ToString(),
         ];
 
         var result = await GetErrorAsync(response, TestContext.Current.CancellationToken);
@@ -145,6 +146,6 @@ public class RegisterActionTests(AppFixture appFixture) : BaseActionTest<Registe
         result.ShouldNotBeNull();
         result.Success.ShouldBeFalse();
         result.Errors.ShouldNotBeEmpty();
-        result.Errors.ShouldContain(e => e.Field == nameof(RegisterForm.ConfirmPassword) && e.Code == ErrorCode.PasswordMismatch.ToString());
+        result.Errors.ShouldContain(e => e.Field == nameof(RegisterForm.ConfirmPassword) && e.Code == ValidationError.PasswordMismatch.ToString());
     }
 }

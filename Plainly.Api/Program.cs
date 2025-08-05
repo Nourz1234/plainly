@@ -1,5 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
-using Plainly.Api.Data.AppDatabase.Seeders;
+using Microsoft.EntityFrameworkCore;
+using Plainly.Infrastructure.Persistence.AppDatabase;
+using Plainly.Infrastructure.Persistence.AppDatabase.Seeders;
+using Plainly.Infrastructure.Persistence.LogDatabase;
 
 namespace Plainly.Api;
 
@@ -17,9 +20,18 @@ public class Program
 
         await startup.Configure(app, builder.Environment);
 
-        if (args.Contains("--seed"))
+        if (args.Contains("--migrate"))
         {
-            await DatabaseSeeder.SeedAllAsync(app.Services);
+            using var scope = app.Services.CreateScope();
+            var appDbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            appDbContext.Database.Migrate();
+            var logDbContext = scope.ServiceProvider.GetRequiredService<LogDbContext>();
+            logDbContext.Database.Migrate();
+        }
+        else if (args.Contains("--seed"))
+        {
+            using var scope = app.Services.CreateScope();
+            await DatabaseSeeder.SeedAllAsync(scope.ServiceProvider);
         }
         else
         {

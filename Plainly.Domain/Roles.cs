@@ -1,6 +1,6 @@
 using Plainly.Shared;
 
-namespace Plainly.Api.Authorization;
+namespace Plainly.Domain;
 
 public record Role(string Name, Scopes[]? Scopes);
 

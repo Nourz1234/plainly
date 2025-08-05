@@ -1,20 +1,16 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Plainly.Api.Actions;
-using Plainly.Api.Data.AppDatabase;
-using Plainly.Api.Data.AppDatabase.Seeders;
 using Plainly.Api.ExceptionHandling;
 using Plainly.Api.Exceptions;
 using Plainly.Api.Extensions;
-using Plainly.Api.Infrastructure.Identity;
-using Plainly.Api.Infrastructure.Jwt;
-using Plainly.Api.Infrastructure.Logging;
+using Plainly.Api.Filters;
 using Plainly.Api.Validation;
-using Plainly.Infrastructure.Persistence.AppDatabase.Entities;
-using Plainly.Shared;
+using Plainly.Application;
+using Plainly.Infrastructure;
+using Plainly.Infrastructure.Persistence.AppDatabase;
+using Plainly.Infrastructure.Persistence.AppDatabase.Seeders;
 
 namespace Plainly.Api;
 
@@ -26,9 +22,11 @@ public class Startup(IConfiguration configuration)
     public void ConfigureServices(IServiceCollection services)
     {
         // Add controllers
-        services.AddControllers()
-            // Add auto validation using FluentValidation
-            .AddAutoValidation();
+        services.AddControllers(options =>
+        {
+            options.Filters.Add<ResponseResultFilter>(); // Add response result filter
+        })
+            .AddAutoValidation(); // Add auto validation using FluentValidation
 
         // Configure FluentValidation
         FluentValidationConfig.Configure();
@@ -42,39 +40,18 @@ public class Startup(IConfiguration configuration)
         // Add OpenAPI
         services.AddOpenApi();
 
-        // Add App DB Context
-        services.AddDbContext<AppDbContext>(
-            options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection"))
-        );
 
-        // Add Identity
-        services.AddIdentity<User, IdentityRole>()
-            .AddEntityFrameworkStores<AppDbContext>()
-            .AddDefaultTokenProviders();
-        services.Configure<IdentityOptions>(options =>
-        {
-            options.User.RequireUniqueEmail = true;
-            // Should handle password validation with FluentValidation
-            options.Password.RequireDigit = false;
-            options.Password.RequireLowercase = false;
-            options.Password.RequireUppercase = false;
-            options.Password.RequireNonAlphanumeric = false;
-            options.Password.RequiredLength = 1;
-            options.SignIn.RequireConfirmedEmail = false;
-            options.SignIn.RequireConfirmedPhoneNumber = false;
-        });
-
+        services.AddInfrastructure(Configuration);
+        services.AddApplication(Configuration);
 
         // Add infrastructure
         services.AddGlobalExceptionHandling();
-        services.AddJwtAuthentication(Configuration);
-        services.AddDbLogging(Configuration);
-        services.AddUserProvider<User>();
-        services.AddActions();
     }
 
     public async Task Configure(WebApplication app, IWebHostEnvironment env)
     {
+        app.UseRouting();
+
         app.UseHttpsRedirection();
         app.UseGlobalExceptionHandling();
 
@@ -82,7 +59,7 @@ public class Startup(IConfiguration configuration)
         app.UseAuthentication();
 
         app.MapControllers();
-        app.MapFallback(context => throw new NotFoundException(Messages.EndpointNotFound));
+        app.MapFallback(context => throw new ApiException(ApiErrorCode.EndpointNotFound));
 
 
         if (env.IsDevelopment())

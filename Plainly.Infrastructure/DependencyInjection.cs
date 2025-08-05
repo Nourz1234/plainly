@@ -11,11 +11,10 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        // Add App DB Context
         services.AddPersistence(configuration);
-        services.AddJwtAuthentication(configuration);
+        services.AddIdentity();
         services.AddDbLogging(configuration);
-        services.AddCurrentUserProvider();
+        services.AddJwtAuthentication(configuration);
 
         return services;
     }

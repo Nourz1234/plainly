@@ -1,4 +1,5 @@
 using FluentValidation;
+using Plainly.Shared.Extensions;
 
 namespace Plainly.Shared.Actions.Auth.Login;
 
@@ -7,9 +8,9 @@ public class LoginFormValidator : AbstractValidator<LoginForm>
     public LoginFormValidator()
     {
         RuleFor(x => x.Email).Cascade(CascadeMode.Stop)
-            .NotEmpty().WithErrorCode(ErrorCode.EmailRequired.ToString())
-            .EmailAddress().WithErrorCode(ErrorCode.InvalidEmail.ToString());
+            .NotEmpty().WithValidationError(ValidationError.EmailRequired)
+            .EmailAddress().WithValidationError(ValidationError.InvalidEmail);
         RuleFor(x => x.Password)
-            .NotEmpty().WithErrorCode(ErrorCode.PasswordRequired.ToString());
+            .NotEmpty().WithValidationError(ValidationError.PasswordRequired);
     }
 }

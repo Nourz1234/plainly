@@ -1,14 +1,15 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
+using Plainly.Application.Interface;
 using Plainly.Domain.Interfaces;
-using Plainly.Infrastructure.Persistence.AppDatabase.Repositories;
+using Plainly.Domain.Interfaces.Repositories;
 
 namespace Plainly.Infrastructure.Identity;
 
 /// <summary>
 /// Provider for the current authenticated user
 /// </summary>
-public class CurrentUserProvider(IHttpContextAccessor httpContextAccessor, UserRepository userRepository)
+public class CurrentUserProvider(IHttpContextAccessor httpContextAccessor, IUserRepository userRepository) : ICurrentUserProvider
 {
     public async Task<IUser?> GetCurrentUserAsync()
     {
@@ -20,7 +21,7 @@ public class CurrentUserProvider(IHttpContextAccessor httpContextAccessor, UserR
     /// <summary>
     /// In the case of impersonation, this will return the impersonator's user
     /// </summary>
-    public Task<IUser?> GetCurrentRealUserAsync()
+    public Task<IUser?> GetCurrentAdminUserAsync()
     {
         throw new NotImplementedException();
     }

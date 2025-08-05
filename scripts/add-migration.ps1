@@ -9,7 +9,7 @@ param(
 
 $env:ASPNETCORE_ENVIRONMENT = $environment
 $location_map = @{
-    "App" = "Data/AppDatabase/Migrations"
-    "Log" = "Data/LogDatabase/Migrations"
+    "App" = "Persistence/AppDatabase/Migrations"
+    "Log" = "Persistence/LogDatabase/Migrations"
 }
-dotnet ef migrations add $Name --project Plainly.Api --context "$($DbName)DbContext" --output-dir $location_map[$DbName] --msbuildprojectextensionspath ./build/obj/Plainly.Api
+dotnet ef migrations add $Name --project Plainly.Infrastructure --context "$($DbName)DbContext" --output-dir $location_map[$DbName] --msbuildprojectextensionspath ./build/obj/Plainly.Infrastructure

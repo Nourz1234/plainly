@@ -1,4 +1,5 @@
 using Plainly.Api.Tests.Integration.Data;
+using Plainly.Domain;
 using Plainly.Shared.Actions.Auth.Login;
 
 namespace Plainly.Api.Tests.Integration.Actions.Auth;
@@ -56,7 +57,7 @@ public class LoginActionTests(AppFixture appFixture) : BaseActionTest<LoginActio
         };
         var payload = JsonContent.Create(form);
         var response = await PerformActionAsync(payload, TestContext.Current.CancellationToken);
-        response.StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+        response.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
 
         // check response
         var result = await GetErrorAsync(response, TestContext.Current.CancellationToken);
@@ -82,7 +83,7 @@ public class LoginActionTests(AppFixture appFixture) : BaseActionTest<LoginActio
         result.ShouldNotBeNull();
         result.Success.ShouldBeFalse();
         result.Errors.ShouldNotBeEmpty();
-        result.Errors.ShouldContain(e => e.Field == nameof(LoginForm.Email) && e.Code == ErrorCode.InvalidEmail.ToString());
+        result.Errors.ShouldContain(e => e.Field == nameof(LoginForm.Email) && e.Code == ValidationError.InvalidEmail.ToString());
     }
 
     [Fact]

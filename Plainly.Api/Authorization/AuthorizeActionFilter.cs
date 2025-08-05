@@ -1,5 +1,8 @@
 using Microsoft.AspNetCore.Mvc.Filters;
+using Plainly.Api.Builders;
 using Plainly.Api.Extensions;
+using Plainly.Domain;
+using Plainly.Shared.Extensions;
 using Plainly.Shared.Interfaces;
 using Plainly.Shared.Responses;
 
@@ -19,7 +22,7 @@ public class AuthorizeActionFilter<TAction>(TAction action) : IAuthorizationFilt
         var user = context.HttpContext.User;
         if (user.Identity is null || !user.Identity.IsAuthenticated)
         {
-            context.Result = ErrorResponse.Unauthorized().Build(context.HttpContext.GetTraceId()).ToActionResult();
+            context.Result = ErrorResponseBuilder.FromErrorCode(ErrorCode.Unauthorized).Build(context.HttpContext).ToActionResult();
             return;
         }
 
@@ -34,7 +37,7 @@ public class AuthorizeActionFilter<TAction>(TAction action) : IAuthorizationFilt
 
         if (!actionScopes.All(userHasScope))
         {
-            context.Result = ErrorResponse.Forbidden().Build(context.HttpContext.GetTraceId()).ToActionResult();
+            context.Result = ErrorResponseBuilder.FromErrorCode(ErrorCode.Forbidden).Build(context.HttpContext).ToActionResult();
             return;
         }
     }

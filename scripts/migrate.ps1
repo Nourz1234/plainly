@@ -5,4 +5,4 @@ param(
 )
 
 $env:ASPNETCORE_ENVIRONMENT = $environment
-dotnet ef database update --project Plainly.Api --context "$($DbName)DbContext" --msbuildprojectextensionspath ./build/obj/Plainly.Api
+dotnet ef database update --project Plainly.Infrastructure --context "$($DbName)DbContext" --msbuildprojectextensionspath ./build/obj/Plainly.Infrastructure

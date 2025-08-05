@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Http;
+using Plainly.Domain;
 
 namespace Plainly.Api.Tests.Integration;
 
@@ -17,8 +18,7 @@ public class AppTests(AppFixture appFixture)
         result.ShouldNotBeNull();
         result.Success.ShouldBeFalse();
         result.StatusCode.ShouldBe(StatusCodes.Status404NotFound);
-        result.Message.ShouldBe(Messages.EndpointNotFound);
-        result.TraceId.ShouldNotBeEmpty();
+        result.Message.ShouldBe(ApiMessages.EndpointNotFound);
     }
 
     [Fact]
@@ -31,7 +31,7 @@ public class AppTests(AppFixture appFixture)
         result.ShouldNotBeNull();
         result.Success.ShouldBeFalse();
         result.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
-        result.Message.ShouldBe(Messages.InternalServerError);
+        result.Message.ShouldBe(Messages.InternalError);
         result.TraceId.ShouldNotBeEmpty();
     }
 
@@ -45,7 +45,7 @@ public class AppTests(AppFixture appFixture)
         result.ShouldNotBeNull();
         result.Success.ShouldBeFalse();
         result.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
-        result.Message.ShouldBe(Messages.InternalServerError);
+        result.Message.ShouldBe(Messages.InternalError);
         result.TraceId.ShouldNotBeEmpty();
     }
 
@@ -60,7 +60,6 @@ public class AppTests(AppFixture appFixture)
         result.Success.ShouldBeFalse();
         result.StatusCode.ShouldBe(StatusCodes.Status404NotFound);
         result.Message.ShouldBe(Messages.NotFound);
-        result.TraceId.ShouldNotBeEmpty();
     }
 
     [Fact]
@@ -74,7 +73,6 @@ public class AppTests(AppFixture appFixture)
         result.Success.ShouldBeFalse();
         result.StatusCode.ShouldBe(StatusCodes.Status401Unauthorized);
         result.Message.ShouldBe(Messages.Unauthorized);
-        result.TraceId.ShouldNotBeEmpty();
     }
 
     [Fact]
@@ -88,7 +86,6 @@ public class AppTests(AppFixture appFixture)
         result.Success.ShouldBeFalse();
         result.StatusCode.ShouldBe(StatusCodes.Status403Forbidden);
         result.Message.ShouldBe(Messages.Forbidden);
-        result.TraceId.ShouldNotBeEmpty();
     }
 
     [Fact]
@@ -102,7 +99,6 @@ public class AppTests(AppFixture appFixture)
         result.Success.ShouldBeFalse();
         result.StatusCode.ShouldBe(StatusCodes.Status400BadRequest);
         result.Message.ShouldBe(Messages.BadRequest);
-        result.TraceId.ShouldNotBeEmpty();
     }
 }
 

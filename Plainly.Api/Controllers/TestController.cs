@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
-using Plainly.Api.Exceptions;
+using Plainly.Domain;
 using Plainly.Shared.Responses;
 
 namespace Plainly.Api.Controllers;
@@ -13,42 +13,42 @@ public class TestController(IHostEnvironment environment) : ControllerBase
     [HttpGet("Exception")]
     public SuccessResponse GetException()
     {
-        if (environment.IsProduction()) throw new NotFoundException();
+        if (environment.IsProduction()) throw DomainError.FromErrorCode(ErrorCode.NotFound);
         throw new Exception();
     }
 
     [HttpGet("InternalServerError")]
     public SuccessResponse GetInternalServerError()
     {
-        if (environment.IsProduction()) throw new NotFoundException();
-        throw new InternalServerErrorException();
+        if (environment.IsProduction()) throw DomainError.FromErrorCode(ErrorCode.NotFound);
+        throw DomainError.FromErrorCode(ErrorCode.InternalError);
     }
 
     [HttpGet("NotFound")]
     public SuccessResponse GetNotFound()
     {
-        if (environment.IsProduction()) throw new NotFoundException();
-        throw new NotFoundException();
+        if (environment.IsProduction()) throw DomainError.FromErrorCode(ErrorCode.NotFound);
+        throw DomainError.FromErrorCode(ErrorCode.NotFound);
     }
 
     [HttpGet("Unauthorized")]
     public SuccessResponse GetUnauthorized()
     {
-        if (environment.IsProduction()) throw new NotFoundException();
-        throw new UnauthorizedException();
+        if (environment.IsProduction()) throw DomainError.FromErrorCode(ErrorCode.NotFound);
+        throw DomainError.FromErrorCode(ErrorCode.Unauthorized);
     }
 
     [HttpGet("Forbidden")]
     public SuccessResponse GetForbidden()
     {
-        if (environment.IsProduction()) throw new NotFoundException();
-        throw new ForbiddenException();
+        if (environment.IsProduction()) throw DomainError.FromErrorCode(ErrorCode.NotFound);
+        throw DomainError.FromErrorCode(ErrorCode.Forbidden);
     }
 
     [HttpGet("BadRequest")]
     public SuccessResponse GetBadRequest()
     {
-        if (environment.IsProduction()) throw new NotFoundException();
-        throw new BadRequestException();
+        if (environment.IsProduction()) throw DomainError.FromErrorCode(ErrorCode.NotFound);
+        throw DomainError.FromErrorCode(ErrorCode.BadRequest);
     }
 }

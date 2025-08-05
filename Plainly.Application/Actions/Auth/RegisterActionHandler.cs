@@ -4,8 +4,9 @@ using Plainly.Domain.Interfaces.Repositories;
 using Plainly.Shared;
 using Plainly.Shared.Actions.Auth.Register;
 using Plainly.Shared.Interfaces;
+using Plainly.Shared.Extensions;
 
-namespace Plainly.Api.Actions.Auth;
+namespace Plainly.Application.Actions.Auth;
 
 public class RegisterActionHandler(IUserRepository userRepository, IJwtService jwtService)
     : IActionHandler<RegisterAction, RegisterRequest, RegisterDTO>
@@ -16,7 +17,7 @@ public class RegisterActionHandler(IUserRepository userRepository, IJwtService j
         var user = await userRepository.CreateAsync(registerForm.FullName, registerForm.Email, registerForm.Password);
 
         await userRepository.AddClaimAsync(user,
-            new Claim("scopes", Scopes.Profile.GetEnumMemberValue()),
+            new Claim("scopes", Scopes.Profile.GetEnumMemberValue())
         );
 
         var token = await jwtService.GenerateToken(user);

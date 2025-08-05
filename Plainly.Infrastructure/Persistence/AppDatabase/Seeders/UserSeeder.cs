@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
-using Plainly.Api.Infrastructure.Authorization;
+using Microsoft.Extensions.DependencyInjection;
+using Plainly.Domain;
 using Plainly.Infrastructure.Persistence.AppDatabase.Entities;
 
 namespace Plainly.Infrastructure.Persistence.AppDatabase.Seeders;

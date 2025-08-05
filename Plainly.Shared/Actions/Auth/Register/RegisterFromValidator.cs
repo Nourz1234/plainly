@@ -1,4 +1,5 @@
 using FluentValidation;
+using Plainly.Shared.Extensions;
 
 namespace Plainly.Shared.Actions.Auth.Register;
 
@@ -8,22 +9,22 @@ public class RegisterFormValidator : AbstractValidator<RegisterForm>
     public RegisterFormValidator()
     {
         RuleFor(x => x.FullName)
-            .NotEmpty().WithErrorCode(ErrorCode.FullNameRequired.ToString());
+            .NotEmpty().WithValidationError(ValidationError.FullNameRequired);
         RuleFor(x => x.Email).Cascade(CascadeMode.Stop)
-            .NotEmpty().WithErrorCode(ErrorCode.EmailRequired.ToString())
-            .EmailAddress().WithErrorCode(ErrorCode.InvalidEmail.ToString());
+            .NotEmpty().WithValidationError(ValidationError.EmailRequired)
+            .EmailAddress().WithValidationError(ValidationError.InvalidEmail);
         RuleFor(x => x.Password)
-            .NotEmpty().WithErrorCode(ErrorCode.PasswordRequired.ToString()).DependentRules(() =>
+            .NotEmpty().WithValidationError(ValidationError.PasswordRequired).DependentRules(() =>
             {
                 RuleFor(x => x.Password)
-                    .MinimumLength(8).WithErrorCode(ErrorCode.PasswordTooShort.ToString())
-                    .Matches("[A-Z]").WithMessage(PasswordMissingUppercase).WithErrorCode(ErrorCode.PasswordMissingUppercase.ToString())
-                    .Matches("[a-z]").WithMessage(PasswordMissingLowercase).WithErrorCode(ErrorCode.PasswordMissingLowercase.ToString())
-                    .Matches("[0-9]").WithMessage(PasswordMissingDigit).WithErrorCode(ErrorCode.PasswordMissingDigit.ToString())
-                    .Matches("[^a-zA-Z0-9]").WithMessage(PasswordMissingSpecial).WithErrorCode(ErrorCode.PasswordMissingSpecial.ToString());
+                    .MinimumLength(8).WithValidationError(ValidationError.PasswordTooShort)
+                        .Matches("[A-Z]").WithValidationError(ValidationError.PasswordMissingUppercase)
+                        .Matches("[a-z]").WithValidationError(ValidationError.PasswordMissingLowercase)
+                        .Matches("[0-9]").WithValidationError(ValidationError.PasswordMissingDigit)
+                        .Matches("[^a-zA-Z0-9]").WithValidationError(ValidationError.PasswordMissingSpecial);
             });
         RuleFor(x => x.ConfirmPassword)
-            .Equal(x => x.Password).WithErrorCode(ErrorCode.PasswordMismatch.ToString());
+            .Equal(x => x.Password).WithValidationError(ValidationError.PasswordMismatch);
     }
 
     public const string PasswordMissingUppercase = "'{PropertyName}' must contain at least one uppercase letter.";

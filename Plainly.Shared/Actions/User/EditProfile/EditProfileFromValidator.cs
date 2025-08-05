@@ -1,4 +1,5 @@
 using FluentValidation;
+using Plainly.Shared.Extensions;
 
 namespace Plainly.Shared.Actions.User.EditProfile;
 
@@ -8,7 +9,8 @@ public class EditProfileFromValidator : AbstractValidator<EditProfileFrom>
     {
         When(x => x.FullName != null, () =>
         {
-            RuleFor(x => x.FullName).NotEmpty().WithErrorCode(ErrorCode.FullNameRequired.ToString());
+            RuleFor(x => x.FullName)
+                .NotEmpty().WithValidationError(ValidationError.FullNameRequired);
         });
     }
 }

@@ -20,10 +20,8 @@ public class LogEntry : ILogEntry
     public string Category { get; set; } = string.Empty;
 
     [Required]
-    [MaxLength]
     public string Message { get; set; } = string.Empty;
 
-    [MaxLength]
     public string? Exception { get; set; }
 
     [MaxLength(64)]

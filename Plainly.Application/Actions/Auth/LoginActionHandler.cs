@@ -1,34 +1,25 @@
-using Microsoft.AspNetCore.Identity;
-using Plainly.Api.Exceptions;
-using Plainly.Api.Infrastructure.Jwt;
-using Plainly.Shared;
+using Plainly.Application.Interface;
+using Plainly.Domain;
+using Plainly.Domain.Interfaces.Repositories;
 using Plainly.Shared.Actions.Auth.Login;
 using Plainly.Shared.Interfaces;
 
 namespace Plainly.Api.Actions.Auth;
 
-public class LoginActionHandler(UserManager<Domain.Entities.User> userManager, SignInManager<Domain.Entities.User> signInManager, JwtService jwtService)
+public class LoginActionHandler(IUserRepository userRepository, IAuthService authService, IJwtService jwtService)
     : IActionHandler<LoginAction, LoginRequest, LoginDTO>
 {
     public async Task<LoginDTO> Handle(LoginRequest request, CancellationToken cancellationToken = default)
     {
         var loginFrom = request.LoginForm;
-        var user = await userManager.FindByEmailAsync(loginFrom.Email) ?? throw new UnauthorizedException(Messages.InvalidLoginCredentials);
-        var result = await signInManager.CheckPasswordSignInAsync(user, loginFrom.Password, false);
-        if (!result.Succeeded)
-        {
-            if (result.IsLockedOut)
-                throw new UnauthorizedException(Messages.UserIsLockedOut);
-            if (result.IsNotAllowed)
-                throw new UnauthorizedException(Messages.EmailNotConfirmed);
-            throw new UnauthorizedException(Messages.InvalidLoginCredentials);
-        }
+        var user = await userRepository.GetByEmailAsync(loginFrom.Email) ?? throw DomainError.FromErrorCode(ErrorCode.InvalidLoginCredentials);
+        await authService.VerifyPasswordAsync(user, loginFrom.Password);
 
         if (!user.IsActive)
-            throw new UnauthorizedException(Messages.UserIsNotActive);
+            throw DomainError.FromErrorCode(ErrorCode.UserIsNotActive);
 
         user.LastLoginAt = DateTime.UtcNow;
-        await userManager.UpdateAsync(user);
+        await userRepository.UpdateAsync(user);
 
         var token = await jwtService.GenerateToken(user);
         return new LoginDTO(token);

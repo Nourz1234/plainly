@@ -1,6 +1,7 @@
+using Microsoft.Extensions.DependencyInjection;
 using Plainly.Shared.Interfaces;
 
-namespace Plainly.Api.Actions;
+namespace Plainly.Application.Actions;
 
 public class ActionDispatcher(IServiceProvider serviceProvider)
 {
