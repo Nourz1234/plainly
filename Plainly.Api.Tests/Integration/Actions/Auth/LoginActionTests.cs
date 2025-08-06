@@ -63,7 +63,7 @@ public class LoginActionTests(AppFixture appFixture) : BaseActionTest<LoginActio
         var result = await GetErrorAsync(response, TestContext.Current.CancellationToken);
         result.ShouldNotBeNull();
         result.Success.ShouldBeFalse();
-        result.Message.ShouldBe(Messages.UserIsNotActive);
+        result.Message.ShouldBe(DomainMessages.UserIsNotActive);
     }
 
     [Fact]
@@ -109,7 +109,7 @@ public class LoginActionTests(AppFixture appFixture) : BaseActionTest<LoginActio
             var result = await GetErrorAsync(response, TestContext.Current.CancellationToken);
             result.ShouldNotBeNull();
             result.Success.ShouldBeFalse();
-            result.Message.ShouldBe(Messages.InvalidLoginCredentials);
+            result.Message.ShouldBe(DomainMessages.InvalidLoginCredentials);
         }
     }
 }

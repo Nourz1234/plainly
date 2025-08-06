@@ -4,6 +4,7 @@ using Plainly.Api.Builders;
 using Plainly.Api.Exceptions;
 using Plainly.Api.Extensions;
 using Plainly.Domain;
+using Plainly.Domain.Exceptions;
 using Plainly.Shared;
 using Plainly.Shared.Extensions;
 using Plainly.Shared.Responses;
@@ -35,8 +36,8 @@ public static class DependencyInjection
         ErrorResponse response = exception switch
         {
             ApiException apiException => ErrorResponseBuilder.FromApiException(apiException).Build(context),
-            DomainError domainError => ErrorResponseBuilder.FromDomainError(domainError).Build(context),
-            _ => ErrorResponseBuilder.FromErrorCode(ErrorCode.InternalError).Build(context),
+            DomainException domainError => ErrorResponseBuilder.FromDomainError(domainError).Build(context),
+            _ => ErrorResponseBuilder.FromErrorCode(DomainErrorCode.InternalError).Build(context),
         };
 
         context.Response.StatusCode = response.StatusCode;
@@ -55,12 +56,12 @@ public static class DependencyInjection
             var errors = extraFields.Select(
                 field => new ErrorDetail(ValidationError.UnknownField.ToString(), ValidationError.UnknownField.GetDescription(), field)
             ).ToArray();
-            return ErrorResponseBuilder.FromErrorCode(ErrorCode.ValidationError)
+            return ErrorResponseBuilder.FromErrorCode(DomainErrorCode.ValidationError)
                 .WithErrors(errors)
                 .Build(context.HttpContext)
                 .ToActionResult();
         }
 
-        return ErrorResponseBuilder.FromErrorCode(ErrorCode.BadRequest).Build(context.HttpContext).ToActionResult();
+        return ErrorResponseBuilder.FromErrorCode(DomainErrorCode.InvalidOperation).Build(context.HttpContext).ToActionResult();
     }
 }

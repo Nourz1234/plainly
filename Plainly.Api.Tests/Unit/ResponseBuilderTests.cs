@@ -12,7 +12,7 @@ public class ResponseBuilderTests
         var response = SuccessResponseBuilder.Ok().Build();
         response.Success.ShouldBeTrue();
         response.StatusCode.ShouldBe(StatusCodes.Status200OK);
-        response.Message.ShouldBe(Messages.Success);
+        response.Message.ShouldBe(DomainMessages.Success);
     }
 
     [Fact]
@@ -32,7 +32,7 @@ public class ResponseBuilderTests
         var response = SuccessResponseBuilder.Ok().Build(data);
         response.Success.ShouldBeTrue();
         response.StatusCode.ShouldBe(StatusCodes.Status200OK);
-        response.Message.ShouldBe(Messages.Success);
+        response.Message.ShouldBe(DomainMessages.Success);
         response.Data.ShouldBe(data);
     }
 

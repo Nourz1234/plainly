@@ -26,7 +26,7 @@ public class AutoValidationActionFilter(IServiceProvider serviceProvider) : IAsy
             {
                 var errors = result.Errors.Select(e => new ErrorDetail(e.ErrorCode, e.ErrorMessage, e.PropertyName)).ToArray();
 
-                context.Result = ErrorResponseBuilder.FromErrorCode(ErrorCode.ValidationError)
+                context.Result = ErrorResponseBuilder.FromErrorCode(DomainErrorCode.ValidationError)
                     .WithErrors(errors)
                     .Build(context.HttpContext)
                     .ToActionResult();

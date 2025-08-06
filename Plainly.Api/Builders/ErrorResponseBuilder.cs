@@ -1,6 +1,8 @@
 using Plainly.Api.Exceptions;
 using Plainly.Api.Extensions;
 using Plainly.Domain;
+using Plainly.Domain.Exceptions;
+using Plainly.Domain.Extensions;
 using Plainly.Shared.Extensions;
 using Plainly.Shared.Responses;
 
@@ -8,35 +10,34 @@ namespace Plainly.Api.Builders;
 
 public class ErrorResponseBuilder
 {
-    private static int StatusCodeForCategory(string category) => category switch
+    private static int StatusCodeForDomainErrorType(DomainErrorType errorType) => errorType switch
     {
         // General
-        ErrorCategories.InternalError => StatusCodes.Status500InternalServerError,
-        ErrorCategories.BadRequest => StatusCodes.Status400BadRequest,
-        ErrorCategories.Unauthorized => StatusCodes.Status401Unauthorized,
-        ErrorCategories.Forbidden => StatusCodes.Status403Forbidden,
-        ErrorCategories.NotFound => StatusCodes.Status404NotFound,
-        ErrorCategories.Conflict => StatusCodes.Status409Conflict,
-        ErrorCategories.ValidationError => StatusCodes.Status422UnprocessableEntity,
-        // Business
-        ErrorCategories.BusinessRuleViolation => StatusCodes.Status409Conflict,
-        ErrorCategories.InvariantViolation => StatusCodes.Status500InternalServerError,
-        ErrorCategories.DependencyFailure => StatusCodes.Status503ServiceUnavailable,
-        ErrorCategories.PreconditionFailed => StatusCodes.Status412PreconditionFailed,
-        ErrorCategories.ResourceLocked => StatusCodes.Status423Locked,
-        _ => StatusCodes.Status500InternalServerError,
+        DomainErrorType.InternalError => StatusCodes.Status500InternalServerError,
+        DomainErrorType.InvalidOperation => StatusCodes.Status400BadRequest,
+        DomainErrorType.Unauthorized => StatusCodes.Status401Unauthorized,
+        DomainErrorType.Forbidden => StatusCodes.Status403Forbidden,
+        DomainErrorType.NotFound => StatusCodes.Status404NotFound,
+        DomainErrorType.Conflict => StatusCodes.Status409Conflict,
+        DomainErrorType.ValidationError => StatusCodes.Status422UnprocessableEntity,
+        DomainErrorType.PreconditionFailed => StatusCodes.Status412PreconditionFailed,
+        DomainErrorType.ResourceLocked => StatusCodes.Status423Locked,
+        DomainErrorType.DependencyFailure => StatusCodes.Status424FailedDependency,
+        DomainErrorType.RateLimitExceeded => StatusCodes.Status429TooManyRequests,
+        DomainErrorType.NotImplemented => StatusCodes.Status501NotImplemented,
+        _ => throw new ArgumentOutOfRangeException(nameof(errorType), errorType, null),
     };
 
-    public static ErrorResponseBuilder FromErrorCode(ErrorCode errorCode)
+    public static ErrorResponseBuilder FromErrorCode(DomainErrorCode errorCode)
     {
-        var category = errorCode.GetCategory();
-        var statusCode = StatusCodeForCategory(category);
+        var errorType = errorCode.GetErrorType();
+        var statusCode = StatusCodeForDomainErrorType(errorType);
         return new ErrorResponseBuilder(statusCode, errorCode.ToString(), errorCode.GetDescription());
     }
 
-    public static ErrorResponseBuilder FromDomainError(DomainError error)
+    public static ErrorResponseBuilder FromDomainError(DomainException error)
     {
-        var statusCode = StatusCodeForCategory(error.Category);
+        var statusCode = StatusCodeForDomainErrorType(error.Type);
         var builder = new ErrorResponseBuilder(statusCode, error.ErrorCode, error.Description);
         if (error.Errors != null)
         {

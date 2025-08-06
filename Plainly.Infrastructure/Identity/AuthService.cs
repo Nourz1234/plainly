@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Plainly.Application.Interface;
 using Plainly.Domain;
+using Plainly.Domain.Exceptions;
 using Plainly.Domain.Interfaces;
 using Plainly.Infrastructure.Extensions;
 using Plainly.Infrastructure.Persistence.AppDatabase.Entities;
@@ -15,10 +16,10 @@ public class AuthService(SignInManager<User> signInManager) : IAuthService
         if (!result.Succeeded)
         {
             if (result.IsLockedOut)
-                throw DomainError.FromErrorCode(ErrorCode.UserIsLockedOut);
+                throw DomainException.FromErrorCode(DomainErrorCode.UserIsLockedOut);
             if (result.IsNotAllowed)
-                throw DomainError.FromErrorCode(ErrorCode.EmailNotConfirmed);
-            throw DomainError.FromErrorCode(ErrorCode.InvalidLoginCredentials);
+                throw DomainException.FromErrorCode(DomainErrorCode.EmailNotConfirmed);
+            throw DomainException.FromErrorCode(DomainErrorCode.InvalidLoginCredentials);
         }
     }
 }

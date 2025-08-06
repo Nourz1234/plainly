@@ -16,11 +16,6 @@ public static class EnumExtensions
         return GetAttribute<DescriptionAttribute>(value).Description;
     }
 
-    public static string GetCategory(this Enum value)
-    {
-        return GetAttribute<CategoryAttribute>(value).Category;
-    }
-
     public static T GetAttribute<T>(this Enum value) where T : Attribute
     {
         FieldInfo field = value.GetType().GetField(value.ToString()) ?? throw new ArgumentException("Field not found.");

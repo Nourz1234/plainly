@@ -1,5 +1,6 @@
 using Plainly.Application.Interface;
 using Plainly.Domain;
+using Plainly.Domain.Exceptions;
 using Plainly.Domain.Interfaces.Repositories;
 using Plainly.Shared.Actions.Auth.Login;
 using Plainly.Shared.Interfaces;
@@ -12,11 +13,11 @@ public class LoginActionHandler(IUserRepository userRepository, IAuthService aut
     public async Task<LoginDTO> Handle(LoginRequest request, CancellationToken cancellationToken = default)
     {
         var loginFrom = request.LoginForm;
-        var user = await userRepository.GetByEmailAsync(loginFrom.Email) ?? throw DomainError.FromErrorCode(ErrorCode.InvalidLoginCredentials);
+        var user = await userRepository.GetByEmailAsync(loginFrom.Email) ?? throw DomainException.FromErrorCode(DomainErrorCode.InvalidLoginCredentials);
         await authService.VerifyPasswordAsync(user, loginFrom.Password);
 
         if (!user.IsActive)
-            throw DomainError.FromErrorCode(ErrorCode.UserIsNotActive);
+            throw DomainException.FromErrorCode(DomainErrorCode.UserIsNotActive);
 
         user.LastLoginAt = DateTime.UtcNow;
         await userRepository.UpdateAsync(user);

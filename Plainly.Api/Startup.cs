@@ -24,7 +24,7 @@ public class Startup(IConfiguration configuration)
         // Add controllers
         services.AddControllers(options =>
         {
-            options.Filters.Add<ResponseResultFilter>(); // Add response result filter
+            options.Filters.Add<ResponseResultFilter>();
         })
             .AddAutoValidation(); // Add auto validation using FluentValidation
 

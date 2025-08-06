@@ -1,4 +1,5 @@
 using Plainly.Api.Extensions;
+using Plainly.Domain.Extensions;
 using Plainly.Shared.Extensions;
 
 namespace Plainly.Api.Exceptions;

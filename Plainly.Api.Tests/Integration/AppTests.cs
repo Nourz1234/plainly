@@ -31,7 +31,7 @@ public class AppTests(AppFixture appFixture)
         result.ShouldNotBeNull();
         result.Success.ShouldBeFalse();
         result.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
-        result.Message.ShouldBe(Messages.InternalError);
+        result.Message.ShouldBe(DomainMessages.InternalError);
         result.TraceId.ShouldNotBeEmpty();
     }
 
@@ -45,7 +45,7 @@ public class AppTests(AppFixture appFixture)
         result.ShouldNotBeNull();
         result.Success.ShouldBeFalse();
         result.StatusCode.ShouldBe(StatusCodes.Status500InternalServerError);
-        result.Message.ShouldBe(Messages.InternalError);
+        result.Message.ShouldBe(DomainMessages.InternalError);
         result.TraceId.ShouldNotBeEmpty();
     }
 
@@ -59,7 +59,7 @@ public class AppTests(AppFixture appFixture)
         result.ShouldNotBeNull();
         result.Success.ShouldBeFalse();
         result.StatusCode.ShouldBe(StatusCodes.Status404NotFound);
-        result.Message.ShouldBe(Messages.NotFound);
+        result.Message.ShouldBe(DomainMessages.NotFound);
     }
 
     [Fact]
@@ -72,7 +72,7 @@ public class AppTests(AppFixture appFixture)
         result.ShouldNotBeNull();
         result.Success.ShouldBeFalse();
         result.StatusCode.ShouldBe(StatusCodes.Status401Unauthorized);
-        result.Message.ShouldBe(Messages.Unauthorized);
+        result.Message.ShouldBe(DomainMessages.Unauthorized);
     }
 
     [Fact]
@@ -85,7 +85,7 @@ public class AppTests(AppFixture appFixture)
         result.ShouldNotBeNull();
         result.Success.ShouldBeFalse();
         result.StatusCode.ShouldBe(StatusCodes.Status403Forbidden);
-        result.Message.ShouldBe(Messages.Forbidden);
+        result.Message.ShouldBe(DomainMessages.Forbidden);
     }
 
     [Fact]
@@ -98,7 +98,7 @@ public class AppTests(AppFixture appFixture)
         result.ShouldNotBeNull();
         result.Success.ShouldBeFalse();
         result.StatusCode.ShouldBe(StatusCodes.Status400BadRequest);
-        result.Message.ShouldBe(Messages.BadRequest);
+        result.Message.ShouldBe(DomainMessages.InvalidOperation);
     }
 }
 

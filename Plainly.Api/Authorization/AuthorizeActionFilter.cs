@@ -22,7 +22,7 @@ public class AuthorizeActionFilter<TAction>(TAction action) : IAuthorizationFilt
         var user = context.HttpContext.User;
         if (user.Identity is null || !user.Identity.IsAuthenticated)
         {
-            context.Result = ErrorResponseBuilder.FromErrorCode(ErrorCode.Unauthorized).Build(context.HttpContext).ToActionResult();
+            context.Result = ErrorResponseBuilder.FromErrorCode(DomainErrorCode.Unauthorized).Build(context.HttpContext).ToActionResult();
             return;
         }
 
@@ -37,7 +37,7 @@ public class AuthorizeActionFilter<TAction>(TAction action) : IAuthorizationFilt
 
         if (!actionScopes.All(userHasScope))
         {
-            context.Result = ErrorResponseBuilder.FromErrorCode(ErrorCode.Forbidden).Build(context.HttpContext).ToActionResult();
+            context.Result = ErrorResponseBuilder.FromErrorCode(DomainErrorCode.Forbidden).Build(context.HttpContext).ToActionResult();
             return;
         }
     }
