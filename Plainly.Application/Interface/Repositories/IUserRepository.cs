@@ -1,6 +1,7 @@
 using System.Security.Claims;
+using Plainly.Domain.Interfaces;
 
-namespace Plainly.Domain.Interfaces.Repositories;
+namespace Plainly.Application.Interface.Repositories;
 
 
 public interface IUserRepository

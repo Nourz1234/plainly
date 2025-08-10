@@ -12,7 +12,6 @@ public class ErrorResponseBuilder
 {
     private static int StatusCodeForDomainErrorType(DomainErrorType errorType) => errorType switch
     {
-        // General
         DomainErrorType.InternalError => StatusCodes.Status500InternalServerError,
         DomainErrorType.InvalidOperation => StatusCodes.Status400BadRequest,
         DomainErrorType.Unauthorized => StatusCodes.Status401Unauthorized,

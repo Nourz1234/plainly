@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Plainly.Domain;
 using Plainly.Domain.Exceptions;
 using Plainly.Shared.Responses;
 
@@ -11,7 +12,7 @@ public static class IdentityResultExtensions
         if (!result.Succeeded)
         {
             var errors = result.Errors.Select(error => new ErrorDetail(error.Code, error.Description)).ToArray();
-            throw DomainException.FromValidationErrors(errors);
+            throw new DomainException(DomainErrorCode.ValidationError, errors);
         }
     }
 }

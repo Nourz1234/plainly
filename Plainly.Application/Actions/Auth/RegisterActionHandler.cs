@@ -1,10 +1,10 @@
 using System.Security.Claims;
 using Plainly.Application.Interface;
-using Plainly.Domain.Interfaces.Repositories;
 using Plainly.Shared;
 using Plainly.Shared.Actions.Auth.Register;
 using Plainly.Shared.Interfaces;
 using Plainly.Shared.Extensions;
+using Plainly.Application.Interface.Repositories;
 
 namespace Plainly.Application.Actions.Auth;
 

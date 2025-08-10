@@ -8,5 +8,5 @@ namespace Plainly.Application.Extensions;
 public static class UserProviderExtensions
 {
     public static async Task<IUser> GetCurrentUserOrFailAsync(this ICurrentUserProvider userProvider)
-        => await userProvider.GetCurrentUserAsync() ?? throw DomainException.FromErrorCode(DomainErrorCode.Unauthorized);
+        => await userProvider.GetCurrentUserAsync() ?? throw new DomainException(DomainErrorCode.Unauthorized);
 }

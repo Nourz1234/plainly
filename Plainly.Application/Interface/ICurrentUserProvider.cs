@@ -5,5 +5,5 @@ namespace Plainly.Application.Interface;
 public interface ICurrentUserProvider
 {
     Task<IUser?> GetCurrentUserAsync();
-    Task<IUser?> GetCurrentAdminUserAsync();
+    Task<IUser?> GetCurrentImpersonatorUserAsync();
 }

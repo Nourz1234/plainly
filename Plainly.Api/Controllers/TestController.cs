@@ -23,34 +23,34 @@ public class TestController(IHostEnvironment environment) : ControllerBase
     public SuccessResponse GetInternalServerError()
     {
         if (environment.IsProduction()) throw new ApiException(ApiErrorCode.EndpointNotFound);
-        throw DomainException.FromErrorCode(DomainErrorCode.InternalError);
+        throw new DomainException(DomainErrorCode.InternalError);
     }
 
     [HttpGet("NotFound")]
     public SuccessResponse GetNotFound()
     {
         if (environment.IsProduction()) throw new ApiException(ApiErrorCode.EndpointNotFound);
-        throw DomainException.FromErrorCode(DomainErrorCode.NotFound);
+        throw new DomainException(DomainErrorCode.NotFound);
     }
 
     [HttpGet("Unauthorized")]
     public SuccessResponse GetUnauthorized()
     {
         if (environment.IsProduction()) throw new ApiException(ApiErrorCode.EndpointNotFound);
-        throw DomainException.FromErrorCode(DomainErrorCode.Unauthorized);
+        throw new DomainException(DomainErrorCode.Unauthorized);
     }
 
     [HttpGet("Forbidden")]
     public SuccessResponse GetForbidden()
     {
         if (environment.IsProduction()) throw new ApiException(ApiErrorCode.EndpointNotFound);
-        throw DomainException.FromErrorCode(DomainErrorCode.Forbidden);
+        throw new DomainException(DomainErrorCode.Forbidden);
     }
 
     [HttpGet("BadRequest")]
     public SuccessResponse GetBadRequest()
     {
         if (environment.IsProduction()) throw new ApiException(ApiErrorCode.EndpointNotFound);
-        throw DomainException.FromErrorCode(DomainErrorCode.InvalidOperation);
+        throw new DomainException(DomainErrorCode.InvalidOperation);
     }
 }

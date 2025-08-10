@@ -4,9 +4,8 @@ using System.Security.Cryptography;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Plainly.Application.Interface;
+using Plainly.Application.Interface.Repositories;
 using Plainly.Domain.Interfaces;
-using Plainly.Domain.Interfaces.Repositories;
-using Plainly.Infrastructure.Persistence.AppDatabase.Entities;
 
 namespace Plainly.Infrastructure.Jwt;
 

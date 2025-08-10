@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Plainly.Domain.Interfaces.Repositories;
+using Plainly.Application.Interface.Repositories;
 using Plainly.Infrastructure.Persistence.AppDatabase;
 using Plainly.Infrastructure.Persistence.AppDatabase.Repositories;
 using Plainly.Infrastructure.Persistence.LogDatabase;

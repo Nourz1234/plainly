@@ -10,16 +10,16 @@ namespace Plainly.Infrastructure.Identity;
 
 public class AuthService(SignInManager<User> signInManager) : IAuthService
 {
-    public async Task VerifyPasswordAsync(IUser user, string password)
+    public async Task CheckPasswordAsync(IUser user, string password)
     {
         var result = await signInManager.CheckPasswordSignInAsync(user.AsEntity(), password, false);
         if (!result.Succeeded)
         {
             if (result.IsLockedOut)
-                throw DomainException.FromErrorCode(DomainErrorCode.UserIsLockedOut);
+                throw new DomainException(DomainErrorCode.UserIsLockedOut);
             if (result.IsNotAllowed)
-                throw DomainException.FromErrorCode(DomainErrorCode.EmailNotConfirmed);
-            throw DomainException.FromErrorCode(DomainErrorCode.InvalidLoginCredentials);
+                throw new DomainException(DomainErrorCode.EmailNotConfirmed);
+            throw new DomainException(DomainErrorCode.InvalidLoginCredentials);
         }
     }
 }

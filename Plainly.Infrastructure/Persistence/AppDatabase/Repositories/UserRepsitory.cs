@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
+using Plainly.Application.Interface.Repositories;
 using Plainly.Domain.Interfaces;
-using Plainly.Domain.Interfaces.Repositories;
 using Plainly.Infrastructure.Extensions;
 using Plainly.Infrastructure.Persistence.AppDatabase.Entities;
 

@@ -1,6 +1,6 @@
 using Plainly.Application.Extensions;
 using Plainly.Application.Interface;
-using Plainly.Domain.Interfaces.Repositories;
+using Plainly.Application.Interface.Repositories;
 using Plainly.Shared.Actions.User.EditProfile;
 using Plainly.Shared.Interfaces;
 

@@ -1,8 +1,8 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Plainly.Application.Interface;
+using Plainly.Application.Interface.Repositories;
 using Plainly.Domain.Interfaces;
-using Plainly.Domain.Interfaces.Repositories;
 
 namespace Plainly.Infrastructure.Identity;
 
@@ -21,7 +21,7 @@ public class CurrentUserProvider(IHttpContextAccessor httpContextAccessor, IUser
     /// <summary>
     /// In the case of impersonation, this will return the impersonator's user
     /// </summary>
-    public Task<IUser?> GetCurrentAdminUserAsync()
+    public Task<IUser?> GetCurrentImpersonatorUserAsync()
     {
         throw new NotImplementedException();
     }
