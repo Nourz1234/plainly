@@ -5,7 +5,7 @@ using Plainly.Domain.Exceptions;
 using Plainly.Shared.Actions.Auth.Login;
 using Plainly.Shared.Interfaces;
 
-namespace Plainly.Api.Actions.Auth;
+namespace Plainly.Application.Actions.Auth;
 
 public class LoginActionHandler(IUserRepository userRepository, IAuthService authService, IJwtService jwtService)
     : IActionHandler<LoginAction, LoginRequest, LoginDTO>

@@ -1,4 +1,7 @@
+using System.Buffers.Text;
 using System.Diagnostics.CodeAnalysis;
+using System.Security.Cryptography;
+using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Plainly.Infrastructure.Persistence.AppDatabase;
 using Plainly.Infrastructure.Persistence.AppDatabase.Seeders;
@@ -33,8 +36,21 @@ public class Program
             using var scope = app.Services.CreateScope();
             await DatabaseSeeder.SeedAllAsync(scope.ServiceProvider);
         }
+        else if (args.Contains("--make-cert"))
+        {
+        }
         else
         {
+            // var rsa = RSA.Create();
+            // rsa.ImportFromPem(app.Configuration["Jwt:PublicKey"]);
+            // var rsaParameters = rsa.ExportParameters(false);
+            // var data = new
+            // {
+            //     Exponent = Convert.ToBase64String(rsaParameters.Exponent!),
+            //     Modulus = Convert.ToBase64String(rsaParameters.Modulus!)
+            // };
+            // File.WriteAllText("rsaParameters.json", JsonSerializer.Serialize(data));
+
             await app.RunAsync();
         }
     }

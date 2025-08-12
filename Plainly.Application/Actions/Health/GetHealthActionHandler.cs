@@ -1,7 +1,7 @@
 using Plainly.Shared.Actions.Heath.GetHealth;
 using Plainly.Shared.Interfaces;
 
-namespace Plainly.Api.Actions.Health;
+namespace Plainly.Application.Actions.Health;
 
 public class GetHealthActionHandler : IActionHandler<GetHealthAction, GetHealthRequest, GetHealthDTO>
 {

@@ -6,19 +6,28 @@ using Microsoft.JSInterop;
 
 namespace Plainly.Frontend.Services;
 
-public class JwtValidator(AppConfig appConfig)
+public class JwtValidator
 {
+    private readonly AppConfig appConfig;
+    private readonly RsaSecurityKey _IssuerSigningKey;
 
-    public bool ValidateToken(string token, string publicKeyPem, out ClaimsPrincipal? principal)
+    public JwtValidator(AppConfig appConfig)
+    {
+        this.appConfig = appConfig;
+
+        _IssuerSigningKey = new RsaSecurityKey(new RSAParameters
+        {
+            Exponent = Convert.FromBase64String(appConfig.Jwt.PublicKeyRSAParameters.Exponent),
+            Modulus = Convert.FromBase64String(appConfig.Jwt.PublicKeyRSAParameters.Modulus)
+        });
+    }
+
+    public bool ValidateToken(string token, out ClaimsPrincipal? principal)
     {
         principal = null;
 
         try
         {
-            // var rsa = RSA.Create();
-            // rsa.ImportFromPem(appConfig.Jwt.PublicKeyPem);
-            // rsa.ExportParameters()
-
             var validationParameters = new TokenValidationParameters
             {
                 ValidIssuer = appConfig.Jwt.Issuer,
@@ -28,7 +37,7 @@ public class JwtValidator(AppConfig appConfig)
                 RequireExpirationTime = true,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new RsaSecurityKey(new RSAParameters {}),
+                IssuerSigningKey = _IssuerSigningKey,
                 ClockSkew = TimeSpan.Zero
             };
 
