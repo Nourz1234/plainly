@@ -29,17 +29,10 @@ To set:
 
 # 🔑 Generating Asymmetric JWT Keys
 
-Private key:
+Run:
 ```sh
-openssl genpkey -algorithm RSA -out jwt-private.key -pkeyopt rsa_keygen_bits:2048
+dotnet run -- --gen-jwt-keys
 ```
-
-Public key:
-```sh
-openssl rsa -in jwt-private.key -pubout -out jwt-public.key
-```
-
-- Tip: Use git bash on windows ;)
 
 ---
 

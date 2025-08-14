@@ -3,51 +3,80 @@ using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
 using System.Security.Claims;
 using Microsoft.JSInterop;
+using Microsoft.IdentityModel.Logging;
 
 namespace Plainly.Frontend.Services;
 
 public class JwtValidator
 {
     private readonly AppConfig appConfig;
-    private readonly RsaSecurityKey _IssuerSigningKey;
+    private readonly IJSRuntime jsRuntime;
 
-    public JwtValidator(AppConfig appConfig)
+    public JwtValidator(AppConfig appConfig, IJSRuntime jsRuntime)
     {
         this.appConfig = appConfig;
-
-        _IssuerSigningKey = new RsaSecurityKey(new RSAParameters
-        {
-            Exponent = Convert.FromBase64String(appConfig.Jwt.PublicKeyRSAParameters.Exponent),
-            Modulus = Convert.FromBase64String(appConfig.Jwt.PublicKeyRSAParameters.Modulus)
-        });
+        this.jsRuntime = jsRuntime;
     }
 
-    public bool ValidateToken(string token, out ClaimsPrincipal? principal)
+    public async Task<ClaimsPrincipal?> ValidateTokenAsync(string token)
     {
-        principal = null;
-
         try
         {
+            var isValidSignature = await jsRuntime.InvokeAsync<bool>(
+                "cryptoFunctions.verifyEcdsaSignature",
+                token,
+                appConfig.Jwt.PublicKey
+            );
+            if (!isValidSignature) return null;
+
             var validationParameters = new TokenValidationParameters
             {
-                ValidIssuer = appConfig.Jwt.Issuer,
-                ValidAudience = appConfig.Jwt.Audience,
                 ValidateIssuer = true,
                 ValidateAudience = true,
-                RequireExpirationTime = true,
                 ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = _IssuerSigningKey,
-                ClockSkew = TimeSpan.Zero
+                ValidateIssuerSigningKey = false,
+                IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String("test")),
+                ValidIssuer = appConfig.Jwt.Issuer,
+                ValidAudience = appConfig.Jwt.Audience,
+                SignatureValidator = (t, vp) => new JwtSecurityToken(t),
             };
 
             var handler = new JwtSecurityTokenHandler();
-            principal = handler.ValidateToken(token, validationParameters, out _);
-            return true;
+            return handler.ValidateToken(token, validationParameters, out _);
         }
-        catch
+        catch (Exception ex)
         {
-            return false;
+            Console.WriteLine(ex);
+            return null;
         }
     }
+
+    // public bool ValidateToken(string token, out ClaimsPrincipal? principal)
+    // {
+    //     principal = null;
+
+    //     try
+    //     {
+    //         var validationParameters = new TokenValidationParameters
+    //         {
+    //             ValidateIssuer = true,
+    //             ValidateAudience = true,
+    //             ValidateLifetime = true,
+    //             ValidateIssuerSigningKey = true,
+    //             ValidIssuer = appConfig.Jwt.Issuer,
+    //             ValidAudience = appConfig.Jwt.Audience,
+    //             IssuerSigningKey = _IssuerSigningKey
+    //         };
+
+    //         var handler = new JwtSecurityTokenHandler();
+    //         principal = handler.ValidateToken(token, validationParameters, out _);
+    //         return true;
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         Console.WriteLine(ex);
+    //         return false;
+    //     }
+    // }
+
 }

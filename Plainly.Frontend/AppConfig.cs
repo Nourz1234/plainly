@@ -11,12 +11,7 @@ public class AppConfig
     {
         public string Issuer { get; set; } = "";
         public string Audience { get; set; } = "";
-        public JwtRsaParameters PublicKeyRSAParameters { get; set; } = new();
-    }
-
-    public class JwtRsaParameters
-    {
-        public string Exponent { get; set; } = "";
-        public string Modulus { get; set; } = "";
+        public string KeyId { get; set; } = "";
+        public string PublicKey { get; set; } = "";
     }
 }

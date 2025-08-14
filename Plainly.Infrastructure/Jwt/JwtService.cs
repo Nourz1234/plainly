@@ -20,9 +20,10 @@ public class JwtService : IJwtService
         _UserRepository = userRepository;
         _Options = options.Value;
 
-        var rsa = RSA.Create();
-        rsa.ImportFromPem(_Options.PrivateKey);
-        _SigningCredentials = new SigningCredentials(new RsaSecurityKey(rsa), SecurityAlgorithms.RsaSha256);
+        var privateKeyBytes = Convert.FromBase64String(_Options.PrivateKey);
+        var ecdsa = ECDsa.Create();
+        ecdsa.ImportPkcs8PrivateKey(privateKeyBytes, out _);
+        _SigningCredentials = new SigningCredentials(new ECDsaSecurityKey(ecdsa) { KeyId = _Options.KeyId }, SecurityAlgorithms.EcdsaSha256);
     }
 
     public async Task<string> GenerateToken(IUser user)

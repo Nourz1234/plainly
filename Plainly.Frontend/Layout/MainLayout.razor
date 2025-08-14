@@ -34,13 +34,14 @@
             Password = "123456",
             RememberMe = true
         };
-        var response = await Http.PostAsJsonAsync<LoginForm>("api/Auth/Login", payload);
-        var result = await response.Content.ReadFromJsonAsync<SuccessResponse<LoginDTO>>();
-        if (result is null) return;
+            var response = await Http.PostAsJsonAsync<LoginForm>("api/Auth/Login", payload);
+            var result = await response.Content.ReadFromJsonAsync<SuccessResponse<LoginDTO>>();
+            if (result is null) return;
 
-        if (JwtValidator.ValidateToken(result.Data.Token, out var claimsPrincipal))
-        {
-            Console.WriteLine("test");
-        }
+            var claimsPrincipal = await JwtValidator.ValidateTokenAsync(result.Data.Token);
+            if (claimsPrincipal is not null)
+            {
+                Console.WriteLine("test");
+            }
     }
 }

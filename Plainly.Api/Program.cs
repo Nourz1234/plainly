@@ -36,8 +36,19 @@ public class Program
             using var scope = app.Services.CreateScope();
             await DatabaseSeeder.SeedAllAsync(scope.ServiceProvider);
         }
-        else if (args.Contains("--make-cert"))
+        else if (args.Contains("--gen-jwt-keys"))
         {
+            using var ecdsa = ECDsa.Create(ECCurve.NamedCurves.nistP256);
+            var privateKeyBytes = ecdsa.ExportPkcs8PrivateKey();
+            var publicKeyBytes = ecdsa.ExportSubjectPublicKeyInfo();
+
+            var data = new
+            {
+                KeyId = Guid.NewGuid().ToString(),
+                PrivateKey = Convert.ToBase64String(privateKeyBytes),
+                PublicKey = Convert.ToBase64String(publicKeyBytes)
+            };
+            File.WriteAllText("ec_keys.json", JsonSerializer.Serialize(data));
         }
         else
         {

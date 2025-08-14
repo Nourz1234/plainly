@@ -21,6 +21,18 @@ public class Startup(IConfiguration configuration)
 
     public void ConfigureServices(IServiceCollection services)
     {
+        // Add CORS services
+        services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAll", policy =>
+            {
+                policy.AllowAnyOrigin()
+                      .AllowAnyHeader()
+                      .AllowAnyMethod();
+            });
+        });
+
+
         // Add controllers
         services.AddControllers(options =>
         {
@@ -50,6 +62,8 @@ public class Startup(IConfiguration configuration)
 
     public async Task Configure(WebApplication app, IWebHostEnvironment env)
     {
+        app.UseCors("AllowAll");
+
         app.UseRouting();
 
         app.UseHttpsRedirection();

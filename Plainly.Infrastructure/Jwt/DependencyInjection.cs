@@ -19,8 +19,9 @@ public static class DependencyInjection
         })
             .AddJwtBearer(options =>
             {
-                var rsa = RSA.Create();
-                rsa.ImportFromPem(configuration["Jwt:PublicKey"]);
+                var publicKeyBytes = Convert.FromBase64String(configuration["Jwt:PublicKey"]!);
+                var ecdsa = ECDsa.Create();
+                ecdsa.ImportSubjectPublicKeyInfo(publicKeyBytes, out _);
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
@@ -29,7 +30,7 @@ public static class DependencyInjection
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = configuration["Jwt:Issuer"],
                     ValidAudience = configuration["Jwt:Audience"],
-                    IssuerSigningKey = new RsaSecurityKey(rsa)
+                    IssuerSigningKey = new ECDsaSecurityKey(ecdsa) { KeyId = configuration["Jwt:KeyId"] }
                 };
             });
         // Add service
