@@ -21,27 +21,3 @@
         </article>
     </main>
 </div>
-
-
-@code
-{
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-        var payload = new LoginForm
-        {
-            Email = "admin@plainly.com",
-            Password = "123456",
-            RememberMe = true
-        };
-            var response = await Http.PostAsJsonAsync<LoginForm>("api/Auth/Login", payload);
-            var result = await response.Content.ReadFromJsonAsync<SuccessResponse<LoginDTO>>();
-            if (result is null) return;
-
-            var claimsPrincipal = await JwtValidator.ValidateTokenAsync(result.Data.Token);
-            if (claimsPrincipal is not null)
-            {
-                Console.WriteLine("test");
-            }
-    }
-}
