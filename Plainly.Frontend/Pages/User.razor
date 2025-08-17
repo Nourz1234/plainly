@@ -1,34 +1,27 @@
-@using Plainly.Frontend.Providers
-@using Plainly.Shared.Actions.Auth.Login
-@using System.Net
+@page "/User"
+@inject AuthService AuthService
 
-@page "/user"
-@inject AuthenticationStateProvider AuthenticationStateProvider
-@inject HttpClient Http
+<PageTitle>Home</PageTitle>
 
 <AuthorizeView>
     <Authorized>
         <p>Hello, @context.User.Identity?.Name!</p>
+        <button class="btn btn-primary" @onclick="Logout">Log out</button>
     </Authorized>
     <NotAuthorized>
-        <button @onclick="SignIn">Sign in</button>
         <p>You're not authorized.</p>
+        <button class="btn btn-primary" @onclick="Login">Login</button>
     </NotAuthorized>
 </AuthorizeView>
 
 @code {
-    public string userIdentifier = string.Empty;
-
-    private async Task SignIn()
+    private async Task Login()
     {
-        var response = await Http.PostAsJsonAsync("api/auth/login", new LoginForm
-        {
-            Email = "admin@plainly.com",
-            Password = "123456"
-        });
-        var result = await response.Content.ReadFromJsonAsync<SuccessResponse<LoginDTO>>();
-        if (result is null) return;
+        await AuthService.LoginAsync("admin@plainly.com", "123456");
+    }
 
-        await ((TokenAuthenticationStateProvider)AuthenticationStateProvider).AuthenticateUser(result.Data.Token);
+    private async Task Logout()
+    {
+        await AuthService.Logout();
     }
 }

@@ -1,9 +1,12 @@
 namespace Plainly.Frontend.Services;
 
-public class AuthService(JwtValidator jwtValidator, CurrentUserService currentUserService)
+public class AuthService(ApiService apiService, CurrentUserService currentUserService)
 {
-    public async Task AuthenticateUser(string token)
+    public async Task LoginAsync(string email, string password)
     {
-        currentUserService.CurrentUser = await jwtValidator.ValidateTokenAsync(token);
+        var result = await apiService.LoginAsync(new() { Email = email, Password = password });
+        await currentUserService.SetCurrentUserAsync(result.Token);
     }
+
+    public async Task Logout() => await currentUserService.ClearCurrentUserAsync();
 }

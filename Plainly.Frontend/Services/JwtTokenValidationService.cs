@@ -2,19 +2,18 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using Microsoft.JSInterop;
-using System.Net.Http.Headers;
 using Plainly.Frontend.Errors;
 
 namespace Plainly.Frontend.Services;
 
-public class JwtValidator(AppConfig appConfig, IJSRuntime jsRuntime)
+public class JwtTokenValidationService(IConfiguration configuration, IJSRuntime jsRuntime)
 {
     public async Task<ClaimsPrincipal> ValidateTokenAsync(string token)
     {
         var isValidSignature = await jsRuntime.InvokeAsync<bool>(
             "cryptoFunctions.verifyEcdsaSignature",
             token,
-            appConfig.Jwt.PublicKey
+            configuration["Jwt:PublicKey"]
         );
         if (!isValidSignature)
             throw new AuthError(Messages.InvalidJWTSignature);
@@ -25,8 +24,8 @@ public class JwtValidator(AppConfig appConfig, IJSRuntime jsRuntime)
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = false,
-            ValidIssuer = appConfig.Jwt.Issuer,
-            ValidAudience = appConfig.Jwt.Audience,
+            ValidIssuer = configuration["Jwt:Issuer"],
+            ValidAudience = configuration["Jwt:Audience"],
             SignatureValidator = (t, vp) => new JwtSecurityToken(t),
         };
 

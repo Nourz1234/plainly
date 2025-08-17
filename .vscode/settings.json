@@ -2,9 +2,9 @@
     "dotnet.defaultSolution": "Plainly.sln",
     "cSpell.words": [
         "ASPNETCORE",
+        "Blazored",
         "Clientside",
         "Npgsql",
-        "Serilog",
         "Shouldly"
     ],
 }
