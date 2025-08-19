@@ -1,17 +1,37 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+<AuthorizeView>
+    <Authorized>
+        <div class="page">
+            <div class="sidebar">
+                <NavMenu />
+            </div>
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+            <main class="d-flex flex-column">
+                <div class="top-row px-4">
+                    <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+                </div>
+
+                <article class="content flex-grow-1 px-4" style="position: relative;">
+                    <LoaderBoundary>
+                        <ErrorBoundary @ref="_ErrorBoundary">
+                            <ChildContent>
+                                @Body
+                            </ChildContent>
+                            <ErrorContent Context="errorContext">
+                                <Error ErrorBoundary="_ErrorBoundary" Exception="errorContext" />
+                            </ErrorContent>
+                        </ErrorBoundary>
+                    </LoaderBoundary>
+                </article>
+            </main>
         </div>
+    </Authorized>
+    <NotAuthorized>
+        <RedirectToLogin />
+    </NotAuthorized>
+</AuthorizeView>
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
+@code {
+    private ErrorBoundary? _ErrorBoundary;
+}

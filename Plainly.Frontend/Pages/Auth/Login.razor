@@ -1,0 +1,39 @@
+@using Plainly.Shared.Actions.Auth.Login
+
+@page "/Login"
+@inherits AppComponent
+@layout Layout.AuthLayout
+@inject CurrentUserService CurrentUserService
+@inject ApiService ApiService
+
+
+<PageTitle>Login</PageTitle>
+
+<h5 class="card-title">Login</h5>
+
+<EditForm Model="_LoginForm" OnValidSubmit="Handle(OnSubmit)">
+    <FluentValidationValidator />
+
+    <div class="d-flex flex-column gap-2">
+        <TextField @bind-Value="_LoginForm.Email" />
+        <TextField @bind-Value="_LoginForm.Password" type="password" />
+        <CheckBoxField @bind-Value="_LoginForm.RememberMe" />
+        <button type="submit" class="btn btn-primary">Login</button>
+    </div>
+
+    <div class="mt-2">
+        <p>Don't have an account? <a href="/Register">Register</a></p>
+    </div>
+</EditForm>
+
+
+@code {
+    private LoginForm _LoginForm = new();
+
+    private async Task OnSubmit(EditContext args)
+    {
+        var result = await ApiService.LoginAsync(_LoginForm);
+        await CurrentUserService.SetCurrentUserAsync(result.Data.Token);
+        ToastService.ShowSuccess(result.Message);
+    }
+}

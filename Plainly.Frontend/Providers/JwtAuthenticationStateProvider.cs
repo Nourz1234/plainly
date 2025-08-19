@@ -1,6 +1,4 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.JSInterop;
 using Plainly.Frontend.Services;
 
 namespace Plainly.Frontend.Providers;

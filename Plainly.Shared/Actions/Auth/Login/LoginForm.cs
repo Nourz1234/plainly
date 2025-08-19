@@ -5,9 +5,9 @@ namespace Plainly.Shared.Actions.Auth.Login;
 public record LoginForm()
 {
     [DisplayName("Email Address")]
-    public string Email { get; init; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
     [DisplayName("Password")]
-    public string Password { get; init; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
     [DisplayName("Remember Me")]
-    public bool RememberMe { get; init; }
+    public bool RememberMe { get; set; }
 }

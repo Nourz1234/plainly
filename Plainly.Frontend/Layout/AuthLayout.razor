@@ -1,0 +1,35 @@
+@inherits LayoutComponentBase
+
+<AuthorizeView>
+    <NotAuthorized>
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-lg-4">
+
+                    <div class="card mt-5">
+                        <div class="card-body">
+                            <LoaderBoundary>
+                                <ErrorBoundary @ref="_ErrorBoundary">
+                                    <ChildContent>
+                                        @Body
+                                    </ChildContent>
+                                    <ErrorContent Context="errorContext">
+                                        <Error ErrorBoundary="_ErrorBoundary" Exception="errorContext" />
+                                    </ErrorContent>
+                                </ErrorBoundary>
+                            </LoaderBoundary>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </NotAuthorized>
+    <Authorized>
+        <RedirectToHome />
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    private ErrorBoundary? _ErrorBoundary;
+}

@@ -20,6 +20,7 @@ public class CurrentUserService(ILocalStorageService localStorageService, JwtTok
     {
         var claimsPrincipal = await jwtTokenValidationService.ValidateTokenAsync(token);
         _CurrentUser = claimsPrincipal;
+        Token = token;
         await localStorageService.SetItemAsStringAsync("token", token);
         UserChanged?.Invoke(_CurrentUser);
     }
@@ -28,11 +29,16 @@ public class CurrentUserService(ILocalStorageService localStorageService, JwtTok
     {
         await localStorageService.RemoveItemAsync("token");
         _CurrentUser = Anonymous;
+        Token = null;
         UserChanged?.Invoke(_CurrentUser);
     }
 
     private ClaimsPrincipal _CurrentUser = Anonymous;
     public ClaimsPrincipal CurrentUser => _CurrentUser;
+
+    public string? Token { get; private set; }
+
+    public bool IsAuthenticated => _CurrentUser.Identity is { IsAuthenticated: true };
 
     public event Action<ClaimsPrincipal>? UserChanged;
 }

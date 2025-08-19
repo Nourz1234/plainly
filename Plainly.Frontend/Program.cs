@@ -1,7 +1,9 @@
 using Blazored.LocalStorage;
+using Blazored.Toast;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Plainly.Frontend.Handlers;
 using Plainly.Frontend.Providers;
 using Plainly.Frontend.Services;
 
@@ -24,15 +26,18 @@ public class Program
         builder.Services.AddAuthorizationCore();
         builder.Services.AddCascadingAuthenticationState();
         builder.Services.AddBlazoredLocalStorage();
+        builder.Services.AddBlazoredToast();
 
         builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+        builder.Services.AddScoped<JwtAuthorizationMessageHandler>();
         builder.Services.AddHttpClient<ApiService>(client =>
         {
             client.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"] ?? throw new Exception("ApiBaseUrl is not set"));
-        });
+        })
+            .AddHttpMessageHandler<JwtAuthorizationMessageHandler>();
+
         builder.Services.AddScoped<CurrentUserService>();
         builder.Services.AddScoped<JwtTokenValidationService>();
-        builder.Services.AddScoped<AuthService>();
         builder.Services.AddScoped<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
 
         await builder.Build().RunAsync();

@@ -1,0 +1,40 @@
+@using Plainly.Shared.Actions.Auth.Register
+
+@page "/Register"
+@inherits AppComponent
+@layout Layout.AuthLayout
+@inject ApiService ApiService
+@inject CurrentUserService CurrentUserService
+
+
+<PageTitle>Register</PageTitle>
+
+
+<h5 class="card-title">Register</h5>
+
+<EditForm Model="_RegisterForm" OnValidSubmit="Handle(OnSubmit)">
+    <FluentValidationValidator />
+
+    <div class="d-flex flex-column gap-2">
+        <TextField @bind-Value="_RegisterForm.FullName" />
+        <TextField @bind-Value="_RegisterForm.Email" autocomplete="off" />
+        <TextField @bind-Value="_RegisterForm.Password" type="password" autocomplete="new-password" />
+        <TextField @bind-Value="_RegisterForm.ConfirmPassword" type="password" autocomplete="new-password" />
+        <button type="submit" class="btn btn-primary">Register</button>
+    </div>
+
+    <div class="mt-2">
+        <p>Already have an account? <a href="/Login">Login</a></p>
+    </div>
+</EditForm>
+
+
+@code {
+    private RegisterForm _RegisterForm = new();
+
+    private async Task OnSubmit(EditContext args)
+    {
+        var result = await ApiService.RegisterAsync(_RegisterForm);
+        await CurrentUserService.SetCurrentUserAsync(result.Token);
+    }
+}

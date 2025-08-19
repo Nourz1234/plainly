@@ -4,7 +4,9 @@
         "ASPNETCORE",
         "Blazored",
         "Clientside",
+        "nameof",
         "Npgsql",
-        "Shouldly"
+        "Shouldly",
+        "typeparam"
     ],
 }

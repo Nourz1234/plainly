@@ -1,0 +1,63 @@
+@using System.Linq.Expressions
+@using System.Reflection
+@using System.ComponentModel
+@using System.Diagnostics.CodeAnalysis
+@using System.Globalization
+@using System.Net.NetworkInformation
+@typeparam TValue
+
+@code {
+    protected string? Name {get; set;}
+    protected string? DisplayName {get; set;}
+
+    [Parameter]
+    public TValue? Value { get; set; }
+    [Parameter]
+    public EventCallback<TValue> ValueChanged { get; set; }
+    [Parameter]
+    public Expression<Func<TValue>>? ValueExpression { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string _CssClass = "";
+    public string CssClass => _CssClass;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        if (ValueExpression is null)
+            throw new ArgumentException("Must bind field to a value");
+
+        MemberInfo memberInfo = GetMemberInfo(ValueExpression);
+        Name = memberInfo.Name;
+        DisplayName = GetAttribute<DisplayNameAttribute>(memberInfo).DisplayName;
+
+        if (AdditionalAttributes is not null && AdditionalAttributes.TryGetValue("class", out var @class))
+        {
+            AdditionalAttributes.Remove("class");
+            _CssClass = Convert.ToString(@class, CultureInfo.InvariantCulture) ?? "";
+        }
+    }
+
+
+    public static MemberInfo GetMemberInfo<TProp>(Expression<Func<TProp>> expression)
+    {
+        if (expression.Body is MemberExpression memberExp)
+        {
+            return memberExp.Member;
+        }
+
+        if (expression.Body is UnaryExpression unaryExp && unaryExp.Operand is MemberExpression innerMemberExp)
+        {
+            return innerMemberExp.Member;
+        }
+
+        throw new ArgumentException("Expression is not a member access", nameof(expression));
+    }
+
+    public static T GetAttribute<T>(MemberInfo member) where T : Attribute
+    {
+        return member.GetCustomAttribute<T>() ?? throw new InvalidOperationException($"The attribute {nameof(T)} was not found.");
+    }
+}
