@@ -2,7 +2,7 @@
 
 <h3>An unhandled error occurred</h3>
 
-@if (Exception is Errors.Error error && !string.IsNullOrEmpty(error.Message))
+@if (Exception is Errors.AppError error && !string.IsNullOrEmpty(error.Message))
 {
     <p class="text-danger">
         @error.Message

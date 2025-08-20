@@ -1,8 +1,4 @@
 @inherits BaseField<string>
 
-<div class="form-group">
-    <label class="form-label" for="@Name">@DisplayName</label>
-    <InputText class=@($"form-control {CssClass}") id="@Name" name="@Name" type="text" DisplayName="@DisplayName" Value="@Value"
-        ValueChanged="ValueChanged" ValueExpression="ValueExpression" @attributes="AdditionalAttributes" />
-    <ValidationMessage For="ValueExpression" />
-</div>
+<MudTextField Label="@DisplayName" Variant="Variant.Outlined" Value="@Value" ValueChanged="ValueChanged"
+    @attributes="AdditionalAttributes" />

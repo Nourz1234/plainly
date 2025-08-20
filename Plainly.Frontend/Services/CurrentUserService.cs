@@ -7,7 +7,7 @@ public class CurrentUserService(ILocalStorageService localStorageService, JwtTok
 {
     private static readonly ClaimsPrincipal Anonymous = new();
 
-    public async Task InitializeAsync()
+    public async Task LoadCurrentUserAsync()
     {
         var token = await localStorageService.GetItemAsStringAsync("token");
         if (token is not null)
@@ -39,6 +39,8 @@ public class CurrentUserService(ILocalStorageService localStorageService, JwtTok
     public string? Token { get; private set; }
 
     public bool IsAuthenticated => _CurrentUser.Identity is { IsAuthenticated: true };
+
+    public string FullName => _CurrentUser.Identity?.Name ?? "Anonymous";
 
     public event Action<ClaimsPrincipal>? UserChanged;
 }

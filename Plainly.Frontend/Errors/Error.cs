@@ -1,7 +1,7 @@
 namespace Plainly.Frontend.Errors;
 
-public class Error : Exception
+public class AppError : Exception
 {
-    public Error(string message) : base(message) { }
-    public Error(string message, Exception innerException) : base(message, innerException) {}
+    public AppError(string message) : base(message) { }
+    public AppError(string message, Exception innerException) : base(message, innerException) {}
 }

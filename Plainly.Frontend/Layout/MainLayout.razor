@@ -2,17 +2,29 @@
 
 <AuthorizeView>
     <Authorized>
-        <div class="page">
-            <div class="sidebar">
+        <MudLayout>
+            <MudAppBar Color="Color.Primary">
+
+                <MudHidden Breakpoint="Breakpoint.MdAndUp">
+                    <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
+                        OnClick="@ToggleDrawer" />
+                </MudHidden>
+
+                <MudText Typo="Typo.h4">Plainly</MudText>
+
+                <MudSpacer />
+
+                <MudStack Row="true">
+                    <ThemeButton />
+                    <UserStrip />
+                </MudStack>
+            </MudAppBar>
+            <MudDrawer @bind-Open="_DrawerOpen" ClipMode="DrawerClipMode.Always">
                 <NavMenu />
-            </div>
+            </MudDrawer>
+            <MudMainContent Style="height: 100vh">
+                <MudContainer Style="height: 100%;">
 
-            <main class="d-flex flex-column">
-                <div class="top-row px-4">
-                    <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-                </div>
-
-                <article class="content flex-grow-1 px-4" style="position: relative;">
                     <LoaderBoundary>
                         <ErrorBoundary @ref="_ErrorBoundary">
                             <ChildContent>
@@ -23,9 +35,10 @@
                             </ErrorContent>
                         </ErrorBoundary>
                     </LoaderBoundary>
-                </article>
-            </main>
-        </div>
+
+                </MudContainer>
+            </MudMainContent>
+        </MudLayout>
     </Authorized>
     <NotAuthorized>
         <RedirectToLogin />
@@ -34,4 +47,11 @@
 
 @code {
     private ErrorBoundary? _ErrorBoundary;
+
+    private bool _DrawerOpen = true;
+
+    private void ToggleDrawer()
+    {
+        _DrawerOpen = !_DrawerOpen;
+    }
 }

@@ -1,9 +1,4 @@
 @inherits BaseField<bool>
 
-<div class="form-check">
-    <InputCheckbox class=@($"form-check-input {CssClass}") id="@Name" name="@Name" type="text" DisplayName="@DisplayName"
-        Value="@Value" ValueChanged="ValueChanged" ValueExpression="ValueExpression"
-        @attributes="AdditionalAttributes" />
-    <label class="form-check-label" for="@Name">@DisplayName</label>
-    <ValidationMessage For="ValueExpression" />
-</div>
+<MudCheckBox Label="@DisplayName" Color="Color.Primary" Value="@Value" ValueChanged="ValueChanged"
+    @attributes="AdditionalAttributes" />

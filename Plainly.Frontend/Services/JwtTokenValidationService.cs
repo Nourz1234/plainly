@@ -30,6 +30,17 @@ public class JwtTokenValidationService(IConfiguration configuration, IJSRuntime 
         };
 
         var handler = new JwtSecurityTokenHandler();
-        return handler.ValidateToken(token, validationParameters, out _);
+        try
+        {
+            return handler.ValidateToken(token, validationParameters, out _);
+
+        }
+        catch (SecurityTokenException e)
+        {
+            if (e.Message.Contains("IDX10223"))
+                throw new AuthError(Messages.SessionExpired);
+            else
+                throw new AuthError(e.Message);
+        }
     }
 }

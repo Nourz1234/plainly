@@ -2,12 +2,13 @@
 
 <AuthorizeView>
     <NotAuthorized>
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-6 col-lg-4">
 
-                    <div class="card mt-5">
-                        <div class="card-body">
+        <MudLayout>
+            <MudMainContent>
+                <MudContainer MaxWidth="MaxWidth.Small">
+                    <MudCard Style="position:relative;">
+                        <MudCardContent>
+
                             <LoaderBoundary>
                                 <ErrorBoundary @ref="_ErrorBoundary">
                                     <ChildContent>
@@ -18,12 +19,13 @@
                                     </ErrorContent>
                                 </ErrorBoundary>
                             </LoaderBoundary>
-                        </div>
-                    </div>
 
-                </div>
-            </div>
-        </div>
+                        </MudCardContent>
+                    </MudCard>
+                </MudContainer>
+            </MudMainContent>
+        </MudLayout>
+
     </NotAuthorized>
     <Authorized>
         <RedirectToHome />

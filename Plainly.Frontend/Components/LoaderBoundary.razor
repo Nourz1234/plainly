@@ -1,15 +1,11 @@
-<!-- Loader.razor -->
 <CascadingValue Value="this">
-    @ChildContent
+    <div class="relative" style="width: 100%; height: 100%;">
+        @ChildContent
 
-    @if (IsVisible)
-    {
-        <div class="loader-overlay">
-            <div class="spinner-grow text-primary" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-        </div>
-    }
+        <MudOverlay Visible="IsVisible" LightBackground="true" Absolute="true">
+            <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+        </MudOverlay>
+    </div>
 </CascadingValue>
 
 @code {

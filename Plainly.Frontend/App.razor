@@ -1,8 +1,13 @@
 ﻿<Router AppAssembly="@typeof(App).Assembly">
     <Found Context="routeData">
-        <BlazoredToasts PauseProgressOnHover="true" ShowProgressBar="true" />
+        <MudThemeProvider @bind-IsDarkMode="_IsDarkMode" />
+        <MudPopoverProvider />
+        <MudDialogProvider />
+        <MudSnackbarProvider />
 
-        <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        <CascadingValue Value="this">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        </CascadingValue>
     </Found>
     <NotFound>
         <PageTitle>Not found</PageTitle>
@@ -11,3 +16,16 @@
         </LayoutView>
     </NotFound>
 </Router>
+
+@code {
+    private bool _IsDarkMode = false;
+    public bool IsDarkMode
+    {
+        get => _IsDarkMode;
+        set
+        {
+            _IsDarkMode = value;
+            StateHasChanged();
+        }
+    }
+}

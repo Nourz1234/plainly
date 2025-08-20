@@ -1,59 +1,26 @@
-using Blazored.Toast.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
-using Plainly.Frontend.Errors;
+using MudBlazor;
 
 namespace Plainly.Frontend.Components;
 
 public class AppComponent : ComponentBase
 {
     [Inject]
-    public required IToastService ToastService { get; set; }
+    public required ISnackbar Snackbar { get; set; }
 
     [CascadingParameter]
     public required LoaderBoundary LoaderBoundary { get; set; }
 
     protected EventCallback Handle(Func<Task> handler)
     {
-        return EventCallback.Factory.Create(this, async () =>
-        {
-            try
-            {
-                LoaderBoundary.Show();
-                await handler();
-            }
-            catch (Exception ex)
-            {
-                if (!HandleError(ex))
-                    throw;
-            }
-            finally
-            {
-                LoaderBoundary.Hide();
-            }
-        });
+        return EventCallback.Factory.Create(this, () => RunWithHandling(handler));
     }
 
     protected EventCallback<T> Handle<T>(Func<T, Task> handler)
     {
-        return EventCallback.Factory.Create<T>(this, async (arg) =>
-        {
-            try
-            {
-                LoaderBoundary.Show();
-                await handler(arg);
-            }
-            catch (Exception ex)
-            {
-                if (!HandleError(ex))
-                    throw;
-            }
-            finally
-            {
-                LoaderBoundary.Hide();
-            }
-        });
+        return EventCallback.Factory.Create<T>(this, (arg) => RunWithHandling(() => handler(arg)));
     }
 
     protected EventCallback<EditContext> Handle(Func<EditContext, Task> handler) => Handle<EditContext>(handler);
@@ -61,13 +28,20 @@ public class AppComponent : ComponentBase
     protected EventCallback<KeyboardEventArgs> Handle(Func<KeyboardEventArgs, Task> handler) => Handle<KeyboardEventArgs>(handler);
 
 
-    protected virtual bool HandleError(Exception ex)
+    public async Task RunWithHandling(Func<Task> handler)
     {
-        if (ex is ApiError apiError)
+        LoaderBoundary.Show();
+        try
         {
-            ToastService.ShowError(apiError.Message);
-            return true;
+            await handler();
         }
-        return false;
+        catch (Errors.AppError error)
+        {
+            Snackbar.Add(error.Message, Severity.Error);
+        }
+        finally
+        {
+            LoaderBoundary.Hide();
+        }
     }
 }

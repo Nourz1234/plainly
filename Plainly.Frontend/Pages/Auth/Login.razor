@@ -9,21 +9,19 @@
 
 <PageTitle>Login</PageTitle>
 
-<h5 class="card-title">Login</h5>
+<MudText Typo="Typo.h5" Align="Align.Center">Login</MudText>
 
 <EditForm Model="_LoginForm" OnValidSubmit="Handle(OnSubmit)">
     <FluentValidationValidator />
 
-    <div class="d-flex flex-column gap-2">
+    <MudStack>
         <TextField @bind-Value="_LoginForm.Email" />
-        <TextField @bind-Value="_LoginForm.Password" type="password" />
+        <TextField @bind-Value="_LoginForm.Password" InputType="@InputType.Password" />
         <CheckBoxField @bind-Value="_LoginForm.RememberMe" />
-        <button type="submit" class="btn btn-primary">Login</button>
-    </div>
+        <MudButton ButtonType="ButtonType.Submit" Color="Color.Primary" Variant="Variant.Filled">Login</MudButton>
+        <p>Don't have an account? <MudLink href="/Register">Register</MudLink></p>
+    </MudStack>
 
-    <div class="mt-2">
-        <p>Don't have an account? <a href="/Register">Register</a></p>
-    </div>
 </EditForm>
 
 
@@ -34,6 +32,6 @@
     {
         var result = await ApiService.LoginAsync(_LoginForm);
         await CurrentUserService.SetCurrentUserAsync(result.Data.Token);
-        ToastService.ShowSuccess(result.Message);
+        Snackbar.Add(result.Message, Severity.Success);
     }
 }

@@ -1,5 +1,4 @@
 @page "/User"
-@inject AuthService AuthService
 
 <PageTitle>Home</PageTitle>
 
@@ -17,11 +16,11 @@
 @code {
     private async Task Login()
     {
-        await AuthService.LoginAsync("admin@plainly.com", "123456");
+        @* await AuthService.LoginAsync("admin@plainly.com", "123456"); *@
     }
 
     private async Task Logout()
     {
-        await AuthService.Logout();
+        @* await AuthService.Logout(); *@
     }
 }

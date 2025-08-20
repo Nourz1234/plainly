@@ -1,0 +1,16 @@
+@inherits AppComponent
+@inject CurrentUserService CurrentUserService
+
+<MudMenu Label="User" Variant="Variant.Filled" Color="Color.Inherit">
+    <MudMenuItem Icon="@Icons.Material.TwoTone.Logout" IconColor="Color.Primary" Label="Logout"
+        OnClick="Handle(OnLogout)" />
+</MudMenu>
+
+
+@code {
+    private async Task OnLogout()
+    {
+        await Task.Delay(2000);
+        await CurrentUserService.ClearCurrentUserAsync();
+    }
+}
