@@ -1,0 +1,76 @@
+@using Plainly.Shared.Actions.User.EditProfile
+@using Plainly.Shared.Actions.User.ViewProfile
+
+@page "/Profile"
+@inherits AppComponent
+@inject ApiService ApiService
+@inject CurrentUserService CurrentUserService
+
+<PageTitle>Profile</PageTitle>
+
+<MudPaper>
+    <MudText Typo="Typo.h5" Align="Align.Center" Class="mt-3">Profile</MudText>
+
+    <MudCard>
+        <MudCardContent>
+            <EditForm Model="_EditProfileFrom" OnValidSubmit="OnSave">
+                <FluentValidationValidator />
+
+                <MudStack>
+                    <MudTextField Label="Email" Variant="Variant.Outlined" Value="@_ViewProfileDTO.Email" Disabled />
+                    <TextField @bind-Value="_EditProfileFrom.FullName" Disabled="@(!_IsEditMode)" />
+
+                    <MudStack Row Reverse>
+                        @if (_IsEditMode)
+                        {
+                            <MudButton ButtonType="ButtonType.Button" OnClick="OnCancel">
+                                Cancel
+                            </MudButton>
+                            <MudButton ButtonType="ButtonType.Submit" Color="Color.Primary" Variant="Variant.Filled">
+                                Save
+                            </MudButton>
+                        }
+                        else
+                        {
+                            <MudButton ButtonType="ButtonType.Button" OnClick="OnEdit">
+                                Edit
+                            </MudButton>
+                        }
+                    </MudStack>
+                </MudStack>
+
+            </EditForm>
+        </MudCardContent>
+    </MudCard>
+</MudPaper>
+
+@code {
+    private ViewProfileDTO _ViewProfileDTO = new(string.Empty, string.Empty);
+    private EditProfileFrom _EditProfileFrom = new EditProfileFrom();
+    private bool _IsEditMode = false;
+
+    protected override async Task OnLoadAsync()
+    {
+        _ViewProfileDTO = (await ApiService.ViewProfileAsync()).Data;
+        _EditProfileFrom.FullName = _ViewProfileDTO.FullName;
+    }
+
+    private async Task OnSave(EditContext context)
+    {
+        var result = await ApiService.EditProfileAsync(_EditProfileFrom);
+        await CurrentUserService.SetCurrentUserAsync(result.Data.Token);
+        Snackbar.Add(result.Message, Severity.Success);
+        _IsEditMode = false;
+    }
+
+    private void OnEdit()
+    {
+        _IsEditMode = true;
+    }
+
+    private void OnCancel()
+    {
+        _IsEditMode = false;
+        _EditProfileFrom.FullName = _ViewProfileDTO.FullName;
+    }
+}

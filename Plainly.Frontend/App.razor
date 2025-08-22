@@ -1,31 +1,33 @@
-﻿<Router AppAssembly="@typeof(App).Assembly">
-    <Found Context="routeData">
-        <MudThemeProvider @bind-IsDarkMode="_IsDarkMode" />
-        <MudPopoverProvider />
-        <MudDialogProvider />
-        <MudSnackbarProvider />
+﻿@inject ILocalStorageService LocalStorage
 
-        <CascadingValue Value="this">
-            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-        </CascadingValue>
-    </Found>
-    <NotFound>
-        <PageTitle>Not found</PageTitle>
-        <LayoutView Layout="@typeof(MainLayout)">
-            <p role="alert">Sorry, there's nothing at this address.</p>
-        </LayoutView>
-    </NotFound>
-</Router>
+<MudThemeProvider IsDarkMode="IsDarkMode" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<CascadingValue Value="this">
+    <CascadingAuthenticationState>
+        <Router AppAssembly="@typeof(App).Assembly">
+            <Found Context="routeData">
+                <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+            </Found>
+        </Router>
+    </CascadingAuthenticationState>
+</CascadingValue>
 
 @code {
-    private bool _IsDarkMode = false;
-    public bool IsDarkMode
+    public bool IsDarkMode { get; private set; }
+
+    protected override async Task OnParametersSetAsync()
     {
-        get => _IsDarkMode;
-        set
-        {
-            _IsDarkMode = value;
-            StateHasChanged();
-        }
+        IsDarkMode = await LocalStorage.GetItemAsync<bool?>("isDarkMode") ?? true;
+        await base.OnParametersSetAsync();
+    }
+
+    public async Task SetIsDarkModeAsync(bool isDarkMode)
+    {
+        IsDarkMode = isDarkMode;
+        StateHasChanged();
+        await LocalStorage.SetItemAsync<bool>("isDarkMode", isDarkMode);
     }
 }

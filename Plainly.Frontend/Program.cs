@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
-using Plainly.Frontend.Handlers;
 using Plainly.Frontend.Providers;
 using Plainly.Frontend.Services;
 
@@ -31,19 +30,14 @@ public class Program
             config.SnackbarConfiguration.PreventDuplicates = false;
             config.SnackbarConfiguration.HideTransitionDuration = 150;
             config.SnackbarConfiguration.ShowTransitionDuration = 150;
+            config.SnackbarConfiguration.PositionClass = MudBlazor.Defaults.Classes.Position.BottomRight;
         });
 
         builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-        builder.Services.AddScoped<ErrorHandlerService>();
-        builder.Services.AddScoped<JwtAuthorizationMessageHandler>();
-        builder.Services.AddHttpClient<ApiService>(client =>
-        {
-            client.BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"] ?? throw new Exception("ApiBaseUrl is not set"));
-        })
-            .AddHttpMessageHandler<JwtAuthorizationMessageHandler>();
-
+        builder.Services.AddScoped<ApiMessageHandler>();
         builder.Services.AddScoped<CurrentUserService>();
         builder.Services.AddScoped<JwtTokenValidationService>();
+        builder.Services.AddScoped<ApiService>();
         builder.Services.AddScoped<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
 
         await builder.Build().RunAsync();

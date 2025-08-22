@@ -5,36 +5,36 @@
         <MudLayout>
             <MudAppBar Color="Color.Primary">
 
-                <MudHidden Breakpoint="Breakpoint.MdAndUp">
-                    <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
-                        OnClick="@ToggleDrawer" />
-                </MudHidden>
+                <MudIconButton Class="d-md-none" Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start"
+                    OnClick="@ToggleDrawer" />
 
                 <MudText Typo="Typo.h4">Plainly</MudText>
 
                 <MudSpacer />
 
-                <MudStack Row="true">
-                    <ThemeButton />
-                    <UserStrip />
+                <MudStack Row="true" Class="relative" AlignItems="AlignItems.Center">
+                    <AppLoaderBoundary>
+                        <UserCard />
+                        <ThemeButton />
+                    </AppLoaderBoundary>
                 </MudStack>
             </MudAppBar>
             <MudDrawer @bind-Open="_DrawerOpen" ClipMode="DrawerClipMode.Always">
                 <NavMenu />
             </MudDrawer>
-            <MudMainContent Style="height: 100vh">
-                <MudContainer Style="height: 100%;">
+            <MudMainContent Style="height: 100vh" Class="relative">
+                <MudContainer>
 
-                    <LoaderBoundary>
-                        <ErrorBoundary @ref="_ErrorBoundary">
+                    <AppLoaderBoundary>
+                        <AppErrorBoundary>
                             <ChildContent>
                                 @Body
                             </ChildContent>
                             <ErrorContent Context="errorContext">
-                                <Error ErrorBoundary="_ErrorBoundary" Exception="errorContext" />
+                                <UnhandledError Exception="errorContext" />
                             </ErrorContent>
-                        </ErrorBoundary>
-                    </LoaderBoundary>
+                        </AppErrorBoundary>
+                    </AppLoaderBoundary>
 
                 </MudContainer>
             </MudMainContent>
@@ -46,8 +46,6 @@
 </AuthorizeView>
 
 @code {
-    private ErrorBoundary? _ErrorBoundary;
-
     private bool _DrawerOpen = true;
 
     private void ToggleDrawer()

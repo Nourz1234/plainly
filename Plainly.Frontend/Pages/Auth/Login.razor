@@ -2,16 +2,16 @@
 
 @page "/Login"
 @inherits AppComponent
-@layout Layout.AuthLayout
-@inject CurrentUserService CurrentUserService
+@layout AuthLayout
 @inject ApiService ApiService
+@inject CurrentUserService CurrentUserService
 
 
 <PageTitle>Login</PageTitle>
 
 <MudText Typo="Typo.h5" Align="Align.Center">Login</MudText>
 
-<EditForm Model="_LoginForm" OnValidSubmit="Handle(OnSubmit)">
+<EditForm Model="_LoginForm" OnValidSubmit="OnSubmit">
     <FluentValidationValidator />
 
     <MudStack>
@@ -19,7 +19,10 @@
         <TextField @bind-Value="_LoginForm.Password" InputType="@InputType.Password" />
         <CheckBoxField @bind-Value="_LoginForm.RememberMe" />
         <MudButton ButtonType="ButtonType.Submit" Color="Color.Primary" Variant="Variant.Filled">Login</MudButton>
-        <p>Don't have an account? <MudLink href="/Register">Register</MudLink></p>
+        <MudText>
+            Don't have an account?
+            <MudLink href="/Register">Register</MudLink>
+        </MudText>
     </MudStack>
 
 </EditForm>

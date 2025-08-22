@@ -3,7 +3,6 @@ using Plainly.Shared.Extensions;
 
 namespace Plainly.Shared.Actions.Auth.Register;
 
-
 public class RegisterFormValidator : AbstractValidator<RegisterForm>
 {
     public RegisterFormValidator()
@@ -26,9 +25,4 @@ public class RegisterFormValidator : AbstractValidator<RegisterForm>
         RuleFor(x => x.ConfirmPassword)
             .Equal(x => x.Password).WithValidationError(ValidationError.PasswordMismatch);
     }
-
-    public const string PasswordMissingUppercase = "'{PropertyName}' must contain at least one uppercase letter.";
-    public const string PasswordMissingLowercase = "'{PropertyName}' must contain at least one lowercase letter.";
-    public const string PasswordMissingDigit = "'{PropertyName}' must contain at least one digit.";
-    public const string PasswordMissingSpecial = "'{PropertyName}' must contain at least one special character.";
 }

@@ -2,7 +2,7 @@
 
 @page "/Register"
 @inherits AppComponent
-@layout Layout.AuthLayout
+@layout AuthLayout
 @inject ApiService ApiService
 @inject CurrentUserService CurrentUserService
 
@@ -11,16 +11,20 @@
 
 <MudText Typo="Typo.h5" Align="Align.Center">Register</MudText>
 
-<EditForm Model="_RegisterForm" OnValidSubmit="Handle(OnSubmit)">
+<EditForm Model="_RegisterForm" OnValidSubmit="OnSubmit">
     <FluentValidationValidator />
 
     <MudStack>
         <TextField @bind-Value="_RegisterForm.FullName" />
         <TextField @bind-Value="_RegisterForm.Email" autocomplete="off" />
-        <TextField @bind-Value="_RegisterForm.Password" type="password" autocomplete="new-password" />
-        <TextField @bind-Value="_RegisterForm.ConfirmPassword" type="password" autocomplete="new-password" />
-        <MudButton ButtonType="ButtonType.Submit" Color="Color.Primary" Variant="Variant.Filled">Login</MudButton>
-        <p>Already have an account? <MudLink href="/Login">Login</MudLink></p>
+        <TextField @bind-Value="_RegisterForm.Password" InputType="@InputType.Password" autocomplete="new-password" />
+        <TextField @bind-Value="_RegisterForm.ConfirmPassword" InputType="@InputType.Password"
+            autocomplete="new-password" />
+        <MudButton ButtonType="ButtonType.Submit" Color="Color.Primary" Variant="Variant.Filled">Register</MudButton>
+        <MudText>
+            Already have an account?
+            <MudLink href="/Login">Login</MudLink>
+        </MudText>
     </MudStack>
 </EditForm>
 
@@ -32,5 +36,6 @@
     {
         var result = await ApiService.RegisterAsync(_RegisterForm);
         await CurrentUserService.SetCurrentUserAsync(result.Data.Token);
+        Snackbar.Add(result.Message, Severity.Success);
     }
 }

@@ -1,0 +1,36 @@
+@inject NavigationManager NavigationManager
+
+<MudText Typo="Typo.h5">An unhandled error occurred</MudText>
+
+@if (Exception is Errors.AppError error && !string.IsNullOrEmpty(error.Message))
+{
+    <MudText>@error.Message</MudText>
+}
+else
+{
+    <MudText>Something went wrong. Please try again later.</MudText>
+}
+<MudStack Row>
+    @if (ErrorBoundary is not null)
+    {
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Retry">Retry</MudButton>
+    }
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="GoHome">Go Home</MudButton>
+</MudStack>
+
+@code {
+    [CascadingParameter]
+    public ErrorBoundary? ErrorBoundary { get; set; }
+
+    [Parameter]
+    public Exception? Exception { get; set; }
+
+    private void GoHome(MouseEventArgs args)
+    {
+        NavigationManager.NavigateTo("/");
+    }
+    private void Retry(MouseEventArgs args)
+    {
+        ErrorBoundary?.Recover();
+    }
+}

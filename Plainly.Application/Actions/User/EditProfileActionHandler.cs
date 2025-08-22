@@ -6,7 +6,7 @@ using Plainly.Shared.Interfaces;
 
 namespace Plainly.Api.Actions.User;
 
-public class EditProfileActionHandler(IUserRepository userRepository, ICurrentUserProvider userProvider) : IActionHandler<EditProfileAction, EditProfileRequest, EditProfileDTO>
+public class EditProfileActionHandler(IUserRepository userRepository, ICurrentUserProvider userProvider, IJwtService jwtService) : IActionHandler<EditProfileAction, EditProfileRequest, EditProfileDTO>
 {
     public async Task<EditProfileDTO> Handle(EditProfileRequest request, CancellationToken token = default)
     {
@@ -20,6 +20,8 @@ public class EditProfileActionHandler(IUserRepository userRepository, ICurrentUs
 
         await userRepository.UpdateAsync(user);
 
-        return new EditProfileDTO(user.FullName, user.Email!);
+        var userToken = await jwtService.GenerateToken(user);
+
+        return new EditProfileDTO(userToken);
     }
 }

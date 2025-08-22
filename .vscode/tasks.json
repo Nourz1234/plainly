@@ -28,6 +28,6 @@
             "dependsOn": "Generate Coverage HTML Report",
             "group": "none",
             "detail": "Open the generated HTML coverage report in browser"
-          }
+        }
     ]
 }

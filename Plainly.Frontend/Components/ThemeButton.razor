@@ -1,5 +1,8 @@
-<MudTooltip Text="@_Tooltip">
-    <MudIconButton Icon="@_Icon" Color="Color.Inherit" OnClick="ToggleTheme" />
+@inherits AppComponent
+
+<MudTooltip Text="@(App.IsDarkMode ? "Light" : "Dark")">
+    <MudToggleIconButton Color="Color.Inherit" Toggled="@App.IsDarkMode" ToggledChanged="OnThemeChanged"
+        Icon="@Icons.Material.Filled.NightlightRound" ToggledIcon="@Icons.Material.Filled.WbSunny" />
 </MudTooltip>
 
 
@@ -7,23 +10,8 @@
     [CascadingParameter]
     public required App App { get; set; }
 
-    private string _Icon = Icons.Material.Filled.WbSunny;
-    private string _Tooltip = "Light";
-
-    override protected void OnParametersSet()
+    private async Task OnThemeChanged(bool args)
     {
-        OnThemeChanged();
-    }
-
-    private void ToggleTheme()
-    {
-        App.IsDarkMode = !App.IsDarkMode;
-        OnThemeChanged();
-    }
-
-    private void OnThemeChanged()
-    {
-        _Icon = App.IsDarkMode ? Icons.Material.Filled.WbSunny : Icons.Material.Filled.NightlightRound;
-        _Tooltip = App.IsDarkMode ? "Light" : "Dark";
+        await App.SetIsDarkModeAsync(args);
     }
 }

@@ -9,16 +9,16 @@
                     <MudCard Style="position:relative;">
                         <MudCardContent>
 
-                            <LoaderBoundary>
-                                <ErrorBoundary @ref="_ErrorBoundary">
+                            <AppLoaderBoundary>
+                                <AppErrorBoundary>
                                     <ChildContent>
                                         @Body
                                     </ChildContent>
                                     <ErrorContent Context="errorContext">
-                                        <Error ErrorBoundary="_ErrorBoundary" Exception="errorContext" />
+                                        <UnhandledError Exception="errorContext" />
                                     </ErrorContent>
-                                </ErrorBoundary>
-                            </LoaderBoundary>
+                                </AppErrorBoundary>
+                            </AppLoaderBoundary>
 
                         </MudCardContent>
                     </MudCard>
@@ -31,7 +31,3 @@
         <RedirectToHome />
     </Authorized>
 </AuthorizeView>
-
-@code {
-    private ErrorBoundary? _ErrorBoundary;
-}

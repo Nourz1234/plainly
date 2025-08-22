@@ -1,0 +1,28 @@
+<CascadingValue Value="this">
+    @ChildContent
+
+    <MudOverlay Visible="_IsVisible" LightBackground="true" Absolute="true">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    </MudOverlay>
+</CascadingValue>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    private bool _IsVisible = false;
+
+    public void Show()
+    {
+        if (_IsVisible) return; // avoid rendering if already visible
+        _IsVisible = true;
+        StateHasChanged();
+    }
+
+    public void Hide()
+    {
+        if (!_IsVisible) return; // avoid rendering if already hidden
+        _IsVisible = false;
+        StateHasChanged();
+    }
+}

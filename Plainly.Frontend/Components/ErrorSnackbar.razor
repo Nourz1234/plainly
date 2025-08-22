@@ -1,0 +1,34 @@
+<MudText><b>@Message</b></MudText>
+@if (Errors is not null)
+{
+    <ul class="mt-2">
+        @foreach (var error in Errors)
+        {
+            <li>
+                @if (error.Field is not null)
+                {
+                    <MudText Typo="Typo.body2">@error.Field: @error.Description</MudText>
+                }
+                else
+                {
+                    <MudText Typo="Typo.body2">@error.Description</MudText>
+                }
+            </li>
+        }
+    </ul>
+}
+@if (TraceId is not null)
+{
+    <MudText Typo="Typo.caption">TraceId: @TraceId</MudText>
+}
+
+@code {
+    [Parameter]
+    public required string Message { get; set; }
+
+    [Parameter]
+    public ErrorDetail[]? Errors { get; set; }
+
+    [Parameter]
+    public string? TraceId { get; set; }
+}

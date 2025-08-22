@@ -6,4 +6,6 @@ public static class Messages
     public const string UnhandledError = "An unexpected error occurred.";
     public const string InvalidJWTSignature = "Invalid JWT signature.";
     public const string SessionExpired = "Session expired.";
+    public const string NetworkError = "Network error.";
+    public const string InvalidApiResponse = "Invalid API response.";
 }

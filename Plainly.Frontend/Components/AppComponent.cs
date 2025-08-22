@@ -1,47 +1,114 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Components.Web;
 using MudBlazor;
+using Plainly.Frontend.Errors;
 
 namespace Plainly.Frontend.Components;
 
-public class AppComponent : ComponentBase
+public class AppComponent : ComponentBase, IHandleEvent
 {
-    [Inject]
-    public required ISnackbar Snackbar { get; set; }
+    [Inject, NotNull]
+    public ISnackbar? Snackbar { get; set; }
 
     [CascadingParameter]
-    public required LoaderBoundary LoaderBoundary { get; set; }
+    public AppLoaderBoundary? LoaderBoundary { get; set; }
 
-    protected EventCallback Handle(Func<Task> handler)
+    // hook up events to allow global error handling and loading indicator
+    Task IHandleEvent.HandleEventAsync(EventCallbackWorkItem callback, object? arg)
     {
-        return EventCallback.Factory.Create(this, () => RunWithHandling(handler));
+        var task = callback.InvokeAsync(arg);
+        var shouldAwaitTask = task.Status != TaskStatus.RanToCompletion &&
+            task.Status != TaskStatus.Canceled;
+
+        StateHasChanged();
+
+        return shouldAwaitTask ?
+            RunTaskWithHandlingAsync(task) :
+            Task.CompletedTask;
     }
 
-    protected EventCallback<T> Handle<T>(Func<T, Task> handler)
+    protected override sealed void OnInitialized()
     {
-        return EventCallback.Factory.Create<T>(this, (arg) => RunWithHandling(() => handler(arg)));
     }
 
-    protected EventCallback<EditContext> Handle(Func<EditContext, Task> handler) => Handle<EditContext>(handler);
-    protected EventCallback<MouseEventArgs> Handle(Func<MouseEventArgs, Task> handler) => Handle<MouseEventArgs>(handler);
-    protected EventCallback<KeyboardEventArgs> Handle(Func<KeyboardEventArgs, Task> handler) => Handle<KeyboardEventArgs>(handler);
-
-
-    public async Task RunWithHandling(Func<Task> handler)
+    protected override sealed Task OnInitializedAsync()
     {
-        LoaderBoundary.Show();
+        return RunWithHandlingAsync(RunLoadAsync, updateState: false); // do not update state, OnInitializedAsync should handle it
+    }
+
+    private Task RunLoadAsync()
+    {
+        OnLoad();
+        return OnLoadAsync();
+    }
+
+    protected virtual void OnLoad() { }
+    protected virtual Task OnLoadAsync() => Task.CompletedTask;
+
+
+    private Task RunWithHandlingAsync(Func<Task> handler, bool updateState = true)
+    {
+        var task = handler();
+        var shouldAwaitTask = task.Status != TaskStatus.RanToCompletion &&
+            task.Status != TaskStatus.Canceled;
+
+        // We always want to update the state here so that we render after the sync part of the handler
+        StateHasChanged();
+
+        return shouldAwaitTask ?
+            RunTaskWithHandlingAsync(task, updateState) :
+            Task.CompletedTask;
+    }
+
+    private async Task RunTaskWithHandlingAsync(Task task, bool updateState = true)
+    {
+        if (!task.IsCompleted)
+            LoaderBoundary?.Show();
         try
         {
-            await handler();
+            await task;
         }
-        catch (Errors.AppError error)
+        catch (ApiError error)
         {
-            Snackbar.Add(error.Message, Severity.Error);
+            Snackbar.Add<ErrorSnackbar>(
+                new()
+                {
+                    [nameof(ErrorSnackbar.Message)] = error.Message,
+                    [nameof(ErrorSnackbar.Errors)] = error.Errors!,
+                    [nameof(ErrorSnackbar.TraceId)] = error.TraceId!,
+                },
+                Severity.Error,
+                ConfigureErrorSnackbar
+            );
+        }
+        catch (AppError error)
+        {
+            Snackbar.Add<ErrorSnackbar>(
+                new() { [nameof(ErrorSnackbar.Message)] = error.Message },
+                Severity.Error,
+                ConfigureErrorSnackbar
+            );
+        }
+        catch (HttpRequestException)
+        {
+            Snackbar.Add<ErrorSnackbar>(
+                new() { [nameof(ErrorSnackbar.Message)] = Messages.NetworkError },
+                Severity.Error,
+                ConfigureErrorSnackbar
+            );
         }
         finally
         {
-            LoaderBoundary.Hide();
+            LoaderBoundary?.Hide();
         }
+
+        if (updateState)
+            StateHasChanged();
     }
+
+    protected virtual void ConfigureErrorSnackbar(SnackbarOptions options)
+    {
+        options.VisibleStateDuration = 10000;
+    }
+
 }

@@ -37,10 +37,9 @@ public class CurrentUserService(ILocalStorageService localStorageService, JwtTok
     public ClaimsPrincipal CurrentUser => _CurrentUser;
 
     public string? Token { get; private set; }
-
     public bool IsAuthenticated => _CurrentUser.Identity is { IsAuthenticated: true };
-
     public string FullName => _CurrentUser.Identity?.Name ?? "Anonymous";
+    public string Email => _CurrentUser.FindFirst(ClaimTypes.Email)?.Value ?? "Anonymous";
 
     public event Action<ClaimsPrincipal>? UserChanged;
 }

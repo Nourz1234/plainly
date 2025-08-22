@@ -1,0 +1,12 @@
+@page "/{*pageRoute}"
+
+<PageTitle>Not Found</PageTitle>
+
+<MudText Typo="Typo.h4">Not Found</MudText>
+
+<MudText>Sorry, there's nothing at this address.</MudText>
+
+@code {
+    [Parameter]
+    public string? PageRoute { get; set; }
+}
