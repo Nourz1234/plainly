@@ -10,7 +10,7 @@ else
 {
     <MudText>Something went wrong. Please try again later.</MudText>
 }
-<MudStack Row>
+<MudStack Row Class="mt-5">
     @if (ErrorBoundary is not null)
     {
         <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Retry">Retry</MudButton>

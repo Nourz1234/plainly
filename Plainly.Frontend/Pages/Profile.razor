@@ -8,20 +8,26 @@
 
 <PageTitle>Profile</PageTitle>
 
-<MudPaper>
-    <MudText Typo="Typo.h5" Align="Align.Center" Class="mt-3">Profile</MudText>
 
-    <MudCard>
-        <MudCardContent>
-            <EditForm Model="_EditProfileFrom" OnValidSubmit="OnSave">
-                <FluentValidationValidator />
+<MudCard Class="mt-5">
+    <MudCardHeader>
+        <MudText Typo="Typo.h5" Align="Align.Center" Class="mt-3">Profile</MudText>
+    </MudCardHeader>
+    <MudCardContent>
+        <EditForm Model="_EditProfileFrom" OnValidSubmit="OnSave">
+            <FluentValidationValidator />
 
-                <MudStack>
+            <MudGrid>
+                <MudItem xs="12" sm="6">
                     <MudTextField Label="Email" Variant="Variant.Outlined" Value="@_ViewProfileDTO.Email" Disabled />
-                    <TextField @bind-Value="_EditProfileFrom.FullName" Disabled="@(!_IsEditMode)" />
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <TextField @bind-Value="_EditProfileFrom.FullName" Disabled="@(!_IsEditing)" />
+                </MudItem>
 
+                <MudItem xs="12">
                     <MudStack Row Reverse>
-                        @if (_IsEditMode)
+                        @if (_IsEditing)
                         {
                             <MudButton ButtonType="ButtonType.Button" OnClick="OnCancel">
                                 Cancel
@@ -37,22 +43,22 @@
                             </MudButton>
                         }
                     </MudStack>
-                </MudStack>
+                </MudItem>
+            </MudGrid>
 
-            </EditForm>
-        </MudCardContent>
-    </MudCard>
-</MudPaper>
+        </EditForm>
+    </MudCardContent>
+</MudCard>
 
 @code {
     private ViewProfileDTO _ViewProfileDTO = new(string.Empty, string.Empty);
     private EditProfileFrom _EditProfileFrom = new EditProfileFrom();
-    private bool _IsEditMode = false;
+    private bool _IsEditing = false;
 
     protected override async Task OnLoadAsync()
     {
         _ViewProfileDTO = (await ApiService.ViewProfileAsync()).Data;
-        _EditProfileFrom.FullName = _ViewProfileDTO.FullName;
+        ResetForm();
     }
 
     private async Task OnSave(EditContext context)
@@ -60,17 +66,22 @@
         var result = await ApiService.EditProfileAsync(_EditProfileFrom);
         await CurrentUserService.SetCurrentUserAsync(result.Data.Token);
         Snackbar.Add(result.Message, Severity.Success);
-        _IsEditMode = false;
+        _IsEditing = false;
     }
 
     private void OnEdit()
     {
-        _IsEditMode = true;
+        _IsEditing = true;
     }
 
     private void OnCancel()
     {
-        _IsEditMode = false;
+        _IsEditing = false;
+        ResetForm();
+    }
+
+    private void ResetForm()
+    {
         _EditProfileFrom.FullName = _ViewProfileDTO.FullName;
     }
 }

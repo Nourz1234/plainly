@@ -1,14 +1,14 @@
 @inherits AppComponent
 @inject CurrentUserService CurrentUserService
 
-<MudButton OnClick="ToggleUserMenu" Color="Color.Inherit" Variant="Variant.Text" Class="rounded-lg">
-    <MudStack Row="true" AlignItems="AlignItems.Center">
+<MudButton OnClick="OpenUserMenu" Color="Color.Inherit" Variant="Variant.Text" Class="rounded-lg">
+    <MudStack Row AlignItems="AlignItems.Center">
         <MudAvatar Color="Color.Inherit">
             <MudIcon Icon="@Icons.Material.TwoTone.AccountCircle" />
         </MudAvatar>
         <MudStack Spacing="0" AlignItems="AlignItems.Start">
             <MudText>@CurrentUserService.FullName</MudText>
-            <MudText Typo="Typo.body2">@CurrentUserService.Email</MudText>
+            <MudText Typo="Typo.caption">@CurrentUserService.Email</MudText>
         </MudStack>
     </MudStack>
 
@@ -22,7 +22,7 @@
 @code {
     private bool _IsUserMenuOpen = false;
 
-    private void ToggleUserMenu()
+    private void OpenUserMenu()
     {
         _IsUserMenuOpen = true;
     }

@@ -81,14 +81,6 @@ public class AppComponent : ComponentBase, IHandleEvent
                 ConfigureErrorSnackbar
             );
         }
-        catch (AppError error)
-        {
-            Snackbar.Add<ErrorSnackbar>(
-                new() { [nameof(ErrorSnackbar.Message)] = error.Message },
-                Severity.Error,
-                ConfigureErrorSnackbar
-            );
-        }
         catch (HttpRequestException)
         {
             Snackbar.Add<ErrorSnackbar>(
