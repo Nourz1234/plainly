@@ -33,14 +33,12 @@ public class JwtTokenValidationService(IConfiguration configuration, IJSRuntime 
         try
         {
             return handler.ValidateToken(token, validationParameters, out _);
-
         }
         catch (SecurityTokenException e)
         {
-            if (e.Message.Contains("IDX10223"))
+            if (e.Message.Contains("IDX10223")) // token expired
                 throw new AuthError(Messages.SessionExpired);
-            else
-                throw new AuthError(e.Message);
+            throw new AuthError(e.Message);
         }
     }
 }

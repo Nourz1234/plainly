@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using Plainly.Frontend.Errors;
+using Plainly.Frontend.Services;
 
 namespace Plainly.Frontend.Components;
 
@@ -9,6 +10,9 @@ public class AppComponent : ComponentBase, IHandleEvent
 {
     [Inject, NotNull]
     public ISnackbar? Snackbar { get; set; }
+
+    [Inject, NotNull]
+    public CurrentUserService? CurrentUserService { get; set; }
 
     [CascadingParameter]
     public AppLoaderBoundary? LoaderBoundary { get; set; }
@@ -77,6 +81,15 @@ public class AppComponent : ComponentBase, IHandleEvent
                     [nameof(ErrorSnackbar.Errors)] = error.Errors!,
                     [nameof(ErrorSnackbar.TraceId)] = error.TraceId!,
                 },
+                Severity.Error,
+                ConfigureErrorSnackbar
+            );
+        }
+        catch (AuthError error)
+        {
+            await CurrentUserService.ClearCurrentUserAsync();
+            Snackbar.Add<ErrorSnackbar>(
+                new() { [nameof(ErrorSnackbar.Message)] = error.Message },
                 Severity.Error,
                 ConfigureErrorSnackbar
             );

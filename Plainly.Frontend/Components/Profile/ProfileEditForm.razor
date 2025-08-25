@@ -1,0 +1,77 @@
+@using Plainly.Shared.Actions.User.EditProfile
+@using Plainly.Shared.Actions.User.ViewProfile
+@inherits AppComponent
+@inject ApiService ApiService
+@inject CurrentUserService CurrentUserService
+
+<EditForm Model="_EditProfileFrom" OnValidSubmit="OnSave">
+    <FluentValidationValidator />
+
+    <MudGrid>
+        <MudItem xs="12" sm="6">
+            <MudTextField Label="Email" Variant="Variant.Outlined" Value="@_ViewProfileDTO.Email" Disabled />
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <TextField @bind-Value="_EditProfileFrom.FullName" Disabled="@(!_IsEditing)" />
+        </MudItem>
+
+        <MudItem xs="12">
+            <MudStack Row Reverse>
+                @if (_IsEditing)
+                {
+                    <MudButton ButtonType="ButtonType.Button" OnClick="OnCancel">
+                        Cancel
+                    </MudButton>
+                    <MudButton ButtonType="ButtonType.Submit" Color="Color.Primary" Variant="Variant.Filled">
+                        Save
+                    </MudButton>
+                }
+                else
+                {
+                    <MudButton ButtonType="ButtonType.Button" OnClick="OnEdit">
+                        Edit
+                    </MudButton>
+                }
+            </MudStack>
+        </MudItem>
+    </MudGrid>
+
+</EditForm>
+
+
+@code {
+    private ViewProfileDTO _ViewProfileDTO = new(string.Empty, string.Empty);
+    private EditProfileFrom _EditProfileFrom = new EditProfileFrom();
+    private bool _IsEditing = false;
+
+    protected override async Task OnLoadAsync()
+    {
+        _ViewProfileDTO = (await ApiService.ViewProfileAsync()).Data;
+        ResetForm();
+    }
+
+    private async Task OnSave(EditContext context)
+    {
+        var result = await ApiService.EditProfileAsync(_EditProfileFrom);
+        await CurrentUserService.SetCurrentUserAsync(result.Data.Token);
+        Snackbar.Add(result.Message, Severity.Success);
+        _IsEditing = false;
+        await Task.Delay(3000);
+    }
+
+    private void OnEdit()
+    {
+        _IsEditing = true;
+    }
+
+    private void OnCancel()
+    {
+        _IsEditing = false;
+        ResetForm();
+    }
+
+    private void ResetForm()
+    {
+        _EditProfileFrom.FullName = _ViewProfileDTO.FullName;
+    }
+}
