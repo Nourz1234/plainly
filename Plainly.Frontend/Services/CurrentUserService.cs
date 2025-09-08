@@ -10,31 +10,50 @@ public class CurrentUserService(ILocalStorageService localStorageService, JwtTok
     public async Task LoadCurrentUserAsync()
     {
         var token = await localStorageService.GetItemAsStringAsync("token");
-        if (token is not null)
-        {
-            await SetCurrentUserAsync(token);
-        }
+        if (token is null)
+            ClearCurrentUserInternal();
+        else
+            SetCurrentUserInternalAsync(token);
     }
 
     public async Task SetCurrentUserAsync(string token)
     {
-        var claimsPrincipal = await jwtTokenValidationService.ValidateTokenAsync(token);
-        _CurrentUser = claimsPrincipal;
-        Token = token;
+        SetCurrentUserInternalAsync(token);
         await localStorageService.SetItemAsStringAsync("token", token);
-        UserChanged?.Invoke(_CurrentUser);
     }
 
     public async Task ClearCurrentUserAsync()
     {
         await localStorageService.RemoveItemAsync("token");
+        ClearCurrentUserInternal();
+    }
+
+    private void SetCurrentUserInternalAsync(string token)
+    {
+        var claimsPrincipal = jwtTokenValidationService.ValidateTokenAsync(token);
+        _CurrentUser = claimsPrincipal;
+        Token = token;
+    }
+
+    private void ClearCurrentUserInternal()
+    {
         _CurrentUser = Anonymous;
         Token = null;
-        UserChanged?.Invoke(_CurrentUser);
     }
 
     private ClaimsPrincipal _CurrentUser = Anonymous;
-    public ClaimsPrincipal CurrentUser => _CurrentUser;
+    public ClaimsPrincipal CurrentUser
+    {
+        get => _CurrentUser;
+        private set
+        {
+            if (_CurrentUser != value)
+            {
+                _CurrentUser = value;
+                UserChanged?.Invoke(_CurrentUser);
+            }
+        }
+    }
 
     public string? Token { get; private set; }
     public bool IsAuthenticated => _CurrentUser.Identity is { IsAuthenticated: true };

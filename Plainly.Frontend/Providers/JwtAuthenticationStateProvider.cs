@@ -5,9 +5,31 @@ using Plainly.Frontend.Services;
 
 namespace Plainly.Frontend.Providers;
 
-public class JwtAuthenticationStateProvider(CurrentUserService currentUserService, ISnackbar snackbar) : AuthenticationStateProvider
+public class JwtAuthenticationStateProvider(CurrentUserService currentUserService, LocalStorageWatcher localStorageWatcher, ISnackbar snackbar) : AuthenticationStateProvider
 {
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
+    {
+        await LoadCurrentUserAsync();
+
+        currentUserService.UserChanged += (user) =>
+        {
+            NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
+        };
+
+        // watch changes from other tabs
+        await localStorageWatcher.StartWatchingAsync();
+        localStorageWatcher.StorageChanged += async (key, oldValue, newValue) =>
+        {
+            if (key == "token")
+            {
+                await LoadCurrentUserAsync();
+            }
+        };
+
+        return new AuthenticationState(currentUserService.CurrentUser);
+    }
+
+    private async Task LoadCurrentUserAsync()
     {
         try
         {
@@ -18,12 +40,5 @@ public class JwtAuthenticationStateProvider(CurrentUserService currentUserServic
             await currentUserService.ClearCurrentUserAsync();
             snackbar.Add(ex.Message, Severity.Error);
         }
-
-        currentUserService.UserChanged += (user) =>
-        {
-            NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
-        };
-
-        return new AuthenticationState(currentUserService.CurrentUser);
     }
 }

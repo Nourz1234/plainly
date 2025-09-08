@@ -42,6 +42,7 @@ window.cryptoFunctions = {
                 dataBytes
             );
 
+            console.info("JWT verification result:", isValid);
             return isValid;
         } catch (error) {
             console.error("JWT verification failed:", error);
@@ -49,6 +50,19 @@ window.cryptoFunctions = {
         }
     },
 };
+
+window.localStorageHelper = {
+    registerStorageChanged: function (dotNetObjRef) {
+        // Cross-tab storage event
+        window.addEventListener("storage", (e) => {
+            if (e.storageArea === localStorage) {
+                console.info("js", e);
+                dotNetObjRef.invokeMethodAsync("OnStorageChanged", e.key, e.oldValue, e.newValue);
+            }
+        });
+    }
+};
+
 
 // Helper function to convert a Base64 string to an ArrayBuffer.
 function base64ToArrayBuffer(base64) {
