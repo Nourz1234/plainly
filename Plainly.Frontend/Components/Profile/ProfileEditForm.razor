@@ -55,7 +55,6 @@
         await CurrentUserService.SetCurrentUserAsync(result.Data.Token);
         Snackbar.Add(result.Message, Severity.Success);
         _IsEditing = false;
-        await Task.Delay(3000);
     }
 
     private void OnEdit()
