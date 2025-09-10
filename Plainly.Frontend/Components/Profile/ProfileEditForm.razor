@@ -2,7 +2,6 @@
 @using Plainly.Shared.Actions.User.ViewProfile
 @inherits AppComponent
 @inject ApiService ApiService
-@inject CurrentUserService CurrentUserService
 
 <EditForm Model="_EditProfileFrom" OnValidSubmit="OnSave">
     <FluentValidationValidator />

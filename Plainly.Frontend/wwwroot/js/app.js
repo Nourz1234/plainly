@@ -42,10 +42,8 @@ window.cryptoFunctions = {
                 dataBytes
             );
 
-            console.info("JWT verification result:", isValid);
             return isValid;
         } catch (error) {
-            console.error("JWT verification failed:", error);
             return false;
         }
     },
@@ -56,7 +54,6 @@ window.localStorageHelper = {
         // Cross-tab storage event
         window.addEventListener("storage", (e) => {
             if (e.storageArea === localStorage) {
-                console.info("js", e);
                 dotNetObjRef.invokeMethodAsync("OnStorageChanged", e.key, e.oldValue, e.newValue);
             }
         });

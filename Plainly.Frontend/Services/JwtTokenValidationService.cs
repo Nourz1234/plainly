@@ -8,11 +8,9 @@ namespace Plainly.Frontend.Services;
 
 public class JwtTokenValidationService(IConfiguration configuration, IJSRuntime jsRuntime)
 {
-    private readonly IJSInProcessRuntime _JsRuntime = (IJSInProcessRuntime)jsRuntime;
-
-    public ClaimsPrincipal ValidateTokenAsync(string token)
+    public async Task<ClaimsPrincipal> ValidateTokenAsync(string token)
     {
-        var isValidSignature = _JsRuntime.Invoke<bool>(
+        var isValidSignature = await jsRuntime.InvokeAsync<bool>(
             "cryptoFunctions.verifyEcdsaSignature",
             token,
             configuration["Jwt:PublicKey"]

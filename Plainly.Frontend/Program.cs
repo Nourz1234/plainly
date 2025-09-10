@@ -24,7 +24,7 @@ public class Program
 
         builder.Services.AddAuthorizationCore();
         builder.Services.AddCascadingAuthenticationState();
-        builder.Services.AddBlazoredLocalStorage();
+        builder.Services.AddBlazoredLocalStorageAsSingleton();
         builder.Services.AddMudServices(config =>
         {
             config.SnackbarConfiguration.PreventDuplicates = false;
@@ -32,14 +32,15 @@ public class Program
             config.SnackbarConfiguration.ShowTransitionDuration = 150;
             config.SnackbarConfiguration.PositionClass = MudBlazor.Defaults.Classes.Position.BottomRight;
         });
-
-        builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-        builder.Services.AddScoped<LocalStorageWatcher>();
-        builder.Services.AddScoped<ApiMessageHandler>();
-        builder.Services.AddScoped<CurrentUserService>();
-        builder.Services.AddScoped<JwtTokenValidationService>();
-        builder.Services.AddScoped<ApiService>();
         builder.Services.AddScoped<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
+
+        // register all services as singleton since this is wasm
+        builder.Services.AddSingleton(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+        builder.Services.AddSingleton<LocalStorageWatcher>();
+        builder.Services.AddSingleton<CurrentUserService>();
+        builder.Services.AddSingleton<JwtTokenValidationService>();
+        builder.Services.AddSingleton<ApiMessageHandler>();
+        builder.Services.AddSingleton<ApiService>();
 
         await builder.Build().RunAsync();
     }

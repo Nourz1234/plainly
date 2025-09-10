@@ -13,12 +13,12 @@ public class CurrentUserService(ILocalStorageService localStorageService, JwtTok
         if (token is null)
             ClearCurrentUserInternal();
         else
-            SetCurrentUserInternalAsync(token);
+            await SetCurrentUserInternalAsync(token);
     }
 
     public async Task SetCurrentUserAsync(string token)
     {
-        SetCurrentUserInternalAsync(token);
+        await SetCurrentUserInternalAsync(token);
         await localStorageService.SetItemAsStringAsync("token", token);
     }
 
@@ -28,16 +28,16 @@ public class CurrentUserService(ILocalStorageService localStorageService, JwtTok
         ClearCurrentUserInternal();
     }
 
-    private void SetCurrentUserInternalAsync(string token)
+    private async Task SetCurrentUserInternalAsync(string token)
     {
-        var claimsPrincipal = jwtTokenValidationService.ValidateTokenAsync(token);
-        _CurrentUser = claimsPrincipal;
+        var claimsPrincipal = await jwtTokenValidationService.ValidateTokenAsync(token);
+        CurrentUser = claimsPrincipal;
         Token = token;
     }
 
     private void ClearCurrentUserInternal()
     {
-        _CurrentUser = Anonymous;
+        CurrentUser = Anonymous;
         Token = null;
     }
 
