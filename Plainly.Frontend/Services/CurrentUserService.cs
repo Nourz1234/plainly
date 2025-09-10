@@ -1,5 +1,7 @@
 using System.Security.Claims;
 using Blazored.LocalStorage;
+using Plainly.Shared.Extensions;
+using Plainly.Shared.Interfaces;
 
 namespace Plainly.Frontend.Services;
 
@@ -59,6 +61,42 @@ public class CurrentUserService(ILocalStorageService localStorageService, JwtTok
     public bool IsAuthenticated => _CurrentUser.Identity is { IsAuthenticated: true };
     public string FullName => _CurrentUser.Identity?.Name ?? "Anonymous";
     public string Email => _CurrentUser.FindFirst(ClaimTypes.Email)?.Value ?? "Anonymous";
+
+
+    public bool CanPerformAction<TAction>() where TAction : IAction, new()
+    {
+        return CanPerformAction(new TAction());
+    }
+
+    public bool CanPerformAction(IAction action)
+    {
+        var actionScopes = action.RequiredScopes.Select(x => x.GetEnumMemberValue()).ToArray();
+        if (actionScopes.Length == 0)
+        {
+            return true;
+        }
+
+        if (_CurrentUser.Identity is null || !_CurrentUser.Identity.IsAuthenticated)
+        {
+            return false;
+        }
+
+        // Admin has access to all!
+        if (_CurrentUser.IsInRole("Admin"))
+        {
+            return true;
+        }
+
+        var userScopes = _CurrentUser.FindAll("scopes").Select(c => c.Value).ToArray();
+        bool userHasScope(string scope) => userScopes.Any(userScope => userScope == scope || scope.StartsWith(userScope + "."));
+
+        if (!actionScopes.All(userHasScope))
+        {
+            return false;
+        }
+
+        return true;
+    }
 
     public event Action<ClaimsPrincipal>? UserChanged;
 }

@@ -1,5 +1,10 @@
+@using Plainly.Frontend.Authorization
+@using Plainly.Shared.Actions.User.ViewProfile
 @page "/Profile"
 @inherits AppComponent
+
+@attribute [AuthorizeAction<ViewProfileAction>]
+
 
 <PageTitle>Profile</PageTitle>
 

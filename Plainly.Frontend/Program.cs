@@ -1,8 +1,10 @@
 using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
+using Plainly.Frontend.Authorization;
 using Plainly.Frontend.Providers;
 using Plainly.Frontend.Services;
 
@@ -33,6 +35,8 @@ public class Program
             config.SnackbarConfiguration.PositionClass = MudBlazor.Defaults.Classes.Position.BottomRight;
         });
         builder.Services.AddScoped<AuthenticationStateProvider, JwtAuthenticationStateProvider>();
+        builder.Services.AddScoped<IAuthorizationHandler, ActionAuthorizationHandler>();
+        builder.Services.AddSingleton<IAuthorizationPolicyProvider, ActionAuthorizationPolicyProvider>();
 
         // register all services as singleton since this is wasm
         builder.Services.AddSingleton(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });

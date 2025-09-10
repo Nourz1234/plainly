@@ -1,3 +1,4 @@
+@using Plainly.Shared.Actions.User.ViewProfile
 @inherits AppComponent
 
 <MudButton OnClick="OpenUserMenu" Color="Color.Inherit" Variant="Variant.Text" Class="rounded-lg">
@@ -12,7 +13,10 @@
     </MudStack>
 
     <MudMenu @bind-Open="_IsUserMenuOpen" Dense Class="absolute" Style="bottom: 0; right: 0">
-        <MudMenuItem Icon="@Icons.Material.TwoTone.Person" Label="Profile" Href="/Profile" />
+        @if (CurrentUserService.CanPerformAction<ViewProfileAction>())
+        {
+            <MudMenuItem Icon="@Icons.Material.TwoTone.Person" Label="Profile" Href="/Profile" />
+        }
         <MudDivider />
         <MudMenuItem Icon="@Icons.Material.TwoTone.Logout" Label="Logout" OnClick="OnLogout" />
     </MudMenu>
