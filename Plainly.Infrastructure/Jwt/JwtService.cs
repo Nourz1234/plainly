@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using Plainly.Application.Interface;
 using Plainly.Application.Interface.Repositories;
 using Plainly.Domain.Interfaces;
+using Plainly.Shared;
 
 namespace Plainly.Infrastructure.Jwt;
 
@@ -35,9 +36,9 @@ public class JwtService : IJwtService
         [
             new Claim(JwtRegisteredClaimNames.Sub, user.Id),
             new Claim(JwtRegisteredClaimNames.Email, user.Email!),
-            new Claim(ClaimTypes.Name, user.FullName),
-            ..userRoles.Select(role => new Claim(ClaimTypes.Role, role)),
-            ..userClaims.Where(c => c.Type == "scopes"),
+            new Claim(JwtRegisteredClaimNames.Name, user.FullName),
+            ..userRoles.Select(role => new Claim(JwtClaimNames.Roles, role)),
+            ..userClaims.Where(claim => claim.Type == JwtClaimNames.Scopes),
         ];
 
         var token = new JwtSecurityToken(

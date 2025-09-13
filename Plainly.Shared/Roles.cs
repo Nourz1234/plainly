@@ -1,8 +1,6 @@
-using Plainly.Shared;
+namespace Plainly.Shared;
 
-namespace Plainly.Domain;
-
-public record Role(string Name, Scopes[]? Scopes);
+public record Role(string Name, Scope[]? Scopes);
 
 public static class Roles
 {

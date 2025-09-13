@@ -5,19 +5,19 @@ namespace Plainly.Frontend.Authorization;
 
 public class ActionAuthorizationPolicyProvider(IOptions<AuthorizationOptions> options) : DefaultAuthorizationPolicyProvider(options)
 {
-    public override async Task<AuthorizationPolicy?> GetPolicyAsync(string policyName)
+    public override Task<AuthorizationPolicy?> GetPolicyAsync(string policyName)
     {
-        if (RegisteredActions.Has(policyName))
+        if (ActionPolicyRegistry.HasPolicy(policyName))
         {
-            var action = RegisteredActions.Get(policyName);
+            var requirement = ActionPolicyRegistry.GetRequirement(policyName);
 
             var policy = new AuthorizationPolicyBuilder()
-                .AddRequirements(new ActionRequirement(action))
+                .AddRequirements(requirement)
                 .Build();
 
-            return policy;
+            return Task.FromResult<AuthorizationPolicy?>(policy);
         }
 
-        return await base.GetPolicyAsync(policyName);
+        return base.GetPolicyAsync(policyName);
     }
 }

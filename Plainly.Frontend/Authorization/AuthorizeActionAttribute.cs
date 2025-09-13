@@ -3,11 +3,11 @@ using Plainly.Shared.Interfaces;
 
 namespace Plainly.Frontend.Authorization;
 
-public class AuthorizeActionAttribute<TAction> : AuthorizeAttribute
+public class AuthorizeActionAttribute<TAction> : AuthorizeAttribute, IAuthorizationRequirement
     where TAction : IAction
 {
     public AuthorizeActionAttribute()
     {
-        Policy = RegisteredActions.Add<TAction>();
+        Policy = ActionPolicyRegistry.Register<TAction>();
     }
 }

@@ -17,7 +17,7 @@ public class RegisterActionHandler(IUserRepository userRepository, IJwtService j
         var user = await userRepository.CreateAsync(registerForm.FullName, registerForm.Email, registerForm.Password);
 
         await userRepository.AddClaimAsync(user,
-            new Claim("scopes", Scopes.Profile.GetEnumMemberValue())
+            new Claim(JwtClaimNames.Scopes, Scope.Profile.GetEnumMemberValue())
         );
 
         var token = await jwtService.GenerateToken(user);

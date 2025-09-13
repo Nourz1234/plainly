@@ -13,10 +13,6 @@ public static class DependencyInjection
         // Add actions and action handlers
         services.Scan(scan =>
         {
-            scan.FromAssemblyOf<Plainly.Shared.Main>()
-                .AddClasses(c => c.AssignableTo(typeof(IAction<,>)))
-                .AsSelf()
-                .WithScopedLifetime();
             scan.FromAssemblyOf<Plainly.Application.Main>()
                 .AddClasses(c => c.AssignableTo(typeof(IActionHandler<,,>)))
                 .AsImplementedInterfaces()

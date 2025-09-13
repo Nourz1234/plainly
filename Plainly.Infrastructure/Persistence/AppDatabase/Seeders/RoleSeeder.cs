@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using Plainly.Domain;
+using Plainly.Shared;
 using Plainly.Shared.Extensions;
 
 namespace Plainly.Infrastructure.Persistence.AppDatabase.Seeders;
@@ -22,7 +22,7 @@ public static class RoleSeeder
             if (role.Scopes is not null)
             {
                 foreach (var scope in role.Scopes)
-                    await roleManager.AddClaimAsync(new IdentityRole(role.Name), new Claim("scopes", scope.GetEnumMemberValue()));
+                    await roleManager.AddClaimAsync(new IdentityRole(role.Name), new Claim(JwtClaimNames.Scopes, scope.GetEnumMemberValue()));
             }
         }
     }

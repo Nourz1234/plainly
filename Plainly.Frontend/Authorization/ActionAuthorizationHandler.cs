@@ -1,15 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
-using Plainly.Shared.Extensions;
-using Plainly.Frontend.Services;
 
 namespace Plainly.Frontend.Authorization;
 
-public class ActionAuthorizationHandler(CurrentUserService currentUserService) : AuthorizationHandler<ActionRequirement>
+public class ActionAuthorizationHandler : AuthorizationHandler<ActionRequirement>
 {
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, ActionRequirement requirement)
     {
-        var action = requirement.Action;
-        if (currentUserService.CanPerformAction(action))
+        if (requirement.UserCanPerformAction(context.User))
             context.Succeed(requirement);
         return Task.CompletedTask;
     }

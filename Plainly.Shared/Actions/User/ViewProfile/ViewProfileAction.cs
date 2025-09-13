@@ -4,9 +4,7 @@ namespace Plainly.Shared.Actions.User.ViewProfile;
 
 public class ViewProfileAction : IAction<ViewProfileRequest, ViewProfileDTO>
 {
-    public string DisplayName => "View Profile";
-
-    public string InternalName => throw new NotImplementedException();
-
-    public Scopes[] RequiredScopes => [Scopes.Profile];
+    public static ActionId Id { get; } = ActionId.ViewProfile;
+    public static string DisplayName { get; } = "View Profile";
+    public static Scope[] RequiredScopes { get; } = [Scope.Profile];
 }

@@ -4,9 +4,7 @@ namespace Plainly.Shared.Actions.User.EditProfile;
 
 public class EditProfileAction : IAction<EditProfileRequest, EditProfileDTO>
 {
-    public string DisplayName => "Edit Profile";
-
-    public string InternalName => throw new NotImplementedException();
-
-    public Scopes[] RequiredScopes => [Scopes.Profile];
+    public static ActionId Id { get; } = ActionId.EditProfile;
+    public static string DisplayName { get; } = "Edit Profile";
+    public static Scope[] RequiredScopes { get; } = [Scope.Profile];
 }

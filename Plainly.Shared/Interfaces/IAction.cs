@@ -2,9 +2,9 @@ namespace Plainly.Shared.Interfaces;
 
 public interface IAction
 {
-    public string DisplayName { get; }
-    public string InternalName { get; }
-    public Scopes[] RequiredScopes { get; }
+    public static abstract ActionId Id { get; }
+    public static abstract string DisplayName { get; }
+    public static abstract Scope[] RequiredScopes { get; }
 }
 
 public interface IAction<TRequest> : IAction

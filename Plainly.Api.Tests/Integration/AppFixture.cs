@@ -50,7 +50,7 @@ public class AppFixture : IAsyncLifetime
             {
                 await UserManager.AddClaimsAsync(
                     userEntity,
-                    user.Scopes.Select(s => new Claim("scopes", s.GetEnumMemberValue())).ToArray()
+                    user.Scopes.Select(s => new Claim(JwtClaimNames.Scopes, s.GetEnumMemberValue())).ToArray()
                 );
             }
 

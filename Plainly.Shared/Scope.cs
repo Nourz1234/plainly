@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 namespace Plainly.Shared;
 
 [DataContract]
-public enum Scopes
+public enum Scope
 {
     [EnumMember(Value = "User")]
     ManageUser,

@@ -29,7 +29,10 @@ public class JwtTokenValidationService(IConfiguration configuration, IJSRuntime 
             SignatureValidator = (t, vp) => new JwtSecurityToken(t),
         };
 
-        var handler = new JwtSecurityTokenHandler();
+        var handler = new JwtSecurityTokenHandler
+        {
+            MapInboundClaims = false
+        };
         try
         {
             return handler.ValidateToken(token, validationParameters, out _);
